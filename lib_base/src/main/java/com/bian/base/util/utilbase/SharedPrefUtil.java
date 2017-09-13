@@ -21,6 +21,10 @@ public final class SharedPrefUtil {
     private static Context context;
     private SharedPreferences prefrence;
 
+    public static boolean isReady(){
+        return context!=null;
+    }
+
     private SharedPrefUtil(String prefrenceName) {
         prefrence = context.getSharedPreferences(prefrenceName, Context.MODE_PRIVATE);
     }

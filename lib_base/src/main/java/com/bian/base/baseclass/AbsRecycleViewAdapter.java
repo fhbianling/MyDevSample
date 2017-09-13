@@ -11,10 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bian.base.util.utilbase.L;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bian.base.util.utilbase.L;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -408,29 +409,6 @@ public abstract class AbsRecycleViewAdapter<DataType, CallType, VH extends Recyc
         void onLoadFailed(Response<CallType> response);
 
         void onLoadStart(@LoadType int type);
-    }
-
-    /**
-     * author 边凌
-     * date 2017/4/24 11:04
-     * desc ${对于可能会用到的上下拉刷新框架，实现该接口用于和{@link AbsRecycleViewAdapter}配合实现上下拉}
-     */
-
-    public interface PullToRefresh {
-        void setMode(Mode mode);
-
-        void onRefreshComplete();
-
-        void setOnRefreshListener(OnRefreshListener onRefreshListener);
-
-        enum Mode {Both, PullFromStart, PullFromEnd}
-
-        @SuppressWarnings("unused")
-        interface OnRefreshListener {
-            void onRefreshUp();
-
-            void onRefreshDown();
-        }
     }
 
     /**

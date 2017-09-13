@@ -2,6 +2,8 @@ package com.bian.base.component.net;
 
 import android.text.TextUtils;
 
+import com.bian.base.util.utilbase.L;
+import com.bian.base.util.utilbase.SharedPrefUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -10,8 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.bian.base.util.utilbase.L;
-import com.bian.base.util.utilbase.SharedPrefUtil;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
@@ -46,6 +46,10 @@ public class Api {
     }
 
     public static String getTOKEN() {
+        if (!SharedPrefUtil.isReady()){
+            L.e("Cannot use token function,because of BaseUtilManager.init(...) isn't called.");
+            return "";
+        }
         if (TextUtils.isEmpty(TOKEN)) {
             TOKEN = SharedPrefUtil.config().getString(TOKEN_KEN);
         }
@@ -53,6 +57,10 @@ public class Api {
     }
 
     public static void setTOKEN(String TOKEN) {
+        if (!SharedPrefUtil.isReady()){
+            L.e("Cannot use token function,because of BaseUtilManager.init(...) isn't called.");
+            return;
+        }
         Api.TOKEN = TOKEN;
         SharedPrefUtil.config().putString(TOKEN_KEN, TOKEN);
     }

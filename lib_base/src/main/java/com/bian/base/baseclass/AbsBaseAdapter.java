@@ -10,13 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bian.base.util.utilbase.L;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bian.base.util.utilbase.L;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * 所有项目通用的ListView基类适配器
@@ -34,22 +32,27 @@ import retrofit2.Response;
  * @see #setOnDataNotifyListener(OnDataNotifyListener) 对该适配器加载数据添加数据更新的监听支持
  */
 // UPDATE: 2017/5/26 去掉对泛型E的类型限定，并将其改名为HolderClass,以支持dataBinding
-@SuppressWarnings({"unused", "WeakerAccess"})
-public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends android.widget.BaseAdapter {
+@SuppressWarnings({"WeakerAccess", "unused"})
+public abstract class AbsBaseAdapter<DataType, HolderClass>
+        extends android.widget.BaseAdapter {
     public final static int Refresh = 0x13;
     public final static int LoadMore = 0x14;
     public final static int Reload = 0x15;
     public final static int FirstLoad = 0x16;
+    public static final int NO_ERROR_MSG = -1;
+    public static int DEFAULT_PAGE_SIZE = 10;
     protected Activity mActivity;
     protected LayoutInflater inflater;
     private List<DataType> mData;
 
     private int pageNum = 1;
-    private int pageSize = 10;
+    private int pageSize = DEFAULT_PAGE_SIZE;
 
     private PullToRefresh pTr;
-    private OnDataLoadListener<CallType> onDataLoadListener;
+    private OnDataLoadListener onDataLoadListener;
     private OnDataNotifyListener onDataNotifyListener;
+    private DataSetter<DataType> innerDataSetter;
+    private InnerDataLoader innerDataLoader;
 
     public AbsBaseAdapter(Activity mActivity) {
         this.mActivity = mActivity;
@@ -64,12 +67,17 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
     public AbsBaseAdapter(Activity mActivity, boolean loadData) {
         this(mActivity);
         if (loadData) {
-            Call<CallType> testCall = getCall(1, 1);
-            if (testCall == null) {
-                throw new NullPointerException("需要重写Call<CallType> getCall(int pageNum, int pageSize)方法以请求数据");
-            }
+            innerDataLoaderInit();
             refreshDown();
         }
+    }
+
+    public static void setDefaultPageSize(int defaultPageSize) {
+        DEFAULT_PAGE_SIZE = defaultPageSize;
+    }
+
+    protected DataLoader<DataType> getDataLoader() {
+        return null;
     }
 
     /**
@@ -79,14 +87,15 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
     @NonNull
     HolderClass getHolder(View convertView);
 
-    public Activity getActivity(){
+    public Activity getActivity() {
         return mActivity;
     }
 
     /**
      * 展示数据
      */
-    protected abstract void displayData(int position, int viewType, @NonNull HolderClass holder, @NonNull DataType dataType, boolean isLast);
+    protected abstract void displayData(int position, int viewType, @NonNull HolderClass holder,
+                                        @NonNull DataType dataType, boolean isLast);
 
     /**
      * 获得View
@@ -94,28 +103,13 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
     protected abstract View getViewByType(LayoutInflater inflater, ViewGroup parent, int viewType);
 
     /**
-     * 返回一个用于请求数据的{@link Call}
-     *
-     * @see #convertData(Object)
-     */
-    public Call<CallType> getCall(int pageIndex, int pageSize) {
-        return null;
-    }
-
-    /**
-     * 将Call获得的数据类型转换为需要展示的数据类型的集合
-     *
-     * @see #getCall(int, int)
-     */
-    public List<DataType> convertData(CallType callData) {
-        return null;
-    }
-
-    /**
      * data改动，重写这个方法，可以对被赋值的data做出改动，可被重写。
-     * {@link #addData(Object)},{@link #addData(List)},{@link #resetData(List)},{@link #resetData(List)}四个方法
-     * 以及该类自行调用{@link Call}请求的数据，都会通过该方法进行数据转换
+     * {@link #addData(Object)},{@link #addData(List)},{@link #resetData(List)},
+     * {@link #resetData(List)}四个方法
+     * 以及该类自行调用{@link #loadData(int)} 请求的数据，都会通过该方法进行数据转换
      * <p>
+     *
+     * @see InnerDataSetter
      * 默认实现不做任何转换
      */
     protected
@@ -189,7 +183,7 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
      */
     public final void refreshDown() {
         pageNum = 1;
-        pageSize = Math.max(10, getCount());
+        pageSize = Math.max(DEFAULT_PAGE_SIZE, getCount());
         loadData(Refresh);
     }
 
@@ -211,7 +205,7 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
      */
     public final void initLoad() {
         pageNum = 1;
-        pageSize = 10;
+        pageSize = DEFAULT_PAGE_SIZE;
         loadData(FirstLoad);
     }
 
@@ -223,7 +217,7 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
      */
     public final void reloadData() {
         pageNum = 1;
-        pageSize = Math.max(10, getCount());
+        pageSize = Math.max(DEFAULT_PAGE_SIZE, getCount());
         loadData(Reload);
     }
 
@@ -260,7 +254,7 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
      *
      * @param onDataLoadListener {@link OnDataLoadListener}
      */
-    public final void setOnDataLoadListener(OnDataLoadListener<CallType> onDataLoadListener) {
+    public final void setOnDataLoadListener(OnDataLoadListener onDataLoadListener) {
         this.onDataLoadListener = onDataLoadListener;
     }
 
@@ -338,93 +332,22 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
      * @param loadType {@link LoadType}
      */
     private void loadData(final @LoadType int loadType) {
-        Call<CallType> dataCall = getCall(pageNum, pageSize);
-        if (dataCall == null) {
-            throw new UnsupportedOperationException("如果要调用绑定上下拉刷新加载操作，请重写getCall(int pageNum, int pageSize)方法");
-        }
+        innerDataLoaderInit();
         if (onDataLoadListener != null) {
             onDataLoadListener.onLoadStart(loadType);
         }
-        dataCall.enqueue(new Callback<CallType>() {
-            @Override
-            public void onResponse(Call<CallType> call, Response<CallType> response) {
-                pageSize = 10;
-                CallType body = response.body();
-                if (body != null) {
-                    /*注意下面这个代码块的顺序不能更改，某些情况下可能其子类会在convertData中做一些操作
-                    /*同时在onDataLoadListener的onLoadSuccess回调中取数据，因此调换顺序可能会导致空指针
-                    /*还可能在loadSuccess中getCount
-                    /*---------------------------------------------------------------------*/
-                    List<DataType> dataTypes = convertData(body);
-                    if (dataTypes == null || dataTypes.size() == 0) {
-                        loadSuccessButDataIsEmpty();
-                        listenerActionSuccess();
-                        return;
-                    }
-                    loadSuccess(dataTypes);
-                    listenerActionSuccess();
-                    notifyDataSetChanged();
-                    /*---------------------------------------------------------------------*/
-                } else {
-                    if (onDataLoadListener != null) {
-                        onDataLoadListener.onLoadFailed(response);
-                    }
-                    resetPageAndEndRefresh();
+        if (innerDataSetter == null) {
+            innerDataSetter = new InnerDataSetter();
+        }
+        if (innerDataLoader.isLoading()) return;
+        ((InnerDataSetter) innerDataSetter).setLoadType(loadType);
+        innerDataLoader.loadData(pageNum, pageSize, innerDataSetter, loadType);
+    }
 
-                }
-            }
-
-            @Override
-            public void onFailure(Call<CallType> call, Throwable t) {
-                pageSize = 10;
-                resetPageAndEndRefresh();
-                if (onDataLoadListener != null) {
-                    onDataLoadListener.onLoadFailed(null);
-                }
-            }
-
-            private void listenerActionSuccess() {
-                if (onDataLoadListener != null) {
-                    onDataLoadListener.onLoadSuccess();
-                }
-            }
-
-            private void loadSuccessButDataIsEmpty() {
-                L.d("loadSuccessButDataIsEmpty");
-                resetPageAndEndRefresh();
-                if (loadType == Refresh || loadType == Reload) {
-                    mData = new ArrayList<>();
-                    notifyDataSetChanged();
-                }
-            }
-
-            private void loadSuccess(List<DataType> dataTypes) {
-                if (mData == null) {
-                    mData = new ArrayList<>();
-                }
-
-                if (pageNum == 1) {
-                    mData = dataAssignment(dataTypes);
-                } else if (pageNum > 1) {
-                    List<DataType> dataTypes1 = dataAssignment(dataTypes);
-                    if (dataTypes1 != null) {
-                        mData.addAll(dataTypes1);
-                    }
-                }
-
-                if (pTr != null) {
-                    pTr.onRefreshComplete();
-                }
-            }
-
-            private void resetPageAndEndRefresh() {
-                pageNum = pageNum - 1;
-                pageNum = Math.max(1, pageNum);
-                if (pTr != null) {
-                    pTr.onRefreshComplete();
-                }
-            }
-        });
+    private void innerDataLoaderInit() {
+        if (innerDataLoader == null) {
+            innerDataLoader = new InnerDataLoader();
+        }
     }
 
     @CallSuper
@@ -471,34 +394,12 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
      * 数据加载监听器，当该适配器被用于加载数据时，在加载开始，失败，成功三种状态回调该接口方法
      */
     @SuppressWarnings("WeakerAccess")
-    public interface OnDataLoadListener<CallType> {
+    public interface OnDataLoadListener {
         void onLoadSuccess();
 
-        void onLoadFailed(Response<CallType> response);
+        void onLoadFailed(int errorCode, @Nullable String msg);
 
         void onLoadStart(@LoadType int type);
-    }
-
-    /**
-     * author 边凌
-     * date 2017/4/24 11:04
-     * desc ${对于可能会用到的上下拉刷新框架，实现该接口用于和{@link AbsBaseAdapter}配合实现上下拉}
-     */
-
-    public interface PullToRefresh {
-        void setMode(Mode mode);
-
-        void onRefreshComplete();
-
-        void setOnRefreshListener(OnRefreshListener onRefreshListener);
-
-        enum Mode {Both, PullFromStart, PullFromEnd}
-
-        interface OnRefreshListener {
-            void onRefreshUp();
-
-            void onRefreshDown();
-        }
     }
 
     /**
@@ -512,6 +413,7 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
         void onNotifyDataSetInvalidated();
     }
 
+
     /**
      * @see OnDataLoadListener#onLoadStart(int) 在该回调方法中用于区别数据加载类型
      * 依序对应下拉刷新，上拉加载更多，重新加载，初次加载
@@ -523,6 +425,20 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
     public @interface LoadType {
     }
 
+    public interface DataLoader<DataType> {
+        void loadData(int pageNum, int pageSize, final DataSetter<DataType> setter,
+                      @LoadType int loadType);
+    }
+
+    public interface DataSetter<T> {
+
+        void setData(List<T> data);
+
+        void setFailed(@Nullable String dataErrorMsg);
+
+        void setFailed(int errorCode, @Nullable String dataErrorMsg);
+    }
+
     /**
      * 用于提供ListView缓存机制实现的基类ViewHolder，这里单独抽类是为了添加对ButterKnife的支持
      */
@@ -531,6 +447,113 @@ public abstract class AbsBaseAdapter<DataType, CallType, HolderClass> extends an
 
         public BaseViewHolder(View root) {
             this.root = root;
+        }
+    }
+
+    private final class InnerDataLoader implements DataLoader<DataType> {
+        private DataLoader<DataType> dataLoader;
+        private boolean isLoading;
+
+        InnerDataLoader() {
+            dataLoader = getDataLoader();
+            if (dataLoader == null) {
+                throw new UnsupportedOperationException(
+                        "请调用setDataLoader(DataLoader)为AbsBaseAdapter设置数据加载器");
+            }
+        }
+
+        boolean isLoading() {
+            return isLoading;
+        }
+
+        void setLoading(boolean loading) {
+            isLoading = loading;
+        }
+
+        @Override
+        public void loadData(int pageNum, int pageSize, DataSetter<DataType> setter,
+                             @LoadType int loadType) {
+            isLoading = true;
+            dataLoader.loadData(pageNum, pageSize, setter, loadType);
+        }
+    }
+
+    private final class InnerDataSetter implements DataSetter<DataType> {
+        private int loadType;
+
+        void setLoadType(int loadType) {
+            this.loadType = loadType;
+        }
+
+        @Override
+        public void setData(List<DataType> data) {
+            innerDataLoader.setLoading(false);
+            if (data == null || data.size() == 0) {
+                loadSuccessButDataIsEmpty();
+                listenerActionSuccess();
+                return;
+            }
+            loadSuccess(data);
+            listenerActionSuccess();
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void setFailed(String dataError) {
+            innerDataLoader.setLoading(false);
+            if (onDataLoadListener != null) {
+                onDataLoadListener.onLoadFailed(NO_ERROR_MSG, dataError);
+            }
+        }
+
+        @Override
+        public void setFailed(int errorCode, @Nullable String dataErrorMsg) {
+            innerDataLoader.setLoading(false);
+            if (onDataLoadListener != null) {
+                onDataLoadListener.onLoadFailed(errorCode, dataErrorMsg);
+            }
+        }
+
+        private void listenerActionSuccess() {
+            if (onDataLoadListener != null) {
+                onDataLoadListener.onLoadSuccess();
+            }
+        }
+
+        private void loadSuccessButDataIsEmpty() {
+            L.d("loadSuccessButDataIsEmpty");
+            resetPageAndEndRefresh();
+            if (loadType == Refresh || loadType == Reload) {
+                mData = new ArrayList<>();
+                notifyDataSetChanged();
+            }
+        }
+
+        private void loadSuccess(List<DataType> dataTypes) {
+            if (mData == null) {
+                mData = new ArrayList<>();
+            }
+
+            if (pageNum == 1) {
+                mData = dataAssignment(dataTypes);
+            } else if (pageNum > 1) {
+                List<DataType> dataTypes1 = dataAssignment(dataTypes);
+                if (dataTypes1 != null) {
+                    mData.addAll(dataTypes1);
+                }
+            }
+
+            if (pTr != null) {
+                pTr.onRefreshComplete();
+            }
+        }
+
+        private void resetPageAndEndRefresh() {
+            pageNum = pageNum - 1;
+            pageNum = Math.max(1, pageNum);
+            if (pTr != null) {
+                pTr.onRefreshComplete();
+            }
         }
     }
 

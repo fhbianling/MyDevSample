@@ -55,7 +55,7 @@ class MAdapter extends AbsBaseAdapter<BookBean, MAdapter.Holder> {
                         count = getCount() == 0 ? 10 : getCount();
                         break;
                 }
-                return Api.createService(BookService.class).getBookList("量子力学", start, count);
+                return Api.getService(BookService.class).getBookList("量子力学", start, count);
             }
 
             @Override

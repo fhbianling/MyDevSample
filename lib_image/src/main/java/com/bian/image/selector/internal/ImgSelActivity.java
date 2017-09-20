@@ -219,6 +219,7 @@ public class ImgSelActivity extends FragmentActivity implements View.OnClickList
         if (cursor != null && cursor.moveToFirst()) {
             int id = cursor.getInt(cursor
                     .getColumnIndex(MediaStore.MediaColumns._ID));
+            cursor.close();
             Uri baseUri = Uri.parse("content://media/external/images/media");
             return Uri.withAppendedPath(baseUri, "" + id);
         } else {

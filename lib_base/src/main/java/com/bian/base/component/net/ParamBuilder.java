@@ -1,13 +1,14 @@
 package com.bian.base.component.net;
 
 
+import com.bian.base.util.utilbase.L;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.bian.base.util.utilbase.L;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -19,11 +20,15 @@ import okhttp3.RequestBody;
 
 public class ParamBuilder {
     private final static String LOG_TAG = "ParamBuilder";
-    private final static boolean DEBUG = Api.getDebug();
+    private static boolean sDEBUG = true;
     private HashMap<String, Object> options;
 
     private ParamBuilder() {
         options = new HashMap<>();
+    }
+
+    public static void setDEBUG(boolean sDEBUG) {
+        ParamBuilder.sDEBUG = sDEBUG;
     }
 
     public static ParamBuilder create() {
@@ -33,10 +38,9 @@ public class ParamBuilder {
 
     /**
      * 参数输出日志
-     * debug属性取决于{@link Api#setDebug(boolean)}的debug设置
      */
     private static void log(String msg) {
-        if (DEBUG) {
+        if (sDEBUG) {
             L.v(LOG_TAG, msg);
         }
     }

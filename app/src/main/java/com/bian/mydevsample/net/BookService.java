@@ -14,5 +14,5 @@ import retrofit2.http.Query;
 
 public interface BookService {
     @GET("/v2/book/search")
-    Call<BookRequest> getBookList(@Query("q")String searchCondition, @Query("start")int start, @Query("count")int count);
+    Call<BookRequest> getBookList(@Query("q") String searchCondition, @Query("start") int start, @Query("count") int count);
 }

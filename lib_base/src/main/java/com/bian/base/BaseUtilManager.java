@@ -4,13 +4,13 @@ import android.app.Application;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 
-import com.squareup.leakcanary.LeakCanary;
-
 import com.bian.base.component.net.Api;
+import com.bian.base.component.net.ParamBuilder;
 import com.bian.base.util.utilbase.L;
 import com.bian.base.util.utilbase.SharedPrefUtil;
 import com.bian.base.util.utilbase.ToastUtil;
 import com.bian.base.util.utilthrowable.ThrowableHandler;
+import com.squareup.leakcanary.LeakCanary;
 
 /**
  * author 边凌
@@ -29,7 +29,7 @@ public class BaseUtilManager {
      * 初始化整个base Module，需要在Application的onCreate方法中调用
      *
      * @param application application
-     * @param debug 是否为debug模式
+     * @param debug       是否为debug模式
      */
     public static void init(Application application, boolean debug) {
         DEBUG = debug;
@@ -37,19 +37,20 @@ public class BaseUtilManager {
         SharedPrefUtil.init(application);
         ThrowableHandler.init(application);
         ToastUtil.init(application);
-        Api.setDebug(debug);
+        ParamBuilder.setDEBUG(debug);
+        Api.setHttpLoggingEnable(debug);
         L.setDEBUG(debug);
     }
 
-    public static void setHttpLoggingEnable(boolean loggingEnable){
+    public static void setHttpLoggingEnable(boolean loggingEnable) {
         Api.setHttpLoggingEnable(loggingEnable);
     }
 
-    public static void setDebugTag(String tag){
+    public static void setDebugTag(String tag) {
         L.setTAG(tag);
     }
 
-    private static void initLeakCanary(Application application){
+    private static void initLeakCanary(Application application) {
         if (LeakCanary.isInAnalyzerProcess(application)) {
             return;
         }
@@ -59,10 +60,12 @@ public class BaseUtilManager {
     public static void setToastStyle(@LayoutRes int layoutRes, @IdRes int textViewId) {
         ToastUtil.setStyle(layoutRes, textViewId);
     }
+
     public static void setBaseUrl(String baseUrl) {
         Api.setBaseUrl(baseUrl);
     }
-    public static void setNetToken(String token){
+
+    public static void setNetToken(String token) {
         Api.setTOKEN(token);
     }
 }

@@ -106,7 +106,7 @@ public final class L {
     public static void printError(Throwable e) {
         PrintStream err = System.err;
         StackTraceElement[] stackTrace = e.getStackTrace();
-        err.println("L.printError():\n" + e +","+ e.getMessage());
+        err.println("L.printError():\n" + e + "," + e.getMessage());
         for (StackTraceElement stackTraceElement : stackTrace) {
             err.println("\tat " + stackTraceElement);
         }

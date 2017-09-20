@@ -54,7 +54,7 @@ class MAdapter2 extends AbsRecycleViewAdapter<BookBean, MAdapter2.Holder> {
                         count = getItemCount() == 0 ? 10 : getItemCount();
                         break;
                 }
-                return Api.createService(BookService.class).getBookList("量子力学", start, count);
+                return Api.getService(BookService.class).getBookList("量子力学", start, count);
             }
 
             @Override

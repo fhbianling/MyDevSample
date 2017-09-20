@@ -16,12 +16,12 @@ import android.widget.LinearLayout;
  * 不采用重写onMeasure的ListView的原因是那种ListView性能开销较大
  */
 public class ListViewLinearLayout extends LinearLayout {
+    private final static long INTERVAL = 300;
     private BaseAdapter mAdapter;
     private AdapterView.OnItemClickListener onItemClickListener;
     private boolean checkFastClick;
     private boolean withItemClickListener;
     private OnViewItemClickListener onViewItemClickListener;
-    private final static long INTERVAL=300;
     private DataSetObserver dataSetObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
@@ -52,7 +52,7 @@ public class ListViewLinearLayout extends LinearLayout {
      * @param adapter               adapter
      * @param withItemClickListener 该属性指定是否为该控件添加默认的{@link AdapterView.OnItemClickListener}
      *                              若为false则不添加，需注意的是若为true,添加监听器的实际实现是通过为子视图设置{@link OnClickListener}
-     *                              因此会导致子视图跟布局的{@link View#setOnClickListener(OnClickListener)}方法不生效
+     *                              因此会导致子视图根布局的{@link View#setOnClickListener(OnClickListener)}方法不生效
      */
     public void setAdapter(BaseAdapter adapter, boolean withItemClickListener) {
         this.withItemClickListener = withItemClickListener;
@@ -78,10 +78,15 @@ public class ListViewLinearLayout extends LinearLayout {
      * 注意，在其监听器中拿到的{@link AdapterView parent}必然为null
      */
     public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
-        setOnItemClickListener(onItemClickListener,false);
+        setOnItemClickListener(onItemClickListener, true);
     }
 
-    public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener,boolean checkFastClick){
+    /**
+     * {@link #setOnItemClickListener(AdapterView.OnItemClickListener)}该方法默认过滤快速点击事件
+     *
+     * @param checkFastClick 是否进行快速点击过滤
+     */
+    public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener, boolean checkFastClick) {
         this.onItemClickListener = onItemClickListener;
         this.checkFastClick = checkFastClick;
     }
@@ -106,9 +111,10 @@ public class ListViewLinearLayout extends LinearLayout {
         final int position = i;
         v.setOnClickListener(new OnClickListener() {
             private long lastClickTime;
+
             @Override
             public void onClick(View v) {
-                if (checkFastClick){
+                if (checkFastClick) {
                     if (isFastClick()) return;
                 }
 
@@ -121,10 +127,10 @@ public class ListViewLinearLayout extends LinearLayout {
             }
 
             private boolean isFastClick() {
-                if (System.currentTimeMillis()-lastClickTime<INTERVAL){
+                if (System.currentTimeMillis() - lastClickTime < INTERVAL) {
                     return true;
                 }
-                lastClickTime=System.currentTimeMillis();
+                lastClickTime = System.currentTimeMillis();
                 return false;
             }
         });

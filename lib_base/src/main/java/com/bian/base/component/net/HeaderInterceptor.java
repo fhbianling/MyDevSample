@@ -8,23 +8,32 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.bian.base.component.net.Api.TOKEN_KEN;
-
 /**
  * author 边凌
  * date 2017/6/28 11:34
- * 类描述：
+ * 类描述：如果需要在请求的头部中添加token或其他值
+ * 调用{@link Api#setInterceptors(Interceptor...)}为其设置该类的子类，可以实现在header统一添加token的功能
+ * <p>
+ * 这只是个示范{@link Interceptor}接口用法的类
  */
 
-class HeaderInterceptor implements Interceptor {
+public abstract class HeaderInterceptor implements Interceptor {
+    protected String TOKEN_KEY;
+
+    public HeaderInterceptor(String keyOfToken) {
+        this.TOKEN_KEY = keyOfToken;
+    }
+
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request original = chain.request();
-        String token = Api.getTOKEN();
+        String token = getToken();
         Request.Builder builder = original.newBuilder();
-        if (!TextUtils.isEmpty(token)){
-            builder.addHeader(TOKEN_KEN,token);
+        if (!TextUtils.isEmpty(token)) {
+            builder.addHeader(TOKEN_KEY, token);
         }
         return chain.proceed(builder.build());
     }
+
+    public abstract String getToken();
 }

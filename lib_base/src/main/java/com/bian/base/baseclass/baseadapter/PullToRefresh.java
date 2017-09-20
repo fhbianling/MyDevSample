@@ -1,4 +1,4 @@
-package com.bian.base.baseclass;
+package com.bian.base.baseclass.baseadapter;
 
 /**
  * author 边凌

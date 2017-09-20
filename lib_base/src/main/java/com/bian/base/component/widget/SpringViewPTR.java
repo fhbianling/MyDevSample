@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bian.base.R;
-import com.bian.base.baseclass.AbsRecycleViewAdapter;
-import com.bian.base.baseclass.PullToRefresh;
+import com.bian.base.baseclass.baseadapter.AbsRecycleViewAdapter;
+import com.bian.base.baseclass.baseadapter.PullToRefresh;
 import com.liaoinstan.springview.container.AliFooter;
 import com.liaoinstan.springview.container.AliHeader;
 import com.liaoinstan.springview.container.BaseFooter;

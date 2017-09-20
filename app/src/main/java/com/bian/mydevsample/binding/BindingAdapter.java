@@ -1,4 +1,4 @@
-package com.bian.mydevsample;
+package com.bian.mydevsample.binding;
 
 import android.widget.ImageView;
 

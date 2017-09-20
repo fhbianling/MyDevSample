@@ -1,9 +1,7 @@
-package com.bian.base.baseclass;
+package com.bian.base.baseclass.baseadapter;
 
 import android.app.Activity;
-import android.database.DataSetObserver;
 import android.support.annotation.CallSuper;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,6 +13,12 @@ import com.bian.base.util.utilbase.L;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bian.base.baseclass.baseadapter.LoadType.FirstLoad;
+import static com.bian.base.baseclass.baseadapter.LoadType.LoadMore;
+import static com.bian.base.baseclass.baseadapter.LoadType.Refresh;
+import static com.bian.base.baseclass.baseadapter.LoadType.Reload;
+import static com.bian.base.baseclass.baseadapter.PullToRefresh.Mode.Both;
+
 
 /**
  * 所有项目通用的ListView基类适配器
@@ -24,7 +28,7 @@ import java.util.List;
  * <p>
  * 包含上下拉刷新和数据请求的处理
  * 对于上下拉刷新，需要使用的上下拉刷新控件实现{@link PullToRefresh}接口，
- * 然后调用{@link #bindToPullToRefreshLayout(PullToRefresh, Mode)}方法绑定上下拉刷新控件
+ * 然后调用{@link #bindToPullToRefreshLayout(PullToRefresh, PullToRefresh.Mode)}方法绑定上下拉刷新控件
  * <p>
  * 该类的使用需要Retrofit2以及ButterKnife库的支持
  *
@@ -35,18 +39,14 @@ import java.util.List;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class AbsBaseAdapter<DataType, HolderClass>
         extends android.widget.BaseAdapter {
-    public final static int Refresh = 0x13;
-    public final static int LoadMore = 0x14;
-    public final static int Reload = 0x15;
-    public final static int FirstLoad = 0x16;
     public static final int NO_ERROR_MSG = -1;
-    public static int DEFAULT_PAGE_SIZE = 10;
+    private int defaultPageSize = 10;
     protected Activity mActivity;
     protected LayoutInflater inflater;
     private List<DataType> mData;
 
     private int pageNum = 1;
-    private int pageSize = DEFAULT_PAGE_SIZE;
+    private int pageSize = defaultPageSize;
 
     private PullToRefresh pTr;
     private OnDataLoadListener onDataLoadListener;
@@ -68,12 +68,12 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
         this(mActivity);
         if (loadData) {
             innerDataLoaderInit();
-            refreshDown();
+            initLoad();
         }
     }
 
-    public static void setDefaultPageSize(int defaultPageSize) {
-        DEFAULT_PAGE_SIZE = defaultPageSize;
+    public void setDefaultPageSize(int defaultPageSize) {
+        this.defaultPageSize = defaultPageSize;
     }
 
     protected DataLoader<DataType> getDataLoader() {
@@ -106,7 +106,7 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
      * data改动，重写这个方法，可以对被赋值的data做出改动，可被重写。
      * {@link #addData(Object)},{@link #addData(List)},{@link #resetData(List)},
      * {@link #resetData(List)}四个方法
-     * 以及该类自行调用{@link #loadData(int)} 请求的数据，都会通过该方法进行数据转换
+     * 以及该类自行调用{@link #loadData(LoadType)} 请求的数据，都会通过该方法进行数据转换
      * <p>
      *
      * @see InnerDataSetter
@@ -183,7 +183,7 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
      */
     public final void refreshDown() {
         pageNum = 1;
-        pageSize = Math.max(DEFAULT_PAGE_SIZE, getCount());
+        pageSize = Math.max(defaultPageSize, getCount());
         loadData(Refresh);
     }
 
@@ -199,13 +199,13 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
      * 首次加载数据
      * <p>
      * 注意,调用该方法和{@link #refreshDown()}的唯一区别是
-     * 会在{@link OnDataLoadListener#onLoadStart(int)}中传入不同参数用于区别数据的加载时机
+     * 会在{@link OnDataLoadListener#onLoadStart(LoadType)} 中传入不同参数用于区别数据的加载时机
      * <p>
      * 并且{@link #pageSize}固定为10
      */
     public final void initLoad() {
         pageNum = 1;
-        pageSize = DEFAULT_PAGE_SIZE;
+        pageSize = defaultPageSize;
         loadData(FirstLoad);
     }
 
@@ -213,11 +213,11 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
      * 重新加载数据
      * <p>
      * 注意,调用该方法和{@link #refreshDown()}的唯一区别是
-     * 会在{@link OnDataLoadListener#onLoadStart(int)}中传入不同参数用于区别数据的加载时机
+     * 会在{@link OnDataLoadListener#onLoadStart(LoadType)} 中传入不同参数用于区别数据的加载时机
      */
     public final void reloadData() {
         pageNum = 1;
-        pageSize = Math.max(DEFAULT_PAGE_SIZE, getCount());
+        pageSize = Math.max(defaultPageSize, getCount());
         loadData(Reload);
     }
 
@@ -225,23 +225,23 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
      * 绑定上下拉刷新库，为上下拉刷新控件添加监听
      *
      * @param pullToRefreshBase 实现了{@link PullToRefresh}接口的上下拉框架
-     * @param mode              {@link Mode}
+     * @param mode              {@link PullToRefresh.Mode}
      */
-    public final void bindToPullToRefreshLayout(PullToRefresh pullToRefreshBase, final Mode mode) {
+    public final void bindToPullToRefreshLayout(PullToRefresh pullToRefreshBase, final PullToRefresh.Mode mode) {
         if (pullToRefreshBase != null) {
             pTr = pullToRefreshBase;
             setPtrMode(mode);
             pullToRefreshBase.setOnRefreshListener(new PullToRefresh.OnRefreshListener() {
                 @Override
                 public void onRefreshUp() {
-                    if (mode == Mode.Both || mode == Mode.OnlyPullUp) {
+                    if (mode == PullToRefresh.Mode.Both || mode == PullToRefresh.Mode.PullFromEnd) {
                         refreshUp();
                     }
                 }
 
                 @Override
                 public void onRefreshDown() {
-                    if (mode == Mode.Both || mode == Mode.OnlyPullDown) {
+                    if (mode == PullToRefresh.Mode.Both || mode == PullToRefresh.Mode.PullFromStart) {
                         refreshDown();
                     }
                 }
@@ -273,17 +273,17 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
     /**
      * 根据传入的该类的Mode设置Ptr的mode
      *
-     * @param mode {@link Mode}
+     * @param mode {@link PullToRefresh.Mode}
      */
-    private void setPtrMode(Mode mode) {
+    private void setPtrMode(PullToRefresh.Mode mode) {
         switch (mode) {
             case Both:
-                pTr.setMode(PullToRefresh.Mode.Both);
+                pTr.setMode(Both);
                 break;
-            case OnlyPullDown:
+            case PullFromStart:
                 pTr.setMode(PullToRefresh.Mode.PullFromStart);
                 break;
-            case OnlyPullUp:
+            case PullFromEnd:
                 pTr.setMode(PullToRefresh.Mode.PullFromEnd);
                 break;
         }
@@ -331,7 +331,7 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
      *
      * @param loadType {@link LoadType}
      */
-    private void loadData(final @LoadType int loadType) {
+    private void loadData(LoadType loadType) {
         innerDataLoaderInit();
         if (onDataLoadListener != null) {
             onDataLoadListener.onLoadStart(loadType);
@@ -373,73 +373,6 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
     }
 
     /**
-     * 当不需要上下拉刷新时，
-     * 不调用{@link #bindToPullToRefreshLayout(PullToRefresh, Mode)}方法即可
-     * 该枚举用于设置是否支持上拉，下拉，两者三种情况下的数据加载
-     * <p>
-     * 需要所用到的上下拉刷新框架实现{@link PullToRefresh}接口
-     */
-    @SuppressWarnings("WeakerAccess")
-    public enum Mode {
-        /*只有下拉刷新*/
-        OnlyPullDown,
-        /*只有上拉加载*/
-        OnlyPullUp,
-        /*两者都有*/
-        Both
-    }
-
-
-    /**
-     * 数据加载监听器，当该适配器被用于加载数据时，在加载开始，失败，成功三种状态回调该接口方法
-     */
-    @SuppressWarnings("WeakerAccess")
-    public interface OnDataLoadListener {
-        void onLoadSuccess();
-
-        void onLoadFailed(int errorCode, @Nullable String msg);
-
-        void onLoadStart(@LoadType int type);
-    }
-
-    /**
-     * 数据更新监听器，注意，这个监听器只在{@link #notifyDataSetChanged()}或{@link #notifyDataSetInvalidated()}
-     * 方法被调用时会回调，并没有通过{@link #registerDataSetObserver(DataSetObserver)}来回调，
-     * 换句话说，它只能监听上述两个方法是否被调用
-     */
-    public interface OnDataNotifyListener {
-        void onNotifyDataSetChanged();
-
-        void onNotifyDataSetInvalidated();
-    }
-
-
-    /**
-     * @see OnDataLoadListener#onLoadStart(int) 在该回调方法中用于区别数据加载类型
-     * 依序对应下拉刷新，上拉加载更多，重新加载，初次加载
-     * <p>
-     * 注意该方法中的回调参数loadType是否等于{@link #FirstLoad}或{@link #Reload}取决于
-     * 做首次加载数据或刷新(非下拉刷新，比如不同筛选条件下的数据刷新)时是否调用了{@link #initLoad()}或{@link #reloadData()}方法
-     */
-    @IntDef({Refresh, LoadMore, Reload, FirstLoad})
-    public @interface LoadType {
-    }
-
-    public interface DataLoader<DataType> {
-        void loadData(int pageNum, int pageSize, final DataSetter<DataType> setter,
-                      @LoadType int loadType);
-    }
-
-    public interface DataSetter<T> {
-
-        void setData(List<T> data);
-
-        void setFailed(@Nullable String dataErrorMsg);
-
-        void setFailed(int errorCode, @Nullable String dataErrorMsg);
-    }
-
-    /**
      * 用于提供ListView缓存机制实现的基类ViewHolder，这里单独抽类是为了添加对ButterKnife的支持
      */
     public static abstract class BaseViewHolder {
@@ -472,16 +405,16 @@ public abstract class AbsBaseAdapter<DataType, HolderClass>
 
         @Override
         public void loadData(int pageNum, int pageSize, DataSetter<DataType> setter,
-                             @LoadType int loadType) {
+                             LoadType loadType) {
             isLoading = true;
             dataLoader.loadData(pageNum, pageSize, setter, loadType);
         }
     }
 
     private final class InnerDataSetter implements DataSetter<DataType> {
-        private int loadType;
+        private LoadType loadType;
 
-        void setLoadType(int loadType) {
+        void setLoadType(LoadType loadType) {
             this.loadType = loadType;
         }
 

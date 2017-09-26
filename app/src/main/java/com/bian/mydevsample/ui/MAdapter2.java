@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsRecycleViewAdapter;
+import com.bian.base.baseclass.baseadapter.BaseRecycleViewPTRAdapter;
 import com.bian.base.baseclass.baseadapter.DataLoader;
 import com.bian.base.baseclass.baseadapter.LoadType;
 import com.bian.base.baseclass.baseadapter.RetrofitDataLoader;
@@ -27,9 +27,9 @@ import retrofit2.Call;
  * 类描述：
  */
 
-class MAdapter2 extends AbsRecycleViewAdapter<BookBean, MAdapter2.Holder> {
+class MAdapter2 extends BaseRecycleViewPTRAdapter<BookBean, MAdapter2.Holder> {
 
-    public MAdapter2(Activity mActivity) {
+    MAdapter2(Activity mActivity) {
         super(mActivity);
     }
 

@@ -64,8 +64,4 @@ public class BaseUtilManager {
     public static void setBaseUrl(String baseUrl) {
         Api.setBaseUrl(baseUrl);
     }
-
-    public static void setNetToken(String token) {
-        Api.setTOKEN(token);
-    }
 }

@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bian.base.R;
-import com.bian.base.baseclass.baseadapter.AbsRecycleViewAdapter;
+import com.bian.base.baseclass.baseadapter.BaseRecycleViewPTRAdapter;
 import com.bian.base.baseclass.baseadapter.PullToRefresh;
 import com.liaoinstan.springview.container.AliFooter;
 import com.liaoinstan.springview.container.AliHeader;
@@ -19,7 +19,7 @@ import com.liaoinstan.springview.widget.SpringView;
 /**
  * author 边凌
  * date 2017/4/26 15:55
- * desc ${用于和{@link AbsRecycleViewAdapter}相配合，
+ * desc ${用于和{@link BaseRecycleViewPTRAdapter}相配合，
  * 使用该子类且实现{@link PullToRefresh}接口，达到上下拉刷新在adapter中直接控制}
  *
  * 若发现该类无法满足需求，可以继承其他上下拉刷新ViewGroup的第三方

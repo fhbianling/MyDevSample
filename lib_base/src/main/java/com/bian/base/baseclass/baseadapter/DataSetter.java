@@ -12,7 +12,7 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public interface DataSetter<T> {
 
-    void setData(List<T> data);
+    void setLoadedData(List<T> data);
 
     void setFailed(@Nullable String dataErrorMsg);
 

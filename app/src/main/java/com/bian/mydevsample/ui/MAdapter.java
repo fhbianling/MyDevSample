@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.bian.base.baseclass.baseadapter.AbsBaseAdapter;
+import com.bian.base.baseclass.baseadapter.BasePTRAdapter;
 import com.bian.base.baseclass.baseadapter.DataLoader;
 import com.bian.base.baseclass.baseadapter.LoadType;
 import com.bian.base.baseclass.baseadapter.RetrofitDataLoader;
@@ -28,7 +28,7 @@ import retrofit2.Call;
  * 类描述：
  */
 
-class MAdapter extends AbsBaseAdapter<BookBean, MAdapter.Holder> {
+class MAdapter extends BasePTRAdapter<BookBean, MAdapter.Holder> {
 
     MAdapter(Activity mActivity, boolean loadData) {
         super(mActivity, loadData);
@@ -67,8 +67,11 @@ class MAdapter extends AbsBaseAdapter<BookBean, MAdapter.Holder> {
 
     @NonNull
     @Override
-    protected Holder getHolder(View convertView) {
-        return new Holder((ItemBookBinding) convertView.getTag());
+    protected Holder getHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+        ItemBookBinding bookBinding = DataBindingUtil.inflate(inflater, R.layout.item_book, parent,
+                false);
+        bookBinding.getRoot().setTag(bookBinding);
+        return new Holder(bookBinding);
     }
 
     @Override
@@ -77,15 +80,8 @@ class MAdapter extends AbsBaseAdapter<BookBean, MAdapter.Holder> {
         holder.root.setBook(bookBean);
     }
 
-    @Override
-    protected View getViewByType(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        ItemBookBinding bookBinding = DataBindingUtil.inflate(inflater, R.layout.item_book, parent,
-                false);
-        bookBinding.getRoot().setTag(bookBinding);
-        return bookBinding.getRoot();
-    }
 
-    class Holder extends AbsBaseAdapter.BaseViewHolder {
+    class Holder extends AbsBaseAdapter.BaseHolder {
 
         private ItemBookBinding root;
 

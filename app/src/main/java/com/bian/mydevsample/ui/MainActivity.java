@@ -41,19 +41,19 @@ public class MainActivity extends AppCompatActivity {
         mAdapter2.initLoad();
         mAdapter2.bindToPullToRefreshLayout((PullToRefresh) findViewById(R.id.ptr2), PullToRefresh.Mode.Both);
 
-        Api.setBaseUrl(TEST_LOG_URL);
-        ApiCall apiCall = new ApiCall(this);
-        Call<Object> test = Api.getService(LogTestService.class).test("689");
-        apiCall.enqueue(test, new ApiCallBack<Object>() {
-            @Override
-            public void onSuccess(@NonNull Object o) {
-                Api.setBaseUrl(BOOK_BASE_URL);
-            }
-
-            @Override
-            public void onFailure(@Nullable Throwable throwable) {
-                Api.setBaseUrl(BOOK_BASE_URL);
-            }
-        });
+//        Api.setBaseUrl(TEST_LOG_URL);
+//        ApiCall apiCall = new ApiCall(this);
+//        Call<Object> test = Api.getService(LogTestService.class).test("689");
+//        apiCall.enqueue(test, new ApiCallBack<Object>() {
+//            @Override
+//            public void onSuccess(@NonNull Object o) {
+//                Api.setBaseUrl(BOOK_BASE_URL);
+//            }
+//
+//            @Override
+//            public void onFailure(@Nullable Throwable throwable) {
+//                Api.setBaseUrl(BOOK_BASE_URL);
+//            }
+//        });
     }
 }

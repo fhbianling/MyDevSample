@@ -18,6 +18,7 @@ import java.util.Locale;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class L {
+    public static final int ELEMENT_INDEX = 2;
     private final static int E = 1;
     private final static int D = 2;
     private final static int I = 3;
@@ -118,7 +119,14 @@ public final class L {
         }
 
         try {
-            String logContent = msgWrapper(message.toString(), shouldLogThread, shouldTraceMessage);
+            String messageTemp;
+            if (message == null) {
+                messageTemp = "receive object null";
+                shouldTraceMessage = true;
+            } else {
+                messageTemp = message.toString();
+            }
+            String logContent = msgWrapper(messageTemp, shouldLogThread, shouldTraceMessage);
             switch (level) {
                 case E:
                     Log.e(tag, logContent);
@@ -143,7 +151,7 @@ public final class L {
     }
 
     private static String msgWrapper(String message, boolean shouldLogThread, boolean shouldTraceMessage) {
-        String traceMessage = shouldTraceMessage ? getTraceMsg() : "";
+        String traceMessage = shouldTraceMessage ? getTraceMsg(getTargetStackTrace(ELEMENT_INDEX)) : "";
         String threadMessage = shouldLogThread ? getThreadMsg() : "";
         return traceMessage + threadMessage + message;
     }
@@ -152,23 +160,23 @@ public final class L {
         return String.format(Locale.CHINA, "[ %s ] ", Thread.currentThread().getName());
     }
 
-    private static String getTraceMsg() {
-        StackTraceElement targetStackTrace = getTargetStackTrace();
-        if (targetStackTrace == null) {
+    public static String getTraceMsg(StackTraceElement stackTraceElement) {
+        /*栈中前两条都是调用getStackTrace方法产生的固定信息，调用该方法也会将该方法的调用记录压入栈，因此过滤掉*/
+        if (stackTraceElement == null) {
             return "";
         }
-        return String.format(Locale.CHINA, "(%s:%d) ", targetStackTrace.getFileName(), targetStackTrace.getLineNumber());
+        return String.format(Locale.CHINA, "(%s:%d) ", stackTraceElement.getFileName(),
+                stackTraceElement.getLineNumber());
     }
 
-    private static StackTraceElement getTargetStackTrace() {
+    public static StackTraceElement getTargetStackTrace(int elementIndex) {
         StackTraceElement stackTraceElement = null;
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        /*栈中前两条都是调用getStackTrace方法产生的固定信息，调用该方法也会将该方法的调用记录压入栈，因此过滤掉*/
         boolean isJVMTrace;
         int count = 0;
         for (StackTraceElement traceElement : stackTrace) {
             boolean isLogMethod = traceElement.getClassName().equals(L.class.getName());
-            isJVMTrace = (count < 2);
+            isJVMTrace = (count < elementIndex);
             if (!isLogMethod && !isJVMTrace) {
                 stackTraceElement = traceElement;
                 break;
@@ -185,28 +193,25 @@ public final class L {
 
     public static void printJson(String tag, String jsonStr) {
         String formatJson = getFormatJson(jsonStr);
-        if (!TextUtils.isEmpty(formatJson)) {
-            log(JSON, tag, formatJson, false, false);
-        } else {
-            log(JSON, tag, jsonStr, false, false);
-        }
+        log(JSON, tag, formatJson, false, false);
     }
 
     private static String getFormatJson(String jsonStr) {
         try {
-            jsonStr = jsonStr.trim();
+            if (TextUtils.isEmpty(jsonStr)) return jsonStr;
+            String jsonStrWrapper = jsonStr.trim();
             /*JSONObject和JSONArray的构造中自带缩进设计，具体看源码*/
-            if (jsonStr.startsWith("{")) {
-                JSONObject jsonObject = new JSONObject(jsonStr);
+            if (jsonStrWrapper.startsWith("{")) {
+                JSONObject jsonObject = new JSONObject(jsonStrWrapper);
                 return jsonObject.toString(JSON_INDENT);
             }
-            if (jsonStr.startsWith("[")) {
-                JSONArray jsonArray = new JSONArray(jsonStr);
+            if (jsonStrWrapper.startsWith("[")) {
+                JSONArray jsonArray = new JSONArray(jsonStrWrapper);
                 return jsonArray.toString(JSON_INDENT);
             }
         } catch (JSONException ignored) {
-
+            return jsonStr;
         }
-        return "";
+        return jsonStr;
     }
 }

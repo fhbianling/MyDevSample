@@ -1,12 +1,8 @@
 package com.bian.base.baseclass.baseadapter;
 
 import android.app.Activity;
-import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.bian.base.util.utilbase.L;
 
@@ -26,35 +22,27 @@ import static com.bian.base.baseclass.baseadapter.LoadType.Reload;
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public abstract class AbsRecycleViewAdapter<DataType, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class BaseRecycleViewPTRAdapter<DataType, VH extends RecyclerView.ViewHolder>
+        extends AbsBaseRecycleViewAdapter<DataType, VH> {
     public static final int NO_ERROR_MSG = -1;
-    private final static long INTERVAL = 300;
-    private final Activity mActivity;
-    private final LayoutInflater inflater;
     private int defaultPageSize = 10;
-    private List<DataType> mData = new ArrayList<>();
-    private long lastClickTime;
     private int pageNum = 1;
     private int pageSize = defaultPageSize;
     private PullToRefresh pTr;
     private OnDataLoadListener onDataLoadListener;
-    private OnItemLongClickListener onItemLongClickListener;
-    private OnItemClickListener onItemClickListener;
     private DataSetter<DataType> innerDataSetter;
     private InnerDataLoader innerDataLoader;
 
-    public AbsRecycleViewAdapter(Activity mActivity) {
-        this.mActivity = mActivity;
-        inflater = LayoutInflater.from(mActivity);
+    public BaseRecycleViewPTRAdapter(Activity mActivity) {
+        super(mActivity);
     }
 
-    public AbsRecycleViewAdapter(List<DataType> mData, Activity mActivity) {
-        this(mActivity);
-        this.mData = dataAssignment(mData);
+    public BaseRecycleViewPTRAdapter(List<DataType> mData, Activity mActivity) {
+        super(mData, mActivity);
     }
 
-    public AbsRecycleViewAdapter(Activity mActivity, boolean loadData) {
-        this(mActivity);
+    public BaseRecycleViewPTRAdapter(Activity mActivity, boolean loadData) {
+        super(mActivity);
         if (loadData) {
             innerDataLoaderInit();
             initLoad();
@@ -69,85 +57,6 @@ public abstract class AbsRecycleViewAdapter<DataType, VH extends RecyclerView.Vi
         return null;
     }
 
-    public List<DataType> getData() {
-        if (mData == null) {
-            return null;
-        } else {
-            return new ArrayList<>(mData);
-        }
-    }
-
-    @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-        return onCreateHolder(inflater, parent, viewType);
-    }
-
-    protected abstract VH onCreateHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
-
-    @CallSuper
-    @Override
-    public void onBindViewHolder(final VH holder, int position) {
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isFastClick()) return;
-                if (onItemClickListener != null) {
-                    onItemClickEvent(holder);
-                }
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (onItemLongClickListener != null) {
-                    onItemLongClickEvent(holder);
-                }
-                return true;
-            }
-        });
-        bindView(holder, position, getItem(positionAssignment(position)));
-    }
-
-    protected int positionAssignment(int position) {
-        return position;
-    }
-
-    @CallSuper
-    protected void onItemLongClickEvent(VH holder) {
-        onItemLongClickListener.onItemLongClick(positionAssignment(holder.getAdapterPosition()));
-    }
-
-    @CallSuper
-    protected void onItemClickEvent(VH holder) {
-        onItemClickListener.onItemClick(positionAssignment(holder.getAdapterPosition()));
-    }
-
-    private boolean isFastClick() {
-        boolean isFastClick = System.currentTimeMillis() - lastClickTime < INTERVAL;
-        lastClickTime = System.currentTimeMillis();
-        return isFastClick;
-    }
-
-    protected abstract void bindView(VH holder, int realPosition, DataType item);
-
-    protected
-    @Nullable
-    List<DataType> dataAssignment(@Nullable List<DataType> data) {
-        return data;
-    }
-
-    protected DataType dataAssignment(@Nullable DataType dataType) {
-        return dataType;
-    }
-
-    public DataType getItem(int position) {
-        return position > mData.size() - 1 ? null : mData.get(position);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mData.size();
-    }
 
     private void innerDataLoaderInit() {
         if (innerDataLoader == null) {
@@ -171,22 +80,6 @@ public abstract class AbsRecycleViewAdapter<DataType, VH extends RecyclerView.Vi
         if (innerDataLoader.isLoading()) return;
         ((InnerDataSetter) innerDataSetter).setLoadType(loadType);
         innerDataLoader.loadData(pageNum, pageSize, innerDataSetter, loadType);
-    }
-
-    public void addData(DataType dataType) {
-        DataType data = dataAssignment(dataType);
-        mData.add(data);
-        notifyItemInserted(getItemCount() - 1);
-    }
-
-    public void removeData(int position) {
-        mData.remove(positionAssignment(position));
-        notifyItemRemoved(positionAssignment(position));
-    }
-
-    public void resetData(List<DataType> dataTypes) {
-        mData = dataAssignment(dataTypes);
-        notifyDataSetChanged();
     }
 
     /**
@@ -279,28 +172,8 @@ public abstract class AbsRecycleViewAdapter<DataType, VH extends RecyclerView.Vi
         }
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
-    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
-        this.onItemLongClickListener = onItemLongClickListener;
-    }
-
     public void setOnDataLoadListener(OnDataLoadListener onDataLoadListener) {
         this.onDataLoadListener = onDataLoadListener;
-    }
-
-    public Activity getActivity() {
-        return mActivity;
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-    }
-
-    public interface OnItemLongClickListener {
-        void onItemLongClick(int position);
     }
 
     private final class InnerDataSetter implements DataSetter<DataType> {
@@ -311,7 +184,7 @@ public abstract class AbsRecycleViewAdapter<DataType, VH extends RecyclerView.Vi
         }
 
         @Override
-        public void setData(List<DataType> data) {
+        public void setLoadedData(List<DataType> data) {
             innerDataLoader.setLoading(false);
             if (data == null || data.size() == 0) {
                 loadSuccessButDataIsEmpty();

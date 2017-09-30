@@ -9,7 +9,7 @@ import java.util.List;
  * date 2017/9/20 9:54
  * 类描述：
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface DataSetter<T> {
 
     void setLoadedData(List<T> data);

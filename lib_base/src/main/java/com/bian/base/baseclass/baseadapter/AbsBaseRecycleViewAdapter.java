@@ -17,10 +17,13 @@ import java.util.List;
  * 类描述：
  * update 2017/9/26 对原有的RecycleView的BaseAdapter基类进行进一步抽象
  * 将BaseAdapter的基本功能抽象到该类，并将数据加载和上下拉刷新功能拆开到其子类{@link BaseRecycleViewPTRAdapter}中
+ *
+ * @see AbsBaseAdapter 抽象思路同该类
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerView.ViewHolder>
+        extends RecyclerView.Adapter<VH> {
     private final static long INTERVAL = 300;
     private final Activity mActivity;
     private final LayoutInflater inflater;
@@ -96,11 +99,21 @@ public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerVie
         return position;
     }
 
+    /**
+     * 当单项点击发生时可通过重写该方法对单项进行改动
+     * <p>
+     * 注意，在重写该方法后，若没有调用{@link #setOnItemClickListener(OnItemClickListener)}，则这个方法中的逻辑不会生效
+     */
     @CallSuper
     protected void onItemLongClickEvent(VH holder) {
         onItemLongClickListener.onItemLongClick(positionAssignment(holder.getAdapterPosition()));
     }
 
+    /**
+     * 当单项长按发生时可通过重写该方法对单项进行改动
+     * <p>
+     * 注意，在重写该方法后，若没有调用{@link #setOnItemLongClickListener(OnItemLongClickListener)}，则这个方法中的逻辑不会生效
+     */
     @CallSuper
     protected void onItemClickEvent(VH holder) {
         onItemClickListener.onItemClick(positionAssignment(holder.getAdapterPosition()));
@@ -114,10 +127,16 @@ public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerVie
 
     protected abstract void bindView(VH holder, int realPosition, DataType item);
 
+    /**
+     * 设置单项点击监听器
+     */
     public final void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
+    /**
+     * 设置单项长按监听器
+     */
     public final void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
     }

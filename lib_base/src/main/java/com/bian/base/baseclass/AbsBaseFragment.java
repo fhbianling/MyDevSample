@@ -8,10 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bian.base.util.utilevent.EventUtil;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import com.bian.base.util.utilevent.EventUtil;
 
 /**
  * author 边凌
@@ -22,6 +22,7 @@ import com.bian.base.util.utilevent.EventUtil;
 @SuppressWarnings({"UnusedParameters", "unused"})
 public abstract class AbsBaseFragment extends Fragment {
     private boolean first = true;
+    private boolean firstOnResume = true;
 
     /**
      * 初始化布局
@@ -40,16 +41,15 @@ public abstract class AbsBaseFragment extends Fragment {
 
     }
 
-    protected void onResume(boolean isFirst){
+    protected void onResume(boolean isFirst) {
 
     }
 
-    private boolean firstOnResume=true;
     @Override
     public void onResume() {
         super.onResume();
         onResume(firstOnResume);
-        firstOnResume=false;
+        firstOnResume = false;
     }
 
     /**

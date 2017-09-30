@@ -10,12 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.bian.base.util.utilbase.AppActivityManager;
+import com.bian.base.util.utilevent.EventUtil;
 import com.jude.swipbackhelper.SwipeBackHelper;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import com.bian.base.util.utilevent.EventUtil;
 
 
 /**
@@ -25,13 +24,9 @@ import com.bian.base.util.utilevent.EventUtil;
 @SuppressWarnings({"UnusedParameters", "unused"})
 public abstract class
 AbsBaseActivity extends AppCompatActivity {
-    public final static String INTENT_EXTRAS ="data";
+    public final static String INTENT_EXTRAS = "data";
 
     private boolean first = true;
-
-    protected boolean getShouldOnCreateSwipeBack() {
-        return true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +56,21 @@ AbsBaseActivity extends AppCompatActivity {
 
     /*---------------------------------------------------------------------*/
     /*应被子类重写和可被子类重写的方法*/
+
+    /**
+     * 与{@link #onResume()}同时被调用的方法，但参数包含列是否是第一次onResume
+     *
+     * @param firstOnResume 是否是第一次onResume
+     */
     protected void firstOnResume(boolean firstOnResume) {
 
+    }
+
+    /**
+     * 是否支持左滑推出 默认返回true,可重写
+     */
+    protected boolean getShouldOnCreateSwipeBack() {
+        return true;
     }
 
     /**
@@ -132,12 +140,13 @@ AbsBaseActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 重写该方法以接收事件
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     @CallSuper
     public void handleMessage(Object msg) {
     }
-    /*---------------------------------------------------------------------*/
-
 
     @CallSuper
     @Override
@@ -163,6 +172,10 @@ AbsBaseActivity extends AppCompatActivity {
         registerRxBus();
     }
 
+
+    /**
+     * 重写该方法以在{@link #setContentView(int)}被调用之前更改某些设置
+     */
     @CallSuper
     protected void settingBeforeSetContentView() {
         /*窗口没有标题栏*/
@@ -180,15 +193,20 @@ AbsBaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 重写该方法以在{@link #setContentView(int)}被调用之后更改某些设置
+     */
+    @CallSuper
+    protected void settingAfterSetContentView() {
+        AppActivityManager.getInstance().addActivity(this);
+    }
+
+    /*---------------------------------------------------------------------*/
+
     protected final void setSwipeBackEnable(boolean enable) {
         if (getShouldOnCreateSwipeBack()) {
             SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(enable);
         }
-    }
-
-    @CallSuper
-    protected void settingAfterSetContentView() {
-        AppActivityManager.getInstance().addActivity(this);
     }
 
     /**
@@ -207,12 +225,12 @@ AbsBaseActivity extends AppCompatActivity {
     }
 
 
-    public void startActivity(Class className) {
+    public final void startActivity(Class className) {
         Intent starter = new Intent(this, className);
         startActivity(starter);
     }
 
-    public void startActivity(Class className, Bundle bundle) {
+    public final void startActivity(Class className, Bundle bundle) {
         Intent starter = new Intent(this, className);
         starter.putExtras(bundle);
         startActivity(starter);

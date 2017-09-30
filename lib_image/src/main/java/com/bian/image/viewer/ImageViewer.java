@@ -24,10 +24,11 @@ import uk.co.senab.photoview.PhotoView;
 /**
  * author 边凌
  * date 2017/7/11 15:15
- * 类描述：
+ * 类描述：大图浏览
  */
 
-public class ImageViewer extends AppCompatActivity implements ViewPager.OnPageChangeListener, View.OnClickListener {
+public class ImageViewer extends AppCompatActivity
+        implements ViewPager.OnPageChangeListener, View.OnClickListener {
     private final static String MULTI = "MULTI";
     private static final String CHECKPOS = "checkPos";
     private PhotoView mPhotoView;
@@ -38,6 +39,12 @@ public class ImageViewer extends AppCompatActivity implements ViewPager.OnPageCh
     private int checkPos = 0;
     private IndicatorAdapter mIndicatorAdapter;
 
+    /**
+     * 打开多图大图浏览界面
+     *
+     * @param urlOrPaths url集合，可以是url也可以是本地路径，也可以时两者混合
+     * @param checkPos   设置默认选中位置，当非0时，界面打开后初始时会自动滚动到选中位置
+     */
     public static void start(Context context, List<String> urlOrPaths, int checkPos) {
         Intent starter = new Intent(context, ImageViewer.class);
         starter.putStringArrayListExtra(MULTI, new ArrayList<>(urlOrPaths));
@@ -45,6 +52,11 @@ public class ImageViewer extends AppCompatActivity implements ViewPager.OnPageCh
         context.startActivity(starter);
     }
 
+    /**
+     * 打开单图或多图大图浏览界面
+     *
+     * @param urlOrPaths url或者path 可变参数
+     */
     public static void start(Context context, String... urlOrPaths) {
         start(context, Arrays.asList(urlOrPaths), 0);
     }

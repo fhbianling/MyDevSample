@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 
+import com.bian.base.component.widget.SpringViewPTR;
 import com.bian.base.util.utilbase.L;
 
 import java.util.ArrayList;
@@ -27,7 +28,11 @@ import static com.bian.base.baseclass.baseadapter.PullToRefresh.Mode.Both;
  * 然后调用{@link #bindToPullToRefreshLayout(PullToRefresh, PullToRefresh.Mode)}方法绑定上下拉刷新控件
  * <p>
  * 该类的使用需要Retrofit2以及ButterKnife库的支持
+ * update:2017/9/30 现在不再仅限定于Retrofit2的网络框架，
+ * 通过重写{@link #getDataLoader()}方法提供一个数据加载器，以适配任何一个网络框架,
  *
+ * @see RetrofitDataLoader 一个实现了{@link DataLoader}接口的Retrofit数据加载器的示例
+ * @see SpringViewPTR 一个实现了{@link PullToRefresh}接口的上下拉刷新框架示例
  * @see #setOnDataLoadListener(OnDataLoadListener) 对该适配器加载数据添加数据加载过程的监听支持
  * @see #setOnDataNotifyListener(OnDataNotifyListener) 对该适配器加载数据添加数据更新的监听支持
  */

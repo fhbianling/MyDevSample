@@ -19,6 +19,8 @@ import static com.bian.base.baseclass.baseadapter.LoadType.Reload;
  * author 边凌
  * date 2017/6/12 15:48
  * desc ${RecycleView的适配器基类}
+ *
+ * @see BasePTRAdapter 抽象思路同该类
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})

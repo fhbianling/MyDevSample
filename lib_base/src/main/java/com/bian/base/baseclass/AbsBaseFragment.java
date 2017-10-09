@@ -2,6 +2,7 @@ package com.bian.base.baseclass;
 
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -97,5 +98,11 @@ public abstract class AbsBaseFragment extends Fragment {
             firstVisibleToUser();
             first = false;
         }
+    }
+
+    public
+    @Nullable
+    <T extends View> View findViewById(@IdRes int id) {
+        return getView() != null ? getView().findViewById(id) : null;
     }
 }

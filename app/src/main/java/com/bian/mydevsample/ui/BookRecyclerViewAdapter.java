@@ -27,9 +27,9 @@ import retrofit2.Call;
  * 类描述：
  */
 
-class MAdapter2 extends BaseRecycleViewPTRAdapter<BookBean, MAdapter2.Holder> {
+class BookRecyclerViewAdapter extends BaseRecycleViewPTRAdapter<BookBean, BookRecyclerViewAdapter.Holder> {
 
-    MAdapter2(Activity mActivity) {
+    BookRecyclerViewAdapter(Activity mActivity) {
         super(mActivity);
     }
 

@@ -1,39 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_red_dark"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     tools:context="com.bian.mydevsample.ui.MainActivity">
 
-    <com.bian.base.component.widget.SpringViewPTR
-        android:id="@+id/ptr"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@android:color/white"
-        app:type="follow">
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/white">
 
-        <ListView
-            android:id="@+id/list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </com.bian.base.component.widget.SpringViewPTR>
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Tab1"/>
 
-    <com.bian.base.component.widget.SpringViewPTR
-        android:id="@+id/ptr2"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@android:color/white"
-        app:type="follow">
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Tab2"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </com.bian.base.component.widget.SpringViewPTR>
+    </android.support.design.widget.TabLayout>
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 </LinearLayout>

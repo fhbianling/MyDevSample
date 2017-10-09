@@ -28,9 +28,9 @@ import retrofit2.Call;
  * 类描述：
  */
 
-class MAdapter extends BasePTRAdapter<BookBean, MAdapter.Holder> {
+class BookListAdapter extends BasePTRAdapter<BookBean, BookListAdapter.Holder> {
 
-    MAdapter(Activity mActivity, boolean loadData) {
+    BookListAdapter(Activity mActivity, boolean loadData) {
         super(mActivity, loadData);
     }
 

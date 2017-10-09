@@ -34,8 +34,11 @@ AbsBaseActivity extends AppCompatActivity {
     private boolean first = true;
     private Set<Fragment> fragments = new HashSet<>();
 
+    /*---------------------------------------------------------------------*/
+    /*应被子类重写和可被子类重写的方法*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        beforeOnCreate();
         super.onCreate(savedInstanceState);
         //设置状态栏白底深色文字
         beforeSetContentView();
@@ -43,28 +46,8 @@ AbsBaseActivity extends AppCompatActivity {
         afterSetContentView(savedInstanceState);
     }
 
-    /*---------------------------------------------------------------------*/
-    /*应被子类重写和可被子类重写的方法*/
-    private void addFragment(Fragment fragment, @IdRes int containerId) {
-        fragments.add(fragment);
-        getSupportFragmentManager().beginTransaction().add(containerId, fragment,
-                fragment.getClass().getSimpleName()).commit();
-    }
+    protected void beforeOnCreate() {
 
-    public final void showFragment(Fragment fragment, @IdRes int containerId) {
-        if (!fragments.contains(fragment)) {
-            addFragment(fragment, containerId);
-        }
-        FragmentTransaction mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-        for (Fragment fragmentTemp : fragments) {
-            if (fragmentTemp.getClass().getSimpleName().equals(
-                    fragment.getClass().getSimpleName())) {
-                mFragmentTransaction.show(fragmentTemp);
-            } else {
-                mFragmentTransaction.hide(fragmentTemp);
-            }
-        }
-        mFragmentTransaction.commit();
     }
 
     @CallSuper
@@ -84,7 +67,6 @@ AbsBaseActivity extends AppCompatActivity {
         firstOnResume(first);
         first = false;
     }
-
 
     /**
      * 与{@link #onResume()}同时被调用的方法，但参数包含列是否是第一次onResume
@@ -202,7 +184,6 @@ AbsBaseActivity extends AppCompatActivity {
         registerRxBus();
     }
 
-
     /**
      * 重写该方法以在{@link #setContentView(int)}被调用之前更改某些设置
      */
@@ -230,8 +211,8 @@ AbsBaseActivity extends AppCompatActivity {
     protected void settingAfterSetContentView() {
         AppActivityManager.getInstance().addActivity(this);
     }
-
     /*---------------------------------------------------------------------*/
+
 
     protected final void setSwipeBackEnable(boolean enable) {
         if (getShouldOnCreateSwipeBack()) {
@@ -246,14 +227,12 @@ AbsBaseActivity extends AppCompatActivity {
         EventUtil.get().register(this);
     }
 
-
     /**
      * 取消订阅RxBus
      */
     private void unRegisterRxBus() {
         EventUtil.get().unregister(this);
     }
-
 
     public final void startActivity(Class cls) {
         Intent starter = new Intent(this, cls);
@@ -264,6 +243,28 @@ AbsBaseActivity extends AppCompatActivity {
         Intent starter = new Intent(this, cls);
         starter.putExtras(bundle);
         startActivity(starter);
+    }
+
+    private void addFragment(Fragment fragment, @IdRes int containerId) {
+        fragments.add(fragment);
+        getSupportFragmentManager().beginTransaction().add(containerId, fragment,
+                fragment.getClass().getSimpleName()).commit();
+    }
+
+    public final void showFragment(Fragment fragment, @IdRes int containerId) {
+        if (!fragments.contains(fragment)) {
+            addFragment(fragment, containerId);
+        }
+        FragmentTransaction mFragmentTransaction = getSupportFragmentManager().beginTransaction();
+        for (Fragment fragmentTemp : fragments) {
+            if (fragmentTemp.getClass().getSimpleName().equals(
+                    fragment.getClass().getSimpleName())) {
+                mFragmentTransaction.show(fragmentTemp);
+            } else {
+                mFragmentTransaction.hide(fragmentTemp);
+            }
+        }
+        mFragmentTransaction.commit();
     }
 }
 

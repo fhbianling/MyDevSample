@@ -1,4 +1,4 @@
-package com.bian.mydevsample.ui;
+package com.bian.mydevsample.ui.fragment.pageanim1;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,12 +13,12 @@ import com.bian.mydevsample.R;
  * 类描述：
  */
 
-public class PagerAdapter extends android.support.v4.view.PagerAdapter {
+class PagerAdapter extends android.support.v4.view.PagerAdapter {
     private LayoutInflater inflater;
     private int[] layoutRes = new int[]{R.layout.pager_1, R.layout.pager_2, R.layout.pager_3};
     private View[] views = new View[3];
 
-    public PagerAdapter(Context context) {
+    PagerAdapter(Context context) {
         inflater = LayoutInflater.from(context);
     }
 

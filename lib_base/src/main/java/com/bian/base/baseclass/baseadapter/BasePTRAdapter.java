@@ -38,7 +38,7 @@ import static com.bian.base.baseclass.baseadapter.PullToRefresh.Mode.Both;
  */
 // UPDATE: 2017/5/26 去掉对泛型E的类型限定，并将其改名为HolderClass,以支持dataBinding
 @SuppressWarnings({"WeakerAccess", "unused"})
-public abstract class BasePTRAdapter<DataType, HolderClass extends AbsBaseAdapter.BaseHolder>
+public abstract class BasePTRAdapter<DataType, HolderClass extends AbsBaseAdapter.ViewHolder>
         extends AbsBaseAdapter<DataType, HolderClass> {
     public static final int NO_ERROR_MSG = -1;
     private int defaultPageSize = 10;
@@ -64,9 +64,7 @@ public abstract class BasePTRAdapter<DataType, HolderClass extends AbsBaseAdapte
         this.defaultPageSize = defaultPageSize;
     }
 
-    protected DataLoader<DataType> getDataLoader() {
-        return null;
-    }
+    protected abstract DataLoader<DataType> getDataLoader();
 
     /**
      * data改动，重写这个方法，可以对被赋值的data做出改动，可被重写。
@@ -137,7 +135,8 @@ public abstract class BasePTRAdapter<DataType, HolderClass extends AbsBaseAdapte
      * @param pullToRefreshBase 实现了{@link PullToRefresh}接口的上下拉框架
      * @param mode              {@link PullToRefresh.Mode}
      */
-    public final void bindToPullToRefreshLayout(PullToRefresh pullToRefreshBase, final PullToRefresh.Mode mode) {
+    public final void bindToPullToRefreshLayout(PullToRefresh pullToRefreshBase,
+                                                final PullToRefresh.Mode mode) {
         if (pullToRefreshBase != null) {
             pTr = pullToRefreshBase;
             setPtrMode(mode);

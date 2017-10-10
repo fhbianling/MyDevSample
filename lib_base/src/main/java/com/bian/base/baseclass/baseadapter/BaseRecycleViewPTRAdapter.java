@@ -55,9 +55,7 @@ public abstract class BaseRecycleViewPTRAdapter<DataType, VH extends RecyclerVie
         this.defaultPageSize = defaultPageSize;
     }
 
-    protected DataLoader<DataType> getDataLoader() {
-        return null;
-    }
+    protected abstract DataLoader<DataType> getDataLoader();
 
 
     private void innerDataLoaderInit() {
@@ -133,7 +131,8 @@ public abstract class BaseRecycleViewPTRAdapter<DataType, VH extends RecyclerVie
      * @param pullToRefreshBase 实现了{@link PullToRefresh}接口的上下拉框架
      * @param mode              {@link PullToRefresh.Mode}
      */
-    public final void bindToPullToRefreshLayout(PullToRefresh pullToRefreshBase, final PullToRefresh.Mode mode) {
+    public final void bindToPullToRefreshLayout(PullToRefresh pullToRefreshBase,
+                                                final PullToRefresh.Mode mode) {
         if (pullToRefreshBase != null) {
             pTr = pullToRefreshBase;
             setPtrMode(mode);

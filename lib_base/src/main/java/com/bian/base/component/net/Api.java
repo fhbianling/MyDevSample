@@ -47,7 +47,7 @@ public class Api {
     /**
      * 设置拦截器，可以为多个，该方法应在{@link #setBaseUrl(String)}前调用
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "WeakerAccess"})
     public static void setInterceptors(Interceptor... interceptors) {
         Api.interceptors = interceptors;
     }
@@ -87,11 +87,11 @@ public class Api {
             throw new NullPointerException("请先调用 setBaseUrl(String)方法");
         }
         Object o = sServiceCache.get(service.getName());
-        T t = sRetrofit.create(service);
         if (o != null) {
             //noinspection unchecked
             return (T) o;
         } else {
+            T t = sRetrofit.create(service);
             sServiceCache.put(service.getName(), t);
             return t;
         }

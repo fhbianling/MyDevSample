@@ -1,7 +1,9 @@
 package com.bian.base.baseclass.baseadapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,25 +27,25 @@ import java.util.List;
 public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
     private final static long INTERVAL = 300;
-    private final Activity mActivity;
-    private final LayoutInflater inflater;
+    private final Context CONTEXT;
+    private final LayoutInflater INFLATER;
     protected List<DataType> mData = new ArrayList<>();
     private long lastClickTime;
     private OnItemLongClickListener onItemLongClickListener;
     private OnItemClickListener onItemClickListener;
 
-    public AbsBaseRecycleViewAdapter(Activity mActivity) {
-        this.mActivity = mActivity;
-        inflater = LayoutInflater.from(mActivity);
+    public AbsBaseRecycleViewAdapter(Context context) {
+        this.CONTEXT = context;
+        INFLATER = LayoutInflater.from(context);
     }
 
-    public AbsBaseRecycleViewAdapter(List<DataType> mData, Activity mActivity) {
-        this(mActivity);
-        this.mData = dataAssignment(mData);
+    public AbsBaseRecycleViewAdapter(List<DataType> data, Activity context) {
+        this(context);
+        this.mData = dataAssignment(data);
     }
 
-    public final Activity getActivity() {
-        return mActivity;
+    public final Context getContext() {
+        return CONTEXT;
     }
 
     protected
@@ -58,7 +60,7 @@ public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerVie
 
     @Override
     public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
-        return onCreateHolder(inflater, parent, viewType);
+        return onCreateHolder(INFLATER, parent, viewType);
     }
 
     protected abstract VH onCreateHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
@@ -92,7 +94,12 @@ public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerVie
                 return true;
             }
         });
-        bindView(holder, position, getItem(positionAssignment(position)));
+        int itemViewType = getItemViewType(position);
+        boolean isLast = position == getItemCount() - 1;
+        DataType item = getItem(positionAssignment(position));
+        if (item != null) {
+            bindView(position, itemViewType, holder, item, isLast);
+        }
     }
 
     protected int positionAssignment(int position) {
@@ -125,7 +132,8 @@ public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerVie
         return isFastClick;
     }
 
-    protected abstract void bindView(VH holder, int realPosition, DataType item);
+    protected abstract void bindView(int position, int viewType, @NonNull VH holder,
+                                     @NonNull DataType item, boolean isLast);
 
     /**
      * 设置单项点击监听器
@@ -141,7 +149,9 @@ public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerVie
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
-    public DataType getItem(int position) {
+    public
+    @Nullable
+    DataType getItem(int position) {
         return position > mData.size() - 1 ? null : mData.get(position);
     }
 

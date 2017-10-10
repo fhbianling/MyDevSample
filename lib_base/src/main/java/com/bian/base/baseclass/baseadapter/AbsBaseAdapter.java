@@ -23,7 +23,8 @@ import java.util.List;
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public abstract class AbsBaseAdapter<DataType, HolderClass extends AbsBaseAdapter.BaseHolder> extends BaseAdapter {
+public abstract class AbsBaseAdapter<DataType, VH extends AbsBaseAdapter.ViewHolder>
+        extends BaseAdapter {
     protected Activity mActivity;
     protected LayoutInflater inflater;
     private List<DataType> mData;
@@ -63,13 +64,13 @@ public abstract class AbsBaseAdapter<DataType, HolderClass extends AbsBaseAdapte
      */
     protected abstract
     @NonNull
-    HolderClass getHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
+    VH onCreateHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
 
     /**
      * 展示数据
      */
-    protected abstract void displayData(int position, int viewType, @NonNull HolderClass holder,
-                                        @NonNull DataType dataType, boolean isLast);
+    protected abstract void bindView(int position, int viewType, @NonNull VH holder,
+                                     @NonNull DataType dataType, boolean isLast);
 
     /**
      * 重置数据
@@ -142,7 +143,7 @@ public abstract class AbsBaseAdapter<DataType, HolderClass extends AbsBaseAdapte
     /**
      * 设置data，注意，该方法仅仅会设置mData，不会做任何额外的操作，
      */
-    protected void setData(List<DataType> data) {
+    protected final void setData(List<DataType> data) {
         mData = data;
     }
 
@@ -165,20 +166,20 @@ public abstract class AbsBaseAdapter<DataType, HolderClass extends AbsBaseAdapte
     @Override
     public final View getView(int i, View view, ViewGroup viewGroup) {
         int viewType = getItemViewType(i);
-        HolderClass holder;
+        VH holder;
         if (view == null) {
-            holder = getHolder(inflater, viewGroup, viewType);
+            holder = onCreateHolder(inflater, viewGroup, viewType);
             view = holder.getItemView();
             view.setTag(holder);
         } else {
             /*注意不能对getView获得的根视图设置tag*/
 
             //noinspection unchecked
-            holder = (HolderClass) view.getTag();
+            holder = (VH) view.getTag();
         }
         DataType item = getItem(i);
         if (item != null) {
-            displayData(i, viewType, holder, item, i == getCount() - 1);
+            bindView(i, viewType, holder, item, i == getCount() - 1);
         }
         return view;
     }
@@ -205,10 +206,10 @@ public abstract class AbsBaseAdapter<DataType, HolderClass extends AbsBaseAdapte
         this.onDataNotifyListener = onDataNotifyListener;
     }
 
-    public static class BaseHolder {
+    public static class ViewHolder {
         private View itemView;
 
-        public BaseHolder(View itemView) {
+        public ViewHolder(View itemView) {
             this.itemView = itemView;
         }
 

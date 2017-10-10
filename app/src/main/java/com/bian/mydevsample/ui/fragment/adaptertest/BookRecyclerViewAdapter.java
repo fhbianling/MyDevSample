@@ -1,13 +1,13 @@
-package com.bian.mydevsample.ui;
+package com.bian.mydevsample.ui.fragment.adaptertest;
 
 import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsBaseAdapter;
-import com.bian.base.baseclass.baseadapter.BasePTRAdapter;
+import com.bian.base.baseclass.baseadapter.BaseRecycleViewPTRAdapter;
 import com.bian.base.baseclass.baseadapter.DataLoader;
 import com.bian.base.baseclass.baseadapter.LoadType;
 import com.bian.base.baseclass.baseadapter.RetrofitDataLoader;
@@ -24,14 +24,15 @@ import retrofit2.Call;
 
 /**
  * author 边凌
- * date 2017/9/13 20:34
+ * date 2017/9/20 10:27
  * 类描述：
  */
 
-class BookListAdapter extends BasePTRAdapter<BookBean, BookListAdapter.Holder> {
+class BookRecyclerViewAdapter
+        extends BaseRecycleViewPTRAdapter<BookBean, BookRecyclerViewAdapter.Holder> {
 
-    BookListAdapter(Activity mActivity, boolean loadData) {
-        super(mActivity, loadData);
+    BookRecyclerViewAdapter(Activity mActivity) {
+        super(mActivity);
     }
 
     @Override
@@ -45,14 +46,14 @@ class BookListAdapter extends BasePTRAdapter<BookBean, BookListAdapter.Holder> {
                 int count = 0;
                 switch (loadType) {
                     case LoadMore:
-                        start = getCount();
+                        start = getItemCount();
                         count = 10;
                         break;
                     case Refresh:
                     case Reload:
                     case FirstLoad:
                         start = 0;
-                        count = getCount() == 0 ? 10 : getCount();
+                        count = getItemCount() == 0 ? 10 : getItemCount();
                         break;
                 }
                 return Api.getService(BookService.class).getBookList("量子力学", start, count);
@@ -65,23 +66,24 @@ class BookListAdapter extends BasePTRAdapter<BookBean, BookListAdapter.Holder> {
         };
     }
 
-    @NonNull
     @Override
-    protected Holder getHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        ItemBookBinding bookBinding = DataBindingUtil.inflate(inflater, R.layout.item_book, parent,
-                false);
-        bookBinding.getRoot().setTag(bookBinding);
-        return new Holder(bookBinding);
+    protected Holder onCreateHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+
+        ItemBookBinding itemBookBinding = DataBindingUtil.inflate(inflater,
+                                                                  R.layout.item_book,
+                                                                  parent,
+                                                                  false);
+        return new Holder(itemBookBinding);
     }
 
     @Override
-    protected void displayData(int position, int viewType, @NonNull Holder holder,
-                               @NonNull BookBean bookBean, boolean isLast) {
-        holder.root.setBook(bookBean);
+    protected void bindView(int position, int viewType,
+                            @NonNull Holder holder, @NonNull BookBean item,
+                            boolean isLast) {
+        holder.root.setBook(item);
     }
 
-
-    class Holder extends AbsBaseAdapter.BaseHolder {
+    class Holder extends RecyclerView.ViewHolder {
 
         private ItemBookBinding root;
 

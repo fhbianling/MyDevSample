@@ -13,16 +13,20 @@ import android.widget.TextView;
 
 import com.bian.base.baseclass.AbsBaseActivity;
 import com.bian.mydevsample.R;
+import com.bian.mydevsample.ui.fragment.adaptertest.Fragment1;
+import com.bian.mydevsample.ui.fragment.pageanim1.Fragment2;
+import com.bian.mydevsample.ui.fragment.pageanim2.Fragment3;
 
 public class MainActivity extends AbsBaseActivity implements TabLayout.OnTabSelectedListener {
-    private Fragment[] fragments = new Fragment[2];
+    private Fragment[] fragments = new Fragment[3];
 
     @Override
     protected void beforeOnCreate() {
         super.beforeOnCreate();
         LayoutInflaterCompat.setFactory(getLayoutInflater(), new LayoutInflaterFactory() {
             @Override
-            public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+            public View onCreateView(View parent, String name, Context context,
+                                     AttributeSet attrs) {
                 if ("TextView".equals(name)) {
                     TextView textView = new TextView(context, attrs);
                     textView.setTypeface(Typeface.create("", Typeface.ITALIC));
@@ -34,6 +38,11 @@ public class MainActivity extends AbsBaseActivity implements TabLayout.OnTabSele
     }
 
     @Override
+    protected boolean getShouldOnCreateSwipeBack() {
+        return false;
+    }
+
+    @Override
     protected int bindLayoutId() {
         return R.layout.activity_main;
     }
@@ -42,6 +51,7 @@ public class MainActivity extends AbsBaseActivity implements TabLayout.OnTabSele
     protected void initView(Bundle savedInstanceState) {
         fragments[0] = new Fragment1();
         fragments[1] = new Fragment2();
+        fragments[2] = new Fragment3();
         showFragment(fragments[0], R.id.fragmentContainer);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.addOnTabSelectedListener(this);

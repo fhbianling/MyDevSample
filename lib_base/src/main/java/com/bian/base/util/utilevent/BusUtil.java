@@ -11,15 +11,15 @@ import com.bian.base.util.utilbase.L;
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class EventUtil {
+public class BusUtil {
 
 
-    private final static String LOG_TAG = "EventUtil";
+    private final static String LOG_TAG = "BusUtil";
     private final EventBus bus;
-    private EventUtil() {
+    private BusUtil() {
         bus=EventBus.getDefault();
     }
-    public static EventUtil get() {
+    public static BusUtil get() {
         return Holder.BUS;
     }
 
@@ -41,6 +41,6 @@ public class EventUtil {
     }
 
     private static class Holder {
-        private static final EventUtil BUS = new EventUtil();
+        private static final BusUtil BUS = new BusUtil();
     }
 }

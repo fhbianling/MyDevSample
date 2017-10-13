@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bian.base.util.utilevent.EventUtil;
+import com.bian.base.util.utilevent.BusUtil;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -18,9 +18,12 @@ import org.greenrobot.eventbus.ThreadMode;
  * author 边凌
  * date 2017/4/21 10:31
  * desc ${Fragment基类}
+ * 功能：
+ * 事件总线支持
+ * {@link #shouldRegisterBus()}返回true，则该Fragment会注册事件总线，否则不会。
+ * 当注册后，重写{@link #handleMessage(Object)}即可接受事件
  */
 
-@SuppressWarnings({"UnusedParameters", "unused"})
 public abstract class AbsBaseFragment extends Fragment {
     private boolean first = true;
     private boolean firstOnResume = true;
@@ -28,12 +31,17 @@ public abstract class AbsBaseFragment extends Fragment {
     /**
      * 初始化布局
      */
-    protected abstract View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
+    protected abstract View createView(LayoutInflater inflater, ViewGroup container,
+                                       Bundle savedInstanceState);
 
     /**
      * 初始化view
      */
     protected abstract void initView(View rootView);
+
+    protected boolean shouldRegisterBus() {
+        return false;
+    }
 
     /**
      * 第一次对用户可见的回调
@@ -64,30 +72,35 @@ public abstract class AbsBaseFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View mView = createView(inflater, container, savedInstanceState);
         initView(mView);
         return mView;
     }
 
-    private void registerRxBus() {
-        EventUtil.get().register(this);
+    private void registerBus() {
+        if (shouldRegisterBus()) {
+            BusUtil.get().register(this);
+        }
     }
 
     @CallSuper
     public void onStart() {
         super.onStart();
-        registerRxBus();
+        registerBus();
     }
 
     @CallSuper
     public void onStop() {
         super.onStop();
-        unregisterRxBus();
+        unregisterBus();
     }
 
-    private void unregisterRxBus() {
-        EventUtil.get().unregister(this);
+    private void unregisterBus() {
+        if (shouldRegisterBus()) {
+            BusUtil.get().unregister(this);
+        }
     }
 
     @CallSuper
@@ -102,7 +115,8 @@ public abstract class AbsBaseFragment extends Fragment {
 
     public
     @Nullable
-    <T extends View> View findViewById(@IdRes int id) {
-        return getView() != null ? getView().findViewById(id) : null;
+    <T extends View> T findViewById(@IdRes int id) {
+        //noinspection unchecked
+        return getView() != null ? (T) getView().findViewById(id) : null;
     }
 }

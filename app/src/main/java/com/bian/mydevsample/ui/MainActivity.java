@@ -38,11 +38,6 @@ public class MainActivity extends AbsBaseActivity implements TabLayout.OnTabSele
     }
 
     @Override
-    protected boolean getShouldOnCreateSwipeBack() {
-        return false;
-    }
-
-    @Override
     protected int bindLayoutId() {
         return R.layout.activity_main;
     }

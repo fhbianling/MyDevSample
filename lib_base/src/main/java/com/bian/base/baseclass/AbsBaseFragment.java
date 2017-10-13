@@ -27,6 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public abstract class AbsBaseFragment extends Fragment {
     private boolean first = true;
     private boolean firstOnResume = true;
+    private View mView;
 
     /**
      * 初始化布局
@@ -72,9 +73,9 @@ public abstract class AbsBaseFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View mView = createView(inflater, container, savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
+        mView = createView(inflater, container, savedInstanceState);
         initView(mView);
         return mView;
     }
@@ -115,8 +116,7 @@ public abstract class AbsBaseFragment extends Fragment {
 
     public
     @Nullable
-    <T extends View> T findViewById(@IdRes int id) {
-        //noinspection unchecked
-        return getView() != null ? (T) getView().findViewById(id) : null;
+    <T extends View> View findViewById(@IdRes int id) {
+        return mView != null ? mView.findViewById(id) : null;
     }
 }

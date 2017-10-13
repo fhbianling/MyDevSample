@@ -48,6 +48,7 @@ public class Fragment4 extends AbsBaseFragment implements View.OnClickListener {
             imageViews[i] = (ImageView) findViewById(imgIds[i]);
 
         }
+
         animViewExecutor = new AnimViewExecutor(views);
         animViewExecutor.setDstScale(ScreenUtil.getScreenWidth(getContext()) / 2, ScreenUtil
                 .getScreenHeight(getContext()) / 2);

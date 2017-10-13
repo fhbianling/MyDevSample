@@ -6,10 +6,11 @@ import android.animation.ValueAnimator;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+
+import com.bian.base.util.utilbase.L;
 
 /**
  * author 边凌
@@ -17,7 +18,7 @@ import android.view.ViewTreeObserver;
  * 类描述：
  */
 
-public class AnimViewExecutor {
+public class AnimViewExecutor implements Animator.AnimatorListener {
     static final int DEGREE_PER_ROUND = 360;
     //转几圈
     private float roundsCounts = 1;
@@ -27,19 +28,6 @@ public class AnimViewExecutor {
     private AnimView[] toAnimtedView;
     private int scaleWidth, scaleHeight;
     private int executeIndex;
-
-    public AnimViewExecutor(View[] toAnimtedView) {
-        this.toAnimtedView = new AnimView[toAnimtedView.length];
-        for (int i = 0; i < toAnimtedView.length; i++) {
-            this.toAnimtedView[i] = new AnimView(toAnimtedView[i]);
-        }
-    }
-
-    public void execute() {
-        executeIndex = 0;
-        toAnimtedView[executeIndex].moveToDst(moveToListener);
-    }
-
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
@@ -50,43 +38,22 @@ public class AnimViewExecutor {
         }
     });
 
+    public AnimViewExecutor(View[] toAnimtedView) {
+        this.toAnimtedView = new AnimView[toAnimtedView.length];
+        for (int i = 0; i < toAnimtedView.length; i++) {
+            this.toAnimtedView[i] = new AnimView(toAnimtedView[i]);
+        }
+    }
+
+    public void execute() {
+        executeIndex = 0;
+        toAnimtedView[executeIndex].moveToDst(this);
+    }
+
     public void setDstScale(int scaleWidth, int scaleHeight) {
         this.scaleWidth = scaleWidth;
         this.scaleHeight = scaleHeight;
     }
-
-    private Animator.AnimatorListener moveToListener = new Animator.AnimatorListener() {
-        @Override
-        public void onAnimationStart(Animator animator) {
-
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animator) {
-            if (executeIndex == toAnimtedView.length) return;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                        handler.sendEmptyMessage(0);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animator) {
-
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animator) {
-
-        }
-    };
 
     public void setRoundsCounts(float roundsCounts) {
         this.roundsCounts = roundsCounts;
@@ -100,8 +67,39 @@ public class AnimViewExecutor {
         toAnimtedView[executeIndex].moveToOrigin();
         executeIndex++;
         if (executeIndex < toAnimtedView.length) {
-            toAnimtedView[executeIndex].moveToDst(moveToListener);
+            toAnimtedView[executeIndex].moveToDst(this);
         }
+    }
+
+    @Override
+    public void onAnimationStart(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationEnd(Animator animation) {
+        if (executeIndex == toAnimtedView.length) return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                    handler.sendEmptyMessage(0);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public void onAnimationCancel(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationRepeat(Animator animation) {
+
     }
 
     /**
@@ -117,7 +115,7 @@ public class AnimViewExecutor {
         private float k, b;
         private int parentWidth;
         private int parentHeight;
-        private int dstScale = 1;
+        private float dstScale = 1;
         private int indexOfChild;
         private ViewGroup parent;
 
@@ -140,14 +138,46 @@ public class AnimViewExecutor {
             });
         }
 
+        void moveToDst(Animator.AnimatorListener listener) {
+            moveViewToFront();
+            assignmentDstPoint();
+            assignmentScale();
+            ValueAnimator valueAnimator = ObjectAnimator.ofFloat(originPoint.x, dstPoint.x);
+            valueAnimator.setDuration(duration);
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    animProcess(valueAnimator);
+                }
+            });
+            valueAnimator.addListener(listener);
+            valueAnimator.start();
+        }
+
+        void moveToOrigin() {
+            moveViewToOriginIndex();
+            assignmentDstPoint();
+            ValueAnimator valueAnimator = ObjectAnimator.ofFloat(dstPoint.x, originPoint.x);
+            valueAnimator.setDuration(duration);
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    animProcess(valueAnimator);
+                }
+            });
+            valueAnimator.start();
+        }
+
         private void assignmentScale() {
             if (scaleWidth == 0 || scaleHeight == 0) return;
 
             if (view.getWidth() > view.getHeight()) {
-                dstScale = scaleWidth / view.getWidth();
+                dstScale = (float) scaleWidth / view.getWidth();
             } else {
-                dstScale = scaleHeight / view.getHeight();
+                dstScale = (float) scaleHeight / view.getHeight();
             }
+            L.i(String.valueOf(hashCode()),
+                "width:" + view.getWidth() + ",height:" + view.getHeight() + "|scaleWidth:" + scaleWidth + ",scaleHeight:" + scaleHeight + "|dstScale:" + dstScale);
         }
 
         private void assignmentKAndB() {
@@ -157,7 +187,7 @@ public class AnimViewExecutor {
 
         private void assignmentDstPoint() {
             if (parentWidth == 0) {
-                parent = getParent();
+                parent = (ViewGroup) view.getParent();
                 parentWidth = parent.getWidth();
                 parentHeight = parent.getHeight();
             }
@@ -170,40 +200,6 @@ public class AnimViewExecutor {
             originPoint = new PointF();
             originPoint.x = view.getLeft();
             originPoint.y = view.getTop();
-        }
-
-        void moveToDst(Animator.AnimatorListener listener) {
-            if (indexOfChild == 0) {
-                indexOfChild = parent.indexOfChild(view);
-            }
-            parent.removeView(view);
-            parent.addView(view);
-
-            assignmentDstPoint();
-            assignmentScale();
-            ValueAnimator valueAnimator = ObjectAnimator.ofFloat(originPoint.x, dstPoint.x);
-            valueAnimator.setDuration(duration);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    float x = (float) valueAnimator.getAnimatedValue();
-                    float y = k * x + b;
-                    float r = getRotationOfView(x);
-                    float scale = getScale(x);
-                    view.setX(x);
-                    view.setY(y);
-                    view.setRotation(r);
-                    Log.d("moveTo", this.toString() + "Scale:" + scale);
-                    view.setScaleX(scale);
-                    view.setScaleY(scale);
-                }
-            });
-            valueAnimator.addListener(listener);
-            valueAnimator.start();
-        }
-
-        private ViewGroup getParent() {
-            return (ViewGroup) view.getParent();
         }
 
         /**
@@ -236,30 +232,29 @@ public class AnimViewExecutor {
                             .x);
         }
 
-        void moveToOrigin() {
+        private void moveViewToFront() {
+            if (indexOfChild == 0) {
+                indexOfChild = parent.indexOfChild(view);
+            }
+            parent.removeView(view);
+            parent.addView(view);
+        }
+
+        private void moveViewToOriginIndex() {
             parent.removeView(view);
             parent.addView(view, indexOfChild);
-            assignmentDstPoint();
-            ValueAnimator valueAnimator = ObjectAnimator.ofFloat(dstPoint.x, originPoint.x);
-            valueAnimator.setDuration(duration);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+        }
 
-                    float x = (float) valueAnimator.getAnimatedValue();
-                    float y = k * x + b;
-                    float r = getRotationOfView(x);
-                    float scale = getScale(x);
-                    Log.d("moveBack", this.toString() + "Scale:" + scale);
-
-                    view.setX(x);
-                    view.setY(y);
-                    view.setRotation(r);
-                    view.setScaleX(scale);
-                    view.setScaleY(scale);
-                }
-            });
-            valueAnimator.start();
+        private void animProcess(ValueAnimator valueAnimator) {
+            float x = (float) valueAnimator.getAnimatedValue();
+            float y = k * x + b;
+            float r = getRotationOfView(x);
+            float scale = getScale(x);
+            view.setX(x);
+            view.setY(y);
+            view.setRotation(r);
+            view.setScaleX(scale);
+            view.setScaleY(scale);
         }
     }
 }

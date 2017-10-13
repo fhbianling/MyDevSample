@@ -1,0 +1,60 @@
+package com.bian.mydevsample.ui.fragment.button;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import com.bian.base.baseclass.AbsBaseFragment;
+import com.bian.mydevsample.R;
+import com.bian.mydevsample.ui.media.MediaPlayerActivity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.tencent.bugly.crashreport.crash.c.i;
+
+/**
+ * author 边凌
+ * date 2017/10/13 15:19
+ * 类描述：
+ */
+
+public class Fragment6 extends AbsBaseFragment implements AdapterView.OnItemClickListener {
+    private ListView buttonList;
+    private Adapter adapter;
+
+    @Override
+    protected View createView(LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_6, container, false);
+    }
+
+    @Override
+    protected void initView(View rootView) {
+        buttonList = (ListView) rootView.findViewById(R.id.buttonList);
+        List<ButtonDesc> buttonDescs = new ArrayList<>();
+        buttonDescs.add(new ButtonDesc("音乐播放器",0));
+        adapter = new Adapter(buttonDescs, getActivity());
+        buttonList.setAdapter(adapter);
+        buttonList.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        ButtonDesc item = adapter.getItem(position);
+        if (item != null) {
+            onClick(item.id);
+        }
+    }
+
+    private void onClick(int id) {
+        switch (id){
+            case 0:
+                MediaPlayerActivity.start(getContext(),"");
+                break;
+        }
+    }
+}

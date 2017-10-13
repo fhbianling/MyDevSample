@@ -15,21 +15,29 @@ import java.util.Set;
 /**
  * author 边凌
  * date 2017/10/13 11:15
- * 类描述：
+ * 类描述：用于执行滚动通知动画的工具类
+ * <p>
+ * 对外暴露的核心方法：
+ *
+ * @see #execute(View)
+ * @see #setInitHeight(int)
+ * @see #setPause()
+ * @see #setResume()
+ * @see #isPause()
  */
 
 // fixme: 2017/10/13 当执行动画的队列中包含的view高度不等时，显示会出现重叠的现象
 public class FloatingAnimSubmitter {
     /**
-     * 单条动画的持续时间
+     * 单条动画的持续时间(单位毫秒)
      */
-    public static final int DURATION = 3000;
+    public static final long DURATION = 3000;
     /**
-     * 同时显示的浮动条槽位数
+     * 同时显示的浮动条槽位数，将槽位数设为1可以禁用槽位效果
      */
-    private final static int COUNT = 3;
+    private static final int COUNT = 3;
     private Activity activity;
-    private FloatingAnimSlotExecutor[] floatingAnimSlotExecutor = new FloatingAnimSlotExecutor[COUNT];
+    private SlotExecutor[] slotExecutor = new SlotExecutor[COUNT];
     private int[] heightValue = new int[COUNT];
     private int initHeight;
     private boolean pause;
@@ -46,16 +54,50 @@ public class FloatingAnimSubmitter {
     }
 
     /**
-     * 执行动画，这里只关注view动画,view动画的点击事件应该在外面写
+     * 执行动画，这个类只关注view动画,view动画的点击事件应该在外面写
      *
      * @param view 要执行动画的view
      */
     public void execute(View view) {
-        int viewAnimSlotIndex = calcViewAnimSlotIndex();
+        int viewAnimSlotIndex = calcSlotIndex();
         int heightValue = calcViewAnimHeight(viewAnimSlotIndex);
 
         if (indexValid(viewAnimSlotIndex)) {
-            floatingAnimSlotExecutor[viewAnimSlotIndex].execute(view, heightValue);
+            slotExecutor[viewAnimSlotIndex].execute(view, heightValue);
+        }
+    }
+
+    /**
+     * 考虑到当view点击事件发生时可能会打开新界面，
+     * 该方法暂停当前所有动画
+     */
+    public void setPause() {
+        pause = true;
+        for (SlotExecutor executor : slotExecutor) {
+            if (executor != null) {
+                executor.setPause();
+            }
+        }
+    }
+
+    /**
+     * 考虑到当view点击事件发生时可能会打开新界面，
+     * 该方法返回当前所有动画是否处于暂停状态
+     */
+    public boolean isPause() {
+        return pause;
+    }
+
+    /**
+     * 考虑到当view点击事件发生时可能会打开新界面，
+     * 该方法恢复到动画的正常流程中
+     */
+    public void setResume() {
+        pause = false;
+        for (SlotExecutor executor : slotExecutor) {
+            if (executor != null) {
+                executor.setResume();
+            }
         }
     }
 
@@ -63,21 +105,23 @@ public class FloatingAnimSubmitter {
      * 验证槽位序号有效
      */
     private boolean indexValid(int viewAnimSlotIndex) {
-        return viewAnimSlotIndex < floatingAnimSlotExecutor.length;
+        return viewAnimSlotIndex < slotExecutor.length;
     }
 
     /**
-     * 计算view应该被排入的槽位的序号
+     * 计算view应该被插入的槽位的序号
+     * <p>
+     * 逻辑：内部的view集合的大小最小的槽位既是view应该被插入的槽位，以达到看起来弹幕在高度上平均分布的效果
      */
-    private int calcViewAnimSlotIndex() {
+    private int calcSlotIndex() {
         int result = 0;
-        for (int i = 0; i < floatingAnimSlotExecutor.length; i++) {
-            initIfNecessary(i);
-            if (floatingAnimSlotExecutor[result].getViewCount() > floatingAnimSlotExecutor[i]
+        for (int i = 0; i < slotExecutor.length; i++) {
+            initSlotIfNecessary(i);
+            if (slotExecutor[result].getViewCount() > slotExecutor[i]
                     .getViewCount()) {
                 result = i;
             }
-            heightValue[i] = floatingAnimSlotExecutor[i].getHeightOfView();
+            heightValue[i] = slotExecutor[i].getHeightOfView();
         }
         return result;
     }
@@ -93,43 +137,9 @@ public class FloatingAnimSubmitter {
         return heightValue;
     }
 
-    /**
-     * 考虑到当view点击事件发生时可能会打开新界面，
-     * 该方法暂停当前所有动画
-     */
-    public void setPause() {
-        pause = true;
-        for (FloatingAnimSlotExecutor animSlotExecutor : floatingAnimSlotExecutor) {
-            if (animSlotExecutor != null) {
-                animSlotExecutor.setPause();
-            }
-        }
-    }
-
-    /**
-     * 考虑到当view点击事件发生时可能会打开新界面，
-     * 该方法返回当前所有动画是否处于暂停状态
-     */
-    public boolean isPause() {
-        return pause;
-    }
-
-    /**
-     * 考虑到当view点击事件发生时可能会打开新界面，
-     * 该方法恢复当前所有动画
-     */
-    public void setResume() {
-        pause = false;
-        for (FloatingAnimSlotExecutor animSlotExecutor : floatingAnimSlotExecutor) {
-            if (animSlotExecutor != null) {
-                animSlotExecutor.setResume();
-            }
-        }
-    }
-
-    private void initIfNecessary(int i) {
-        if (floatingAnimSlotExecutor[i] == null) {
-            floatingAnimSlotExecutor[i] = new FloatingAnimSlotExecutor(activity);
+    private void initSlotIfNecessary(int i) {
+        if (slotExecutor[i] == null) {
+            slotExecutor[i] = new SlotExecutor(activity);
         }
     }
 
@@ -139,14 +149,14 @@ public class FloatingAnimSubmitter {
      * 类描述：单个浮动条槽位,描述该槽位中的view集合的动画执行逻辑
      */
 
-    private static class FloatingAnimSlotExecutor implements Animator.AnimatorListener {
+    private static class SlotExecutor implements Animator.AnimatorListener {
         private static int sStartX;
         private ViewGroup decorView;
         private Set<ViewDescribe> viewSet = new LinkedHashSet<>();
         private ValueAnimator valueAnimator;
         private ViewDescribe viewDescribe;
 
-        FloatingAnimSlotExecutor(Activity activity) {
+        SlotExecutor(Activity activity) {
             decorView = (ViewGroup) activity.getWindow().getDecorView();
         }
 
@@ -178,21 +188,19 @@ public class FloatingAnimSubmitter {
             return viewSet.size();
         }
 
-        /**
-         * 该方法中在view
-         *
-         * @param viewDescribe
-         */
         private void addToParentAndStartAnim(final ViewDescribe viewDescribe) {
             View view = viewDescribe.view;
             decorView.addView(view);
             startAnim(viewDescribe);
         }
 
+        /**
+         * 动画逻辑
+         */
         private void startAnim(ViewDescribe viewDescribe) {
             this.viewDescribe = viewDescribe;
             final View view = viewDescribe.view;
-            int yOfView = viewDescribe.yOfView;
+            int yOfView = viewDescribe.y;
             view.setY(yOfView);
             if (sStartX == 0) {
                 sStartX = view.getContext().getResources().getDisplayMetrics().widthPixels;
@@ -262,15 +270,15 @@ public class FloatingAnimSubmitter {
     }
 
     /**
-     * 描述view及其执行动画时应该处于的y坐标
+     * 描述view和其执行动画时应该处于的y坐标
      */
     private static class ViewDescribe {
         private View view;
-        private int yOfView;
+        private int y;
 
-        ViewDescribe(View view, int yOfView) {
+        ViewDescribe(View view, int y) {
             this.view = view;
-            this.yOfView = yOfView;
+            this.y = y;
         }
     }
 }

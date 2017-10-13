@@ -15,12 +15,13 @@ import com.bian.base.baseclass.AbsBaseActivity;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.ui.fragment.adaptertest.Fragment1;
 import com.bian.mydevsample.ui.fragment.animtest1.Fragment4;
+import com.bian.mydevsample.ui.fragment.button.Fragment6;
 import com.bian.mydevsample.ui.fragment.floatinganim.Fragment5;
 import com.bian.mydevsample.ui.fragment.pageanim1.Fragment2;
 import com.bian.mydevsample.ui.fragment.pageanim2.Fragment3;
 
 public class MainActivity extends AbsBaseActivity implements TabLayout.OnTabSelectedListener {
-    private Fragment[] fragments = new Fragment[5];
+    private Fragment[] fragments = new Fragment[6];
 
     @Override
     protected void beforeOnCreate() {
@@ -51,6 +52,7 @@ public class MainActivity extends AbsBaseActivity implements TabLayout.OnTabSele
         fragments[2] = new Fragment3();
         fragments[3] = new Fragment4();
         fragments[4] = new Fragment5();
+        fragments[5] = new Fragment6();
         showFragment(fragments[0], R.id.fragmentContainer);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.addOnTabSelectedListener(this);

@@ -15,11 +15,12 @@ import android.widget.TextView;
  * date 2017/9/26 10:14
  * 类描述：
  */
-public class DefaultHolder {
+public class ListDefaultHolder extends AbsBaseAdapter.ViewHolder {
     private View root;
     private SparseArray<View> viewCache;
 
-    public DefaultHolder(View root) {
+    public ListDefaultHolder(View root) {
+        super(root);
         this.root = root;
         viewCache = new SparseArray<>();
     }

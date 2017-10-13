@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bian.base.baseclass.AbsBaseFragment;
+import com.bian.base.util.utilbase.ToastUtil;
 import com.bian.mydevsample.R;
 
 /**
@@ -65,7 +66,13 @@ public class Fragment5 extends AbsBaseFragment implements View.OnClickListener {
     }
 
     private View getToastView(boolean isTall) {
-        TextView view = new TextView(getContext());
+        final TextView view = new TextView(getContext());
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastUtil.showToastShort(view.getText().toString());
+            }
+        });
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                                                                          isTall ? 200 : 100);
         view.setLayoutParams(layoutParams);

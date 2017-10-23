@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.bian.base.baseclass.AbsBaseFragment;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.ui.WeiTuanAnimTestActivity;
+import com.bian.mydevsample.ui.daggerstudy.Dagger2StudyActivity;
 import com.bian.mydevsample.ui.media.MediaPlayerActivity;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class Fragment6 extends AbsBaseFragment implements AdapterView.OnItemClic
         List<ButtonDesc> buttonDescs = new ArrayList<>();
         buttonDescs.add(new ButtonDesc("音乐播放器", 0));
         buttonDescs.add(new ButtonDesc("微团项目动画测试", 1));
+        buttonDescs.add(new ButtonDesc("Dagger2学习", 2));
         adapter = new Adapter(buttonDescs, getActivity());
         buttonList.setAdapter(adapter);
         buttonList.setOnItemClickListener(this);
@@ -57,6 +59,9 @@ public class Fragment6 extends AbsBaseFragment implements AdapterView.OnItemClic
                 break;
             case 1:
                 WeiTuanAnimTestActivity.start(getContext());
+                break;
+            case 2:
+                Dagger2StudyActivity.start(getContext());
                 break;
         }
     }

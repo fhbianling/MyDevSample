@@ -9,12 +9,11 @@ import android.widget.ListView;
 
 import com.bian.base.baseclass.AbsBaseFragment;
 import com.bian.mydevsample.R;
+import com.bian.mydevsample.ui.WeiTuanAnimTestActivity;
 import com.bian.mydevsample.ui.media.MediaPlayerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.tencent.bugly.crashreport.crash.c.i;
 
 /**
  * author 边凌
@@ -36,7 +35,8 @@ public class Fragment6 extends AbsBaseFragment implements AdapterView.OnItemClic
     protected void initView(View rootView) {
         buttonList = (ListView) rootView.findViewById(R.id.buttonList);
         List<ButtonDesc> buttonDescs = new ArrayList<>();
-        buttonDescs.add(new ButtonDesc("音乐播放器",0));
+        buttonDescs.add(new ButtonDesc("音乐播放器", 0));
+        buttonDescs.add(new ButtonDesc("微团项目动画测试", 1));
         adapter = new Adapter(buttonDescs, getActivity());
         buttonList.setAdapter(adapter);
         buttonList.setOnItemClickListener(this);
@@ -51,9 +51,12 @@ public class Fragment6 extends AbsBaseFragment implements AdapterView.OnItemClic
     }
 
     private void onClick(int id) {
-        switch (id){
+        switch (id) {
             case 0:
-                MediaPlayerActivity.start(getContext(),"");
+                MediaPlayerActivity.start(getContext(), "");
+                break;
+            case 1:
+                WeiTuanAnimTestActivity.start(getContext());
                 break;
         }
     }

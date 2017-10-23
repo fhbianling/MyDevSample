@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/img2"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:src="@android:color/holo_red_dark"/>
+
+        <ImageView
+            android:id="@+id/img1"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_1"/>
+    </RelativeLayout>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:onClick="start"
+            android:text="start"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_row="0"
+            android:onClick="back"
+            android:text="back"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_row="0"
+            android:onClick="reset"
+            android:text="reset"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="1"
+            android:onClick="function"
+            android:text="functionAfterStart"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="3"
+            android:onClick="functionBeforeBack"
+            android:text="functionBeforeBack"/>
+    </GridLayout>
+</LinearLayout>

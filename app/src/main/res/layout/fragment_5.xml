@@ -32,6 +32,15 @@
         android:layout_marginBottom="30dp"
         android:text="弹一条高度低的"/>
 
+    <Button
+        android:id="@+id/toastADialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/toastOneShort"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="弹一条类似弹窗的"/>
+
     <TextView
         android:id="@+id/toastDelay"
         android:layout_width="wrap_content"

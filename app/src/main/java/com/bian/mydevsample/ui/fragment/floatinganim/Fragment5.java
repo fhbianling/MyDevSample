@@ -33,6 +33,7 @@ public class Fragment5 extends AbsBaseFragment implements View.OnClickListener {
     protected void initView(View rootView) {
         rootView.findViewById(R.id.toastOneTall).setOnClickListener(this);
         rootView.findViewById(R.id.toastOneShort).setOnClickListener(this);
+        rootView.findViewById(R.id.toastADialog).setOnClickListener(this);
         pause = (TextView) rootView.findViewById(R.id.pause);
         pause.setOnClickListener(this);
         tv = (TextView) rootView.findViewById(R.id.toastDelay);
@@ -43,7 +44,6 @@ public class Fragment5 extends AbsBaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         count++;
-        boolean isTall = false;
         switch (v.getId()) {
             case R.id.toastOneShort:
                 tv.setText("点击次数：" + count);
@@ -62,6 +62,18 @@ public class Fragment5 extends AbsBaseFragment implements View.OnClickListener {
                     submiter.setPause();
                 }
                 break;
+            case R.id.toastADialog:
+                final View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_test,
+                                                                            (ViewGroup) getActivity().getWindow().getDecorView(),
+                                                                            false);
+                view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        submiter.cancel(view);
+                    }
+                });
+                submiter.execute(view);
+                break;
         }
     }
 
@@ -73,7 +85,7 @@ public class Fragment5 extends AbsBaseFragment implements View.OnClickListener {
                 ToastUtil.showToastShort(view.getText().toString());
             }
         });
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(isTall?200:100,
                                                                          isTall ? 200 : 100);
         view.setLayoutParams(layoutParams);
         view.setTextSize(32);

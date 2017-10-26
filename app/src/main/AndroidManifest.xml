@@ -20,6 +20,7 @@
         <activity android:name=".ui.media.MediaPlayerActivity"/>
         <activity android:name=".ui.WeiTuanAnimTestActivity"/>
         <activity android:name=".ui.daggerstudy.Dagger2StudyActivity"/>
+        <activity android:name=".ui.floating.FloatingAnimTestActivity"/>
     </application>
 
 </manifest>

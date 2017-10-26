@@ -1,12 +1,15 @@
 package com.bian.mydevsample.ui.fragment.floatinganim;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+
+import com.bian.base.util.utilbase.L;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -20,6 +23,7 @@ import java.util.Set;
  * 对外暴露的核心方法：
  *
  * @see #execute(View)
+ * @see #cancel(View)
  * @see #setInitHeight(int)
  * @see #setPause()
  * @see #setResume()
@@ -29,9 +33,13 @@ import java.util.Set;
 // fixme: 2017/10/13 当执行动画的队列中包含的view高度不等时，显示会出现重叠的现象
 public class FloatingAnimSubmitter {
     /**
-     * 单条动画的持续时间(单位毫秒)
+     * view在屏幕上的静止滞留时间
      */
-    public static final long DURATION = 3000;
+    public static final long DELAY_DURATION = 3000;
+    /**
+     * 进入屏幕中心和从屏幕中心移除到屏幕外的动画持续时间
+     */
+    public static final int ANIM_DURATION = 300;
     /**
      * 同时显示的浮动条槽位数，将槽位数设为1可以禁用槽位效果
      */
@@ -64,6 +72,25 @@ public class FloatingAnimSubmitter {
 
         if (indexValid(viewAnimSlotIndex)) {
             slotExecutor[viewAnimSlotIndex].execute(view, heightValue);
+        }
+    }
+
+    /**
+     * 取消动画，调用该方法时，会查找该类保存的view集合是否包含该view
+     * 若包含且该view正在执行动画的过程中，则会对该view执行从其当前位置向左移到屏幕外的动画
+     *
+     * @param view 对应execute传入的view
+     */
+    public void cancel(View view) {
+        for (SlotExecutor executor : slotExecutor) {
+            ViewDescribe viewDescribe = executor.viewDescribe;
+            if (viewDescribe == null || viewDescribe.view == null) {
+                continue;
+            }
+            if (viewDescribe.view.equals(view)) {
+                executor.cancel();
+                break;
+            }
         }
     }
 
@@ -153,8 +180,47 @@ public class FloatingAnimSubmitter {
         private static int sStartX;
         private ViewGroup decorView;
         private Set<ViewDescribe> viewSet = new LinkedHashSet<>();
-        private ValueAnimator valueAnimator;
+        //        private ValueAnimator valueAnimator;
         private ViewDescribe viewDescribe;
+        private AnimatorSet animatorSet;
+        private boolean executeDelayToGetViewWidth;
+        private ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                if (viewDescribe != null && viewDescribe.viewWidth == 0) {
+                    viewDescribe.viewWidth = viewDescribe.view.getWidth();
+                    viewDescribe.view.getViewTreeObserver().removeOnGlobalLayoutListener(
+                            onGlobalLayoutListener);
+                    realExecute();
+                }
+            }
+        };
+        private Animator.AnimatorListener cancelListener = new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (animatorSet != null) {
+                    animatorSet.removeListener(cancelListener);
+                    animatorSet.addListener(SlotExecutor.this);
+                }
+                animationEnd();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        };
 
         SlotExecutor(Activity activity) {
             decorView = (ViewGroup) activity.getWindow().getDecorView();
@@ -170,7 +236,9 @@ public class FloatingAnimSubmitter {
             viewSet.add(viewDescribe);
 
             //非动画播放状态则开始播放，否则什么都不做，等待当前view的播放完成
-            if (valueAnimator == null || !valueAnimator.isStarted()) {
+            boolean animatorDontPlaying = animatorSet == null || (!animatorSet.isStarted() && !animatorSet
+                    .isRunning());
+            if (animatorDontPlaying && !executeDelayToGetViewWidth) {
                 addToParentAndStartAnim(viewDescribe);
             }
         }
@@ -178,8 +246,12 @@ public class FloatingAnimSubmitter {
         int getHeightOfView() {
             if (viewSet.iterator().hasNext()) {
                 View view = viewSet.iterator().next().view;
-                view.measure(0, 0);
-                return view.getMeasuredHeight();
+                if (view.getHeight() == 0) {
+                    view.measure(0, 0);
+                    return view.getMeasuredHeight();
+                } else {
+                    return view.getHeight();
+                }
             }
             return 0;
         }
@@ -188,37 +260,73 @@ public class FloatingAnimSubmitter {
             return viewSet.size();
         }
 
+        /**
+         * 动画逻辑 先移动到中间，停留3秒，再移除边界
+         */
         private void addToParentAndStartAnim(final ViewDescribe viewDescribe) {
             View view = viewDescribe.view;
             decorView.addView(view);
-            startAnim(viewDescribe);
+            this.viewDescribe = viewDescribe;
+            this.viewDescribe.view.getViewTreeObserver()
+                                  .addOnGlobalLayoutListener(onGlobalLayoutListener);
         }
 
-        /**
-         * 动画逻辑
-         */
-        private void startAnim(ViewDescribe viewDescribe) {
-            this.viewDescribe = viewDescribe;
+        private void realExecute() {
+            executeDelayToGetViewWidth = true;
             final View view = viewDescribe.view;
             int yOfView = viewDescribe.y;
             view.setY(yOfView);
             if (sStartX == 0) {
                 sStartX = view.getContext().getResources().getDisplayMetrics().widthPixels;
+                L.d("Bian", "sStartX:" + sStartX);
             }
-            view.measure(0, 0);
-            int endX = -view.getMeasuredWidth();
+            int endXOfLeftScreen = -view.getWidth();
+            int endXOfMiddleScreen = sStartX / 2 - viewDescribe.viewWidth / 2;
+            view.setX(sStartX);
+            ObjectAnimator objectAnimator0 = ObjectAnimator.ofFloat(view,
+                                                                    "x",
+                                                                    sStartX,
+                                                                    endXOfMiddleScreen);
+//            ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view,
+//                                                                    "x",
+//                                                                    endXOfMiddleScreen,
+//                                                                    endXOfMiddleScreen);
+            ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(view,
+                                                                    "x",
+                                                                    endXOfMiddleScreen,
+                                                                    endXOfLeftScreen);
+            objectAnimator0.setDuration(ANIM_DURATION);
+//            objectAnimator1.setDuration(DELAY_DURATION);
+            objectAnimator2.setDuration(ANIM_DURATION);
+            if (animatorSet == null) {
+                animatorSet = new AnimatorSet();
+                animatorSet.addListener(this);
+            }
+            animatorSet.play(objectAnimator0);
+            animatorSet.play(objectAnimator2).after(DELAY_DURATION).after(objectAnimator0);
+            animatorSet.start();
+        }
 
-            valueAnimator = ObjectAnimator.ofInt(sStartX, endX);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    int x = (int) animation.getAnimatedValue();
-                    view.setX(x);
-                }
-            });
-            valueAnimator.addListener(this);
-            valueAnimator.setDuration(DURATION);
-            valueAnimator.start();
+        private void cancel() {
+            if (animatorSet == null) {
+                return;
+            }
+            L.d("Bian", "cancel");
+            animatorSet.removeListener(this);
+            animatorSet.cancel();
+            if (viewDescribe == null) {
+                return;
+            }
+            View view = viewDescribe.view;
+            float x = view.getX();
+            int endXOfLeftScreen = -viewDescribe.viewWidth;
+            L.d("Bian", "cancel:" + "x," + view.getX() + ",endXOfLeftScreen:" + endXOfLeftScreen);
+            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view, "x", x, endXOfLeftScreen);
+            objectAnimator.setDuration(ANIM_DURATION);
+            animatorSet = new AnimatorSet();
+            animatorSet.play(objectAnimator);
+            animatorSet.addListener(cancelListener);
+            animatorSet.start();
         }
 
         private void executeRemain() {
@@ -229,17 +337,17 @@ public class FloatingAnimSubmitter {
         }
 
         private void setPause() {
-            if (valueAnimator != null) {
+            if (animatorSet != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    valueAnimator.pause();
+                    animatorSet.pause();
                 }
             }
         }
 
         private void setResume() {
-            if (valueAnimator != null) {
+            if (animatorSet != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    valueAnimator.resume();
+                    animatorSet.resume();
                 }
             }
         }
@@ -251,6 +359,11 @@ public class FloatingAnimSubmitter {
 
         @Override
         public void onAnimationEnd(Animator animation) {
+            animationEnd();
+        }
+
+        private void animationEnd() {
+            executeDelayToGetViewWidth = false;
             if (viewDescribe != null) {
                 decorView.removeView(viewDescribe.view);
                 viewSet.remove(viewDescribe);
@@ -260,7 +373,6 @@ public class FloatingAnimSubmitter {
 
         @Override
         public void onAnimationCancel(Animator animation) {
-
         }
 
         @Override
@@ -275,6 +387,7 @@ public class FloatingAnimSubmitter {
     private static class ViewDescribe {
         private View view;
         private int y;
+        private int viewWidth;
 
         ViewDescribe(View view, int y) {
             this.view = view;

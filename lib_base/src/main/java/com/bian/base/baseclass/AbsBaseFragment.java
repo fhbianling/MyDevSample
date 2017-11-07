@@ -116,7 +116,7 @@ public abstract class AbsBaseFragment extends Fragment {
 
     public
     @Nullable
-    <T extends View> View findViewById(@IdRes int id) {
-        return mView != null ? mView.findViewById(id) : null;
+    <T extends View> T findViewById(@IdRes int id) {
+        return mView != null ? (T) mView.findViewById(id) : null;
     }
 }

@@ -46,8 +46,8 @@ public class WeiTuanAnimTestActivity extends BaseActivity implements Animator.An
 
     @Override
     protected void initView(Bundle savedInstanceState) {
-        img1 = (ImageView) findViewById(R.id.img1);
-        img2 = (ImageView) findViewById(R.id.img2);
+        img1 = findViewById(R.id.img1);
+        img2 = findViewById(R.id.img2);
     }
 
     public void reset(View view) {

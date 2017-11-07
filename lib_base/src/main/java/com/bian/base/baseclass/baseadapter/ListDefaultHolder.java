@@ -32,7 +32,7 @@ public class ListDefaultHolder extends AbsBaseAdapter.ViewHolder {
         View view = viewCache.get(id);
         try {
             if (view == null) {
-                t = (T) root.findViewById(id);
+                t = root.findViewById(id);
                 if (t != null) {
                     viewCache.put(id, t);
                 }

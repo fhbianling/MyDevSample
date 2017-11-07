@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.LayoutInflaterCompat;
-import android.support.v4.view.LayoutInflaterFactory;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,7 +26,17 @@ public class MainActivity extends AbsBaseActivity implements TabLayout.OnTabSele
     @Override
     protected void beforeOnCreate() {
         super.beforeOnCreate();
-        LayoutInflaterCompat.setFactory(getLayoutInflater(), new LayoutInflaterFactory() {
+        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new LayoutInflater.Factory2() {
+            @Override
+            public View onCreateView(String name, Context context, AttributeSet attrs) {
+                if ("TextView".equals(name)) {
+                    TextView textView = new TextView(context, attrs);
+                    textView.setTypeface(Typeface.create("", Typeface.ITALIC));
+                    return textView;
+                }
+                return null;
+            }
+
             @Override
             public View onCreateView(View parent, String name, Context context,
                                      AttributeSet attrs) {

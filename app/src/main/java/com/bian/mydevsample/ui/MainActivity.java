@@ -3,12 +3,16 @@ package com.bian.mydevsample.ui;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.bian.base.baseclass.AbsBaseActivity;
@@ -64,7 +68,7 @@ public class MainActivity extends AbsBaseActivity implements TabLayout.OnTabSele
         fragments[4] = new Fragment5();
         fragments[5] = new Fragment6();
         showFragment(fragments[0], R.id.fragmentContainer);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addOnTabSelectedListener(this);
     }
 

@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
-import com.bian.base.util.utilbase.L;
-
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -265,7 +263,9 @@ public class FloatingAnimSubmitter {
          */
         private void addToParentAndStartAnim(final ViewDescribe viewDescribe) {
             View view = viewDescribe.view;
-            decorView.addView(view);
+            decorView.addView(view,
+                              new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                                                         ViewGroup.LayoutParams.WRAP_CONTENT));
             this.viewDescribe = viewDescribe;
             this.viewDescribe.view.getViewTreeObserver()
                                   .addOnGlobalLayoutListener(onGlobalLayoutListener);
@@ -278,7 +278,6 @@ public class FloatingAnimSubmitter {
             view.setY(yOfView);
             if (sStartX == 0) {
                 sStartX = view.getContext().getResources().getDisplayMetrics().widthPixels;
-                L.d("Bian", "sStartX:" + sStartX);
             }
             int endXOfLeftScreen = -view.getWidth();
             int endXOfMiddleScreen = sStartX / 2 - viewDescribe.viewWidth / 2;
@@ -287,16 +286,11 @@ public class FloatingAnimSubmitter {
                                                                     "x",
                                                                     sStartX,
                                                                     endXOfMiddleScreen);
-//            ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(view,
-//                                                                    "x",
-//                                                                    endXOfMiddleScreen,
-//                                                                    endXOfMiddleScreen);
             ObjectAnimator objectAnimator2 = ObjectAnimator.ofFloat(view,
                                                                     "x",
                                                                     endXOfMiddleScreen,
                                                                     endXOfLeftScreen);
             objectAnimator0.setDuration(ANIM_DURATION);
-//            objectAnimator1.setDuration(DELAY_DURATION);
             objectAnimator2.setDuration(ANIM_DURATION);
             if (animatorSet == null) {
                 animatorSet = new AnimatorSet();
@@ -311,7 +305,6 @@ public class FloatingAnimSubmitter {
             if (animatorSet == null) {
                 return;
             }
-            L.d("Bian", "cancel");
             animatorSet.removeListener(this);
             animatorSet.cancel();
             if (viewDescribe == null) {
@@ -320,7 +313,6 @@ public class FloatingAnimSubmitter {
             View view = viewDescribe.view;
             float x = view.getX();
             int endXOfLeftScreen = -viewDescribe.viewWidth;
-            L.d("Bian", "cancel:" + "x," + view.getX() + ",endXOfLeftScreen:" + endXOfLeftScreen);
             ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view, "x", x, endXOfLeftScreen);
             objectAnimator.setDuration(ANIM_DURATION);
             animatorSet = new AnimatorSet();

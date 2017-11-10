@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 
-import com.bian.base.component.widget.SpringViewPTR;
 import com.bian.base.util.utilbase.L;
 
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import static com.bian.base.baseclass.baseadapter.PullToRefresh.Mode.Both;
  * 通过重写{@link #getDataLoader()}方法提供一个数据加载器，以适配任何一个网络框架,
  *
  * @see RetrofitDataLoader 一个实现了{@link DataLoader}接口的Retrofit数据加载器的示例
- * @see SpringViewPTR 一个实现了{@link PullToRefresh}接口的上下拉刷新框架示例
  * @see #setOnDataLoadListener(OnDataLoadListener) 对该适配器加载数据添加数据加载过程的监听支持
  * @see #setOnDataNotifyListener(OnDataNotifyListener) 对该适配器加载数据添加数据更新的监听支持
  */

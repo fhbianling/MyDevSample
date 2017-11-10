@@ -12,16 +12,29 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding{
+    dataBinding {
         enabled true
     }
 }
 
+android.applicationVariants.all {
+    variant ->
+        variant.outputs.each { output ->
+            def file = output.outputFile
+            file.renameTo(file.name.replace(".apk", "-${variant.versionCode}.apk"))
+        }
+}
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -30,7 +43,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
-    implementation project(':lib_base')
+    api project(':lib_base')
     implementation project(':lib_image')
     implementation project(':lib_media')
     implementation "com.android.support:design:$supportLibraryVersion"

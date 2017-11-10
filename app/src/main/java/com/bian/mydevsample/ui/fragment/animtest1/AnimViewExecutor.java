@@ -64,6 +64,7 @@ public class AnimViewExecutor implements Animator.AnimatorListener {
     }
 
     private void resume() {
+        if (executeIndex==toAnimtedView.length)return;
         toAnimtedView[executeIndex].moveToOrigin();
         executeIndex++;
         if (executeIndex < toAnimtedView.length) {

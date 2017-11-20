@@ -11,12 +11,12 @@ import com.bian.base.baseclass.baseadapter.BasePTRAdapter;
 import com.bian.base.baseclass.baseadapter.DataLoader;
 import com.bian.base.baseclass.baseadapter.LoadType;
 import com.bian.base.baseclass.baseadapter.RetrofitDataLoader;
-import com.bian.base.component.net.Api;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.bean.BookBean;
 import com.bian.mydevsample.bean.BookRequest;
 import com.bian.mydevsample.databinding.ItemBookBinding;
 import com.bian.mydevsample.net.BookService;
+import com.bian.net.Api;
 
 import java.util.List;
 

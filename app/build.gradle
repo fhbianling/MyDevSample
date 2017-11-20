@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 
 android {
@@ -16,6 +18,12 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            applicationVariants.all {
+                variant ->
+                    variant.outputs.all { output ->
+                        outputFileName=outputFileName.replace(".apk", "-${variant.versionName}-${date()}.apk")
+                    }
+            }
         }
         release {
             minifyEnabled true
@@ -28,13 +36,12 @@ android {
     }
 }
 
-android.applicationVariants.all {
-    variant ->
-        variant.outputs.each { output ->
-            def file = output.outputFile
-            file.renameTo(file.name.replace(".apk", "-${variant.versionCode}.apk"))
-        }
+static String date(){
+    def df=new SimpleDateFormat("yyyyMMdd_hhmm")
+    println("try run date")
+    df.format(System.currentTimeMillis())
 }
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -47,4 +54,5 @@ dependencies {
     implementation project(':lib_image')
     implementation project(':lib_media')
     implementation "com.android.support:design:$supportLibraryVersion"
+    implementation project(':lib_net')
 }

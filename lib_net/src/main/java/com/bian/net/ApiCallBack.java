@@ -1,4 +1,4 @@
-package com.bian.base.component.net;
+package com.bian.net;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

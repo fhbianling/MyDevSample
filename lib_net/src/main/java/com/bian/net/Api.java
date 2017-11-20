@@ -1,8 +1,8 @@
-package com.bian.base.component.net;
+package com.bian.net;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.bian.base.util.utilbase.L;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -27,9 +27,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Api {
     private final static String LOG_TAG = "Api";
     private final static HashMap<String, Object> sServiceCache = new HashMap<>();
+    static boolean sHttpLoggingEnable = true;
     private static Retrofit sRetrofit;
     private static String baseUrl;
-    private static boolean sHttpLoggingEnable = true;
     private static Interceptor[] interceptors;
     private static Converter.Factory[] sFactories;
 
@@ -40,6 +40,7 @@ public class Api {
     /**
      * 设置是否输出网络访问日志，注意，当使用Retrofit下载大文件时，通过该方法输出网络访问日志会导致App崩溃
      */
+    @SuppressWarnings("unused")
     public static void setHttpLoggingEnable(boolean httpLoggingEnable) {
         Api.sHttpLoggingEnable = httpLoggingEnable;
     }
@@ -114,10 +115,20 @@ public class Api {
      * 设置baseUrl
      */
     public static void setBaseUrl(String baseUrl) {
+        setBaseUrl(baseUrl, null);
+    }
+
+    /**
+     * 设置baseUrl
+     *
+     * @param builder 如果传入builder则会使用传入的builder来进行构建而非默认的
+     */
+    @SuppressWarnings({"WeakerAccess", "SameParameterValue"})
+    public static void setBaseUrl(String baseUrl, @Nullable Retrofit.Builder builder) {
         Api.baseUrl = baseUrl;
-        L.d(LOG_TAG, "Base url is setting:" + baseUrl);
+        Util.d(LOG_TAG, "Base url is setting:" + baseUrl);
         clearServiceCache();
-        initApi();
+        initApi(builder);
     }
 
     private static OkHttpClient createClient() {
@@ -136,18 +147,16 @@ public class Api {
             private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
 
             @Override
-            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+            public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
                 cookieStore.put(url, cookies);
             }
 
             @Override
-            public List<Cookie> loadForRequest(HttpUrl url) {
+            public List<Cookie> loadForRequest(@NonNull HttpUrl url) {
                 List<Cookie> cookies = cookieStore.get(url);
                 return cookies != null ? cookies : new ArrayList<Cookie>();
             }
-        }).
-                readTimeout(60, TimeUnit.SECONDS).
-                connectTimeout(60, TimeUnit.SECONDS);
+        }).readTimeout(60, TimeUnit.SECONDS).connectTimeout(60, TimeUnit.SECONDS);
 
         return builder.build();
     }
@@ -159,21 +168,28 @@ public class Api {
             @Override
             public void log(String message) {
                 /*在某些情况下可能无法看到返回的json数据，比如服务器做出了特殊设置*/
-                L.printJson(LOG_TAG, message);
+                Util.printJson(LOG_TAG, message);
             }
         });
         sHttpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         return sHttpLoggingInterceptor;
     }
 
-    private static void initApi() {
-        GsonBuilder builder = new GsonBuilder();
-        builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        Gson gson = builder.create();
+    private static void initApi(Retrofit.Builder builder) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        Gson gson = gsonBuilder.create();
 
-        Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
-                .baseUrl(getBaseUrl())
-                .client(createClient());
+        Retrofit.Builder retrofitBuilder;
+        if (builder != null) {
+            retrofitBuilder = builder;
+            builder.baseUrl(getBaseUrl());
+        } else {
+            retrofitBuilder = new Retrofit.Builder()
+                    .baseUrl(getBaseUrl())
+                    .client(createClient());
+        }
+
 
         if (sFactories != null) {
             for (Converter.Factory factory : sFactories) {
@@ -181,9 +197,8 @@ public class Api {
             }
         }
 
-        Api.sRetrofit = retrofitBuilder.
-                addConverterFactory(GsonConverterFactory.create(gson)).
-                build();
+        Api.sRetrofit = retrofitBuilder.addConverterFactory(GsonConverterFactory.create(gson))
+                                       .build();
     }
 
 }

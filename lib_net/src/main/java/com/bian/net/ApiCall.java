@@ -1,18 +1,17 @@
-package com.bian.base.component.net;
+package com.bian.net;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.bian.base.util.utilbase.AppActivityManager;
-import com.bian.base.util.utilthrowable.ResponseBodyNullException;
-
 import java.lang.ref.WeakReference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.bian.net.Util.isActivityDestroyed;
 
 /**
  * author 边凌
@@ -69,13 +68,15 @@ public class ApiCall {
         show();
         call.enqueue(new Callback<T>() {
             @Override
-            public void onResponse(Call<T> call, Response<T> response) {
+            public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
                 if (apiCallBack == null) {
                     hide();
                     return;
                 }
 
                 if (!checkResponseNull(response)) {
+                    //这里经过check后body不可能为Null
+                    //noinspection ConstantConditions
                     apiCallBack.onSuccess(response.body());
                 } else {
                     apiCallBack.onFailure(new ResponseBodyNullException());
@@ -85,7 +86,7 @@ public class ApiCall {
             }
 
             @Override
-            public void onFailure(Call<T> call, Throwable t) {
+            public void onFailure(@NonNull Call<T> call, @NonNull Throwable t) {
                 if (apiCallBack != null) {
                     apiCallBack.onFailure(t);
                 }
@@ -97,7 +98,8 @@ public class ApiCall {
     /**
      * @param showLoadingDialog 是否加载显示弹窗
      */
-    public <T> void enqueue(boolean showLoadingDialog, Call<T> call, final ApiCallBack<T> apiCallBack) {
+    public <T> void enqueue(boolean showLoadingDialog, Call<T> call,
+                            final ApiCallBack<T> apiCallBack) {
         this.showLoadingDialog = showLoadingDialog;
         enqueue(call, apiCallBack);
     }
@@ -128,8 +130,10 @@ public class ApiCall {
     }
 
     private boolean canShowLoadingDialog(Context context) {
-        return context != null && context instanceof Activity && !AppActivityManager.isActivityDestroyed((Activity) context);
+        return context != null && context instanceof Activity && !isActivityDestroyed(
+                (Activity) context);
     }
+
 
     private void hide() {
         if (!showLoadingDialog) {

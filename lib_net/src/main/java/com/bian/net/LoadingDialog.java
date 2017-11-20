@@ -1,12 +1,10 @@
-package com.bian.base.component.net;
+package com.bian.net;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.widget.ImageView;
-
-import com.bian.base.R;
 
 
 /**
@@ -18,7 +16,7 @@ import com.bian.base.R;
 public class LoadingDialog extends Dialog {
 
     public LoadingDialog(Context context) {
-        super(context, R.style.LoadingDialog);
+        super(context, R.style.DefaultNetLoadingDialog);
     }
 
     @Override
@@ -29,7 +27,7 @@ public class LoadingDialog extends Dialog {
 
     private void initializeView() {
         setContentView(R.layout.loading_dialog_layout);
-        ImageView loadingImageView = (ImageView) findViewById(R.id.loading_ImageView);
+        ImageView loadingImageView = findViewById(R.id.loading_ImageView);
         loadingImageView.setImageResource(R.drawable.loading_anim);
         AnimationDrawable animationDrawable = (AnimationDrawable) loadingImageView.getDrawable();
         animationDrawable.start();

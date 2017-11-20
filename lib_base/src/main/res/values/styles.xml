@@ -10,19 +10,6 @@
         <item name="android:windowDisablePreview">true</item>
     </style>
 
-    <style name="LoadingDialog" parent="@android:style/Theme.Dialog">
-        <!-- 设置未浮动窗口 -->
-        <item name="android:windowIsFloating">true</item>
-        <!-- 设置无边框 -->
-        <item name="android:windowFrame">@null</item>
-        <!-- 设置无标题 -->
-        <item name="android:windowNoTitle">true</item>
-        <!-- 设置完全透明 -->
-        <item name="android:windowBackground">@color/testloadingbg</item>
-        <!-- 设置屏幕变暗 -->
-        <item name="android:backgroundDimEnabled">false</item>
-    </style>
-
     <style name="Line_H">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0.5dp</item>

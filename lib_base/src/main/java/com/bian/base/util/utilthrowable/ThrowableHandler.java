@@ -39,8 +39,6 @@ public class ThrowableHandler {
             } else if (t instanceof ConnectException ||
                     t instanceof NoRouteToHostException) {
                 ToastUtil.showToastShort("服务器暂时无法连接，请稍后重试");
-            } else if (t instanceof ResponseBodyNullException){
-                ToastUtil.showToastShort("服务器异常，请稍后重试");
             }
         } else {
             L.e("要处理的异常对象为空");

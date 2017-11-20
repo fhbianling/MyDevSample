@@ -4,8 +4,6 @@ import android.app.Application;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 
-import com.bian.base.component.net.Api;
-import com.bian.base.component.net.ParamBuilder;
 import com.bian.base.util.utilbase.L;
 import com.bian.base.util.utilbase.SharedPrefUtil;
 import com.bian.base.util.utilbase.ToastUtil;
@@ -37,15 +35,8 @@ public class BaseUtilManager {
         SharedPrefUtil.init(application);
         ThrowableHandler.init(application);
         ToastUtil.init(application);
-        ParamBuilder.setDEBUG(debug);
-        Api.setHttpLoggingEnable(debug);
         L.setDEBUG(debug);
     }
-
-    public static void setHttpLoggingEnable(boolean loggingEnable) {
-        Api.setHttpLoggingEnable(loggingEnable);
-    }
-
     public static void setDebugTag(String tag) {
         L.setTAG(tag);
     }
@@ -59,9 +50,5 @@ public class BaseUtilManager {
 
     public static void setToastStyle(@LayoutRes int layoutRes, @IdRes int textViewId) {
         ToastUtil.setStyle(layoutRes, textViewId);
-    }
-
-    public static void setBaseUrl(String baseUrl) {
-        Api.setBaseUrl(baseUrl);
     }
 }

@@ -1,4 +1,4 @@
-package com.bian.base.util.utilthrowable;
+package com.bian.net;
 
 /**
  * author 边凌
@@ -6,7 +6,8 @@ package com.bian.base.util.utilthrowable;
  * desc ${服务器返回数据为空}
  */
 
-public class ResponseBodyNullException extends BaseException{
+@SuppressWarnings("WeakerAccess")
+public class ResponseBodyNullException extends Exception{
     public ResponseBodyNullException() {
         super("返回数据为空");
     }

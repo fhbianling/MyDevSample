@@ -292,11 +292,11 @@ public class FloatingAnimSubmitter {
                                                                     endXOfLeftScreen);
             objectAnimator0.setDuration(ANIM_DURATION);
             objectAnimator2.setDuration(ANIM_DURATION);
-            if (animatorSet == null) {
+//            if (animatorSet == null) {
                 animatorSet = new AnimatorSet();
                 animatorSet.addListener(this);
-            }
-            animatorSet.play(objectAnimator0);
+//            }
+//            animatorSet.play(objectAnimator0);
             animatorSet.play(objectAnimator2).after(DELAY_DURATION).after(objectAnimator0);
             animatorSet.start();
         }

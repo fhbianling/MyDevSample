@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <com.bian.base.component.widget.SpringViewPTR
+    <com.bian.base.widget.SpringViewPTR
         android:id="@+id/ptr"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -18,9 +18,9 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-    </com.bian.base.component.widget.SpringViewPTR>
+    </com.bian.base.widget.SpringViewPTR>
 
-    <com.bian.base.component.widget.SpringViewPTR
+    <com.bian.base.widget.SpringViewPTR
         android:id="@+id/ptr2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -32,5 +32,5 @@
             android:id="@+id/list2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-    </com.bian.base.component.widget.SpringViewPTR>
+    </com.bian.base.widget.SpringViewPTR>
 </LinearLayout>

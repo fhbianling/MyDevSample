@@ -126,7 +126,7 @@ public class Api {
     @SuppressWarnings({"WeakerAccess", "SameParameterValue"})
     public static void setBaseUrl(String baseUrl, @Nullable Retrofit.Builder builder) {
         Api.baseUrl = baseUrl;
-        Util.d(LOG_TAG, "Base url is setting:" + baseUrl);
+        Util.i(LOG_TAG, "Base url is setting:" + baseUrl);
         clearServiceCache();
         initApi(builder);
     }

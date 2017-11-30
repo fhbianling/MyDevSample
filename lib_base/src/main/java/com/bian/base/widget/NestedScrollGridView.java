@@ -1,4 +1,4 @@
-package com.bian.base.component.widget;
+package com.bian.base.widget;
 
 import android.content.Context;
 import android.os.Build;

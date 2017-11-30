@@ -10,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".ui.InfoTextViewActivity">
+        <!--<activity android:name=".ui.MainActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +21,9 @@
         <activity android:name=".ui.media.MediaPlayerActivity"/>
         <activity android:name=".ui.WeiTuanAnimTestActivity"/>
         <activity android:name=".ui.daggerstudy.Dagger2StudyActivity"/>
-        <activity android:name=".ui.floating.FloatingAnimTestActivity"/>
+        <activity android:name=".ui.InfoTextViewSampleActivity"/>
+
+        <!--<activity android:name=".ui.InfoTextViewActivity"/>-->
     </application>
 
 </manifest>

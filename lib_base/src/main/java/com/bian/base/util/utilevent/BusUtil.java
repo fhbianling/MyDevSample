@@ -1,8 +1,9 @@
 package com.bian.base.util.utilevent;
 
+import com.bian.base.util.utilbase.L;
+
 import org.greenrobot.eventbus.EventBus;
 
-import com.bian.base.util.utilbase.L;
 
 /**
  * author 边凌

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.bian.base.widget.info.InfoTextView
+        android:id="@+id/avatar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:dividerBottomColor="#ccc"
+        app:dividerBottomPaddingLeft="13dp"
+        app:drawableRight="@mipmap/right_arrow"
+        app:drawableRightPadding="12dp"
+        app:hintColor="#101014"
+        app:hintSize="14sp"
+        app:hintText="头像"
+        app:infoImageViewSideLength="40dp"
+        app:infoViewType="ImageView"
+        app:paddingLeft="13dp"
+        app:paddingRight="13dp"/>
+
+    <com.bian.base.widget.info.InfoTextView
+        android:id="@+id/nickNameShow"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:dividerBottomColor="#ccc"
+        app:dividerBottomPaddingLeft="13dp"
+        app:drawableRight="@mipmap/right_arrow"
+        app:drawableRightPadding="12dp"
+        app:hintColor="#101014"
+        app:hintSize="14sp"
+        app:hintText="昵称"
+        app:infoHintColor="#999"
+        app:infoHintText="请输入昵称"
+        app:infoText="多一层五花肉"
+        app:infoTextColor="#787b86"
+        app:infoTextGravity="Right"
+        app:infoTextViewSize="14sp"
+        app:infoViewType="EditText"
+        app:paddingLeft="13dp"
+        app:paddingRight="13dp"/>
+
+    <com.bian.base.widget.info.InfoTextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        app:dividerBottomColor="#ccc"
+        app:dividerBottomPaddingLeft="13dp"
+        app:drawableRight="@mipmap/right_arrow"
+        app:drawableRightPadding="12dp"
+        app:hintColor="#101014"
+        app:hintSize="14sp"
+        app:hintText="手机号绑定"
+        app:infoText="180 4855 5787"
+        app:infoTextColor="#787b86"
+        app:infoTextGravity="Right"
+        app:infoTextViewSize="14sp"
+        app:paddingLeft="13dp"
+        app:paddingRight="13dp"/>
+
+    <com.bian.base.widget.info.InfoTextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        app:dividerBottomColor="#ccc"
+        app:dividerBottomPaddingLeft="13dp"
+        app:drawableRight="@mipmap/ic_add_green"
+        app:drawableRightPadding="12dp"
+        app:drawableRightSideLength="24dp"
+        app:hintColor="#101014"
+        app:hintSize="14sp"
+        app:hintText="添加人员"
+        app:infoBackground="@drawable/et_selector"
+        app:infoHintColor="#787b86"
+        app:infoHintText="请添加团队人员"
+        app:infoPadding="17dp"
+        app:infoTextColor="#787b86"
+        app:infoTextGravity="Left"
+        app:infoTextViewSize="14sp"
+        app:infoViewBottomMargin="5dp"
+        app:infoViewLeftPadding="15dp"
+        app:infoViewRightPadding="15dp"
+        app:infoViewSingleLine="true"
+        app:infoViewTopMargin="5dp"
+        app:infoViewType="EditText"
+        app:paddingLeft="13dp"
+        app:paddingRight="13dp"/>
+
+    <com.bian.base.widget.info.InfoTextView
+        android:id="@+id/drawableClick"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        app:dividerBottomColor="#ccc"
+        app:drawableRight="@mipmap/ic_add_green"
+        app:drawableRightPadding="12dp"
+        app:drawableRightSideLength="24dp"
+        app:hintColor="#10121e"
+        app:hintSize="14sp"
+        app:hintText="通知附件"
+        app:infoText="关于工作人员持证上岗通知"
+        app:infoTextColor="#787b86"
+        app:infoTextGravity="Center"
+        app:infoTextViewSize="14sp"
+        app:infoViewSingleLine="true"
+        app:paddingLeft="13dp"
+        app:paddingRight="13dp"/>
+
+
+</LinearLayout>

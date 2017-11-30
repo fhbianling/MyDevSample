@@ -27,6 +27,10 @@ public class ApiCall {
     private Dialog loadingDialog;
     private boolean showLoadingDialog;
 
+    public ApiCall() {
+        this(null, false);
+    }
+
     public ApiCall(Context context) {
         this(context, true);
     }

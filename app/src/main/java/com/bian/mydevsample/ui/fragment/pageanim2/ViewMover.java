@@ -6,6 +6,7 @@ import android.view.ViewTreeObserver;
 
 import com.bian.base.util.utilbase.ScreenUtil;
 
+
 /**
  * author 边凌
  * date 2017/10/10 15:19

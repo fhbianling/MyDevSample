@@ -10,9 +10,9 @@ import com.bian.image.loader.GlideUtil;
  * 类描述：
  */
 
-public class BindingAdapter {
-    @android.databinding.BindingAdapter("app:img")
-    public static void img(ImageView imageView,String url){
-        GlideUtil.load(imageView,url);
+public class BindingUtil {
+
+    public static void img(ImageView imageView, String url) {
+        GlideUtil.load(imageView, url);
     }
 }

@@ -54,5 +54,5 @@ dependencies {
     implementation project(':lib_image')
     implementation project(':lib_media')
     implementation "com.android.support:design:$supportLibraryVersion"
-    implementation project(':lib_net')
+    api project(':lib_net')
 }

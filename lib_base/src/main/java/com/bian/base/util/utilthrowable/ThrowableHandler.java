@@ -2,13 +2,13 @@ package com.bian.base.util.utilthrowable;
 
 import android.content.Context;
 
+import com.bian.base.util.utilbase.L;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 
-import com.bian.base.util.utilbase.L;
 import com.bian.base.util.utilbase.ToastUtil;
 
 /**

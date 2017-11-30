@@ -36,14 +36,13 @@ class Util {
         Log.v(logTag, msg);
     }
 
-    static void d(String logTag, String msg) {
+    static void i(String logTag, String msg) {
         if (!Api.sHttpLoggingEnable) return;
-        Log.d(logTag, msg);
+        Log.i(logTag, msg);
     }
 
     static void printJson(String logTag, String msg) {
-        if (!Api.sHttpLoggingEnable) return;
-        Log.d(logTag, getFormatJson(msg));
+        v(logTag, getFormatJson(msg));
     }
 
     private static String getFormatJson(String jsonStr) {

@@ -109,5 +109,31 @@
         app:paddingLeft="13dp"
         app:paddingRight="13dp"/>
 
+    <com.bian.base.widget.info.InfoTextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:dividerBottomColor="#ccc"
+        app:dividerBottomPaddingLeft="13dp"
+        app:drawableLeft="@mipmap/ic_wechat"
+        app:drawableLeftPadding="12dp"
+        app:drawableRight="@drawable/select_check"
+        app:drawableRightSideLength="24dp"
+        app:drawableRightType="Checkable"
+        app:hintText="微信支付"
+        app:paddingLeft="10dp"
+        app:paddingRight="13dp"/>
+
+    <com.bian.base.widget.info.InfoTextView
+        android:id="@+id/checkable"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:dividerBottomColor="#ccc"
+        app:dividerBottomPaddingLeft="13dp"
+        app:drawableLeftType="Checkable"
+        app:drawableRightSideLength="24dp"
+        app:hintText="微信支付"
+        app:infoText="左侧默认check style"
+        app:paddingLeft="10dp"
+        app:paddingRight="13dp"/>
 
 </LinearLayout>

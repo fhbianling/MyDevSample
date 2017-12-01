@@ -7,19 +7,18 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Checkable;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,17 +41,19 @@ import com.bian.base.R;
 
 public class InfoTextView extends LinearLayout implements Checkable {
 
-    private LinearLayout infoRoot;
+    //drawableLeft的标志以及添加位置
+    public static final int INDEX_LEFT = 0;
+    //drawableRight的标志以及添加位置
+    public static final int INDEX_RIGHT = -1;
+    private LinearLayout root;
 
     private TextView mHintTv;
 
     private View mInfoView;
 
-    private View mLeftIV;
+    private View mDrawableLeft;
 
-    private View mRightIV;
-
-    private Space placeHolderSpace;
+    private View mDrawableRight;
 
     /**
      * HintView文字内容
@@ -155,11 +156,13 @@ public class InfoTextView extends LinearLayout implements Checkable {
     private @DrawableRes
     int mHintBackgroundDrawableRes;
 
-    //是否在指定宽度的条件下，自动调整字体间距的TextView,用于使hint部分对齐
-    //类似下面的效果
-    //hint1hint1:info1
-    //h i n t  2:info2
-    //todo 当前该功能未完成
+    /**
+     * 是否在指定宽度的条件下，自动调整字体间距的TextView,用于使hint部分对齐
+     * 类似下面的效果
+     * hint1hint1:info1
+     * h i n t  2:info2
+     * todo 当前该功能未完成
+     */
     private boolean mAutoAdjustHintLetterSpacing;
 
     /**
@@ -284,6 +287,7 @@ public class InfoTextView extends LinearLayout implements Checkable {
 
     private OnInfoViewClickListener mOnInfoViewClickListener;
     private OnDrawableClickListener mOnDrawableClickListener;
+    private OnCheckedChangeListener mOnCheckedChangeListener;
     private OnClickListener mOnViewClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -295,20 +299,37 @@ public class InfoTextView extends LinearLayout implements Checkable {
             if (mOnDrawableClickListener == null) {
                 return;
             }
-            if (v.equals(mLeftIV)) {
-                mOnDrawableClickListener.onDrawableLeftClick(InfoTextView.this, mLeftIV);
-            } else if (v.equals(mRightIV)) {
-                mOnDrawableClickListener.onDrawableRightClick(InfoTextView.this, mRightIV);
+            if (v.equals(mDrawableLeft)) {
+                mOnDrawableClickListener.onDrawableLeftClick(InfoTextView.this, mDrawableLeft);
+            } else if (v.equals(mDrawableRight)) {
+                mOnDrawableClickListener.onDrawableRightClick(InfoTextView.this, mDrawableRight);
+            }
+        }
+    };
+    private CompoundButton.OnCheckedChangeListener mInnerCheckedChangedListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (mOnCheckedChangeListener != null) {
+                mOnCheckedChangeListener.onCheckedChange(InfoTextView.this, isChecked());
             }
         }
     };
 
-    public InfoTextView(Context context,
-                        @Nullable AttributeSet attrs) {
+    public InfoTextView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
+    private void init(Context context, AttributeSet attrs) {
+        setOrientation(LinearLayout.VERTICAL);
+        assignmentField(context, attrs);
+        addRoot();
+        addDivider();
+    }
+
+    /**
+     * 设置HintView的文字
+     */
     public void setHintText(CharSequence hint) {
         mHintText = hint;
         if (mHintTv != null) {
@@ -316,22 +337,129 @@ public class InfoTextView extends LinearLayout implements Checkable {
         }
     }
 
-    private void init(Context context, AttributeSet attrs) {
-        setOrientation(LinearLayout.VERTICAL);
-        initAttr(context, attrs);
-        addInfoRoot();
-        addDivider();
+    /**
+     * 获得InfoView的文字
+     *
+     * @return 当InfoView的type为图像时返回null, 其他时候返回文字
+     */
+    public @Nullable
+    CharSequence getInfoText() {
+        if (mInfoView == null || !(mInfoView instanceof TextView)) return null;
+        return ((TextView) mInfoView).getText();
     }
 
-    private void addInfoRoot() {
-        infoRoot = new LinearLayout(getContext());
-        infoRoot.setGravity(Const.findInfoRootGravity(mInfoRootGravity));
-        infoRoot.setPadding(mPaddingLeft, 0, mPaddingRight, 0);
+    /**
+     * 设置InfoView的文字,当InfoView为图像时会扔异常
+     */
+    public void setInfoText(CharSequence info) {
+        mInfoText = info;
+        if (mInfoView != null && mInfoView instanceof TextView) {
+            ((TextView) mInfoView).setText(mInfoText);
+            if (mGoneIfInfoEmpty && TextUtils.isEmpty(mInfoText)) {
+                setVisibility(GONE);
+            } else {
+                setVisibility(VISIBLE);
+            }
+        } else {
+            throw new UnsupportedOperationException(
+                    "wrong infoView type,infoView isn't instance of TextView");
+        }
+    }
+
+    /**
+     * 获得InfoView，根据设置的infoViewType,可能为TextView,EditText或者ImageView,
+     * 当为ImageView时，可以通过该种方式拿到ImageView进行图片加载
+     *
+     * @return 以View的形式返回的InfoView, 当提供的xml属性和方法不足以进行更详细的设置时，可以通过拿到InfoView进行更详细的设置
+     */
+    public View getInfoView() {
+        return mInfoView;
+    }
+
+    /**
+     * 仅在左右drawable其一为checkable type时可以调用该方法，否则会抛异常
+     *
+     * @return 是否选中
+     */
+    @Override
+    public boolean isChecked() {
+        checkableStateValid();
+        return getCheckableDrawable().isChecked();
+    }
+
+    /**
+     * 仅在左右drawable其一为checkable type时可以调用该方法，否则会抛异常
+     * <p>
+     * 设置是否选中
+     */
+    @Override
+    public void setChecked(boolean checked) {
+        checkableStateValid();
+        getCheckableDrawable().setChecked(checked);
+    }
+
+    /**
+     * 仅在左右drawable其一为checkable type时可以调用该方法，否则会抛异常
+     * <p>
+     * 选中状态取反
+     */
+    @Override
+    public void toggle() {
+        checkableStateValid();
+        getCheckableDrawable().toggle();
+    }
+
+    /**
+     * 设置InfoView的点击监听器
+     */
+    public void setOnInfoViewClickListener(OnInfoViewClickListener value) {
+        mOnInfoViewClickListener = value;
+
+        if (!(mInfoView instanceof EditText) && mOnInfoViewClickListener != null) {
+            mInfoView.setOnClickListener(mOnViewClickListener);
+        } else {
+            mInfoView.setOnClickListener(null);
+        }
+    }
+
+    /**
+     * 设置InfoView左右的drawable点击监听器
+     */
+    public void setOnDrawableClickListener(OnDrawableClickListener value) {
+        this.mOnDrawableClickListener = value;
+        OnClickListener onClickListener = mOnDrawableClickListener != null ? mOnViewClickListener : null;
+        if (mDrawableLeft != null) {
+            mDrawableLeft.setOnClickListener(onClickListener);
+        }
+        if (mDrawableRight != null) {
+            mDrawableRight.setOnClickListener(onClickListener);
+        }
+    }
+
+    /**
+     * 设置选中状态监听器，仅在左右drawable其一为checkable type时可以调用该方法，否则会抛异常
+     */
+    public void setOnCheckedChangeListener(OnCheckedChangeListener value) {
+        checkableStateValid();
+        this.mOnCheckedChangeListener = value;
+    }
+
+    private void addRoot() {
+        root = new LinearLayout(getContext());
+        root.setGravity(Const.findInfoRootGravity(mInfoRootGravity));
+        root.setPadding(mPaddingLeft, 0, mPaddingRight, 0);
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 0, 1);
-        addView(infoRoot, lp);
-        addHintView();
-        addInfoView();
-        addInfoRootDrawable();
+        addView(root, lp);
+
+        addHint();
+        addInfo();
+
+        if (mDrawableRightType == mDrawableLeftType && mDrawableLeftType == Const.DRAWABLE_TYPE_CHECKABLE) {
+            throw new IllegalArgumentException("can only have one checkable drawable");
+        }
+
+        addRootDrawable(INDEX_LEFT);
+        addRootDrawable(INDEX_RIGHT);
     }
 
     private void addDivider() {
@@ -355,76 +483,77 @@ public class InfoTextView extends LinearLayout implements Checkable {
 
     }
 
-    private void addInfoRootDrawable() {
-        if (mDrawableRightType == mDrawableLeftType && mDrawableLeftType == Const.DRAWABLE_TYPE_CHECKABLE) {
-            throw new IllegalArgumentException("左右Drawable不能同时为Checkable类型");
+    private void addRootDrawable(int index) {
+        View drawable = null;
+        boolean isLeftDrawable = index == INDEX_LEFT;
+        int drawableRes = isLeftDrawable ? mDrawableLeftRes : mDrawableRightRes;
+        int drawableType = isLeftDrawable ? mDrawableLeftType : mDrawableRightType;
+        int drawableSideLength = isLeftDrawable ? mDrawableLeftSideLength : mDrawableRightSideLength;
+        int drawablePadding = isLeftDrawable ? mDrawableLeftPadding : mDrawableRightPadding;
+
+        if (drawableType == Const.DRAWABLE_TYPE_CHECKABLE) {
+            drawable = new CheckBox(getContext());
+            if (drawableRes != DefaultConfig.NONE) {
+                ((CheckBox) drawable).setButtonDrawable(null);
+                drawable.setBackgroundResource(drawableRes);
+            }
+            ((CheckBox) drawable).setOnCheckedChangeListener(mInnerCheckedChangedListener);
+        } else if (drawableRes != DefaultConfig.NONE) {
+            drawable = new ImageView(getContext());
+            ((ImageView) drawable).setImageResource(drawableRes);
         }
 
-        if (mDrawableLeftRes != DefaultConfig.NONE) {
-            if (mDrawableLeftType == Const.DRAWABLE_TYPE_CHECKABLE) {
-                mLeftIV = new CheckBox(getContext());
-                mLeftIV.setBackgroundResource(mDrawableLeftRes);
-            } else {
-                mLeftIV = new ImageView(getContext());
-                ((ImageView) mLeftIV).setImageResource(mDrawableLeftRes);
-            }
-            int width = mDrawableLeftSideLength != DefaultConfig.WARP_CONTENT ? mDrawableLeftSideLength : LayoutParams.WRAP_CONTENT;
-            //noinspection SuspiciousNameCombination
-            LayoutParams lp = new LayoutParams(width, width);
-            lp.rightMargin = mDrawableLeftPadding;
-            infoRoot.addView(mLeftIV, 0, lp);
+        if (drawable == null) return;
+
+        int width = getWidthOfLayoutParams(drawableSideLength);
+        //noinspection SuspiciousNameCombination
+        LayoutParams lp = new LayoutParams(width, width);
+
+        if (isLeftDrawable) {
+            lp.rightMargin = drawablePadding;
+            mDrawableLeft = drawable;
+        } else {
+            lp.leftMargin = drawablePadding;
+            mDrawableRight = drawable;
         }
 
-        if (mDrawableRightRes != DefaultConfig.NONE) {
-            if (mDrawableRightType == Const.DRAWABLE_TYPE_CHECKABLE) {
-                mRightIV = new CheckBox(getContext());
-                mRightIV.setBackgroundResource(mDrawableRightRes);
-            } else {
-                mRightIV = new ImageView(getContext());
-                ((ImageView) mLeftIV).setImageResource(mDrawableRightRes);
-            }
-            int width = mDrawableRightSideLength != DefaultConfig.WARP_CONTENT ? mDrawableRightSideLength : LayoutParams.WRAP_CONTENT;
-            //noinspection SuspiciousNameCombination
-            LayoutParams lp = new LayoutParams(width, width);
-            lp.leftMargin = mDrawableRightPadding;
-            infoRoot.addView(mRightIV, lp);
-        }
+        root.addView(drawable, index, lp);
     }
 
-    private void addInfoView() {
-        int indexOfChild = -1;
-        if (placeHolderSpace != null) {
-            removeView(placeHolderSpace);
-        }
-        if (mInfoView != null) {
-            indexOfChild = indexOfChild(mInfoView);
-            removeView(mInfoView);
-        }
+    private int getWidthOfLayoutParams(int width) {
+        return width != DefaultConfig.WARP_CONTENT ? width : ViewGroup.LayoutParams.WRAP_CONTENT;
+    }
 
+    private void addInfo() {
         switch (mInfoViewType) {
             case Const.INFO_TYPE_IMAGE_VIEW:
-                addInfoImageView(indexOfChild);
+                addInfoImageView();
                 break;
             case Const.INFO_TYPE_TEXT_VIEW:
             case Const.INFO_TYPE_EDIT_TEXT:
-                addInfoTVOrET(indexOfChild);
+                addInfoTVOrET();
                 break;
         }
 
         if (mInfoBackgroundDrawableRes != DefaultConfig.NONE && mInfoView != null) {
             mInfoView.setBackgroundResource(mInfoBackgroundDrawableRes);
         }
-
     }
 
-    private void addInfoTVOrET(int indexOfChild) {
+    private void addInfoTVOrET() {
         if (mInfoViewType == Const.INFO_TYPE_EDIT_TEXT) {
             mInfoView = new EditText(getContext());
         } else {
             mInfoView = new TextView(getContext());
         }
-        LayoutParams layoutParams = getInfoTvLp();
-        infoRoot.addView(mInfoView, indexOfChild, layoutParams);
+
+        LayoutParams layoutParams = new LayoutParams(0,
+                                                     getInfoViewHeight(), 1);
+        layoutParams.leftMargin = mInfoPadding;
+        layoutParams.topMargin = mInfoViewTopMargin;
+        layoutParams.bottomMargin = mInfoViewBottomMargin;
+
+        root.addView(mInfoView, layoutParams);
 
         int gravityValue = Const.transformToViewGravity(mInfoTextGravity);
 
@@ -455,16 +584,14 @@ public class InfoTextView extends LinearLayout implements Checkable {
         setInfoText(mInfoText);
     }
 
-    private void addInfoImageView(int indexOfChild) {
+    private void addInfoImageView() {
         mInfoView = new ImageView(getContext());
-        if (placeHolderSpace == null) {
-            placeHolderSpace = new Space(getContext());
-        }
-        infoRoot.addView(placeHolderSpace, indexOfChild, new LayoutParams(0, 1, 1));
-        int width = mInfoImageViewSideLength == DefaultConfig.WARP_CONTENT ? ViewGroup.LayoutParams.WRAP_CONTENT : mInfoImageViewSideLength;
+        Space placeHolderSpace = new Space(getContext());
+        root.addView(placeHolderSpace, new LayoutParams(0, 1, 1));
+        int width = getWidthOfLayoutParams(mInfoImageViewSideLength);
         //infoPadding属性在该种模式下无效，图片始终被添加到右侧
         //noinspection SuspiciousNameCombination
-        infoRoot.addView(mInfoView, width, width);
+        root.addView(mInfoView, width, width);
 
         //fix view attr
         ImageView mImg = (ImageView) mInfoView;
@@ -472,16 +599,6 @@ public class InfoTextView extends LinearLayout implements Checkable {
         if (mInfoImageViewSrc != DefaultConfig.NONE) {
             mImg.setImageResource(mInfoImageViewSrc);
         }
-    }
-
-    @NonNull
-    private LayoutParams getInfoTvLp() {
-        LayoutParams layoutParams = new LayoutParams(0,
-                                                     getInfoViewHeight(), 1);
-        layoutParams.leftMargin = mInfoPadding;
-        layoutParams.topMargin = mInfoViewTopMargin;
-        layoutParams.bottomMargin = mInfoViewBottomMargin;
-        return layoutParams;
     }
 
     private int getInfoViewHeight() {
@@ -496,38 +613,14 @@ public class InfoTextView extends LinearLayout implements Checkable {
         return height;
     }
 
-    public @Nullable
-    CharSequence getInfoText() {
-        if (mInfoView == null || !(mInfoView instanceof TextView)) return null;
-        return ((TextView) mInfoView).getText();
-    }
-
-    public void setInfoText(CharSequence info) {
-        mInfoText = info;
-        if (mInfoView != null && mInfoView instanceof TextView) {
-            ((TextView) mInfoView).setText(mInfoText);
-            if (mGoneIfInfoEmpty && TextUtils.isEmpty(mInfoText)) {
-                setVisibility(GONE);
-            } else {
-                setVisibility(VISIBLE);
-            }
-        } else {
-            Log.e("InfoTextView", "wrong infoView type,infoView isn't instance of TextView");
-        }
-    }
-
-    public View getInfoView() {
-        return mInfoView;
-    }
-
-    private void addHintView() {
+    private void addHint() {
         mHintTv = new LetterSpacingTextView(getContext());
         ((LetterSpacingTextView) mHintTv).setAutoAdjustLetterSpacing(mAutoAdjustHintLetterSpacing);
         mHintTv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mHintSize);
         mHintTv.setTextColor(mHintColor);
         mHintTv.setGravity(Gravity.CENTER_VERTICAL);
-        int width = mHintWidth == DefaultConfig.WARP_CONTENT ? LayoutParams.WRAP_CONTENT : mHintWidth;
-        infoRoot.addView(mHintTv, width, LayoutParams.WRAP_CONTENT);
+        int width = getWidthOfLayoutParams(mHintWidth);
+        root.addView(mHintTv, width, LayoutParams.WRAP_CONTENT);
         if (mHintBackgroundDrawableRes != DefaultConfig.NONE) {
             mHintTv.setBackgroundResource(mHintBackgroundDrawableRes);
         }
@@ -535,7 +628,7 @@ public class InfoTextView extends LinearLayout implements Checkable {
         setHintText(mHintText);
     }
 
-    private void initAttr(Context context, AttributeSet attrs) {
+    private void assignmentField(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.InfoTextView);
         mHintText = typedArray.getString(R.styleable.InfoTextView_hintText);
         mInfoHintText = typedArray.getString(R.styleable.InfoTextView_infoHintText);
@@ -625,44 +718,14 @@ public class InfoTextView extends LinearLayout implements Checkable {
         typedArray.recycle();
     }
 
-    public void setOnInfoViewClickListener(OnInfoViewClickListener value) {
-        mOnInfoViewClickListener = value;
-
-        if (!(mInfoView instanceof EditText) && mOnInfoViewClickListener != null) {
-            mInfoView.setOnClickListener(mOnViewClickListener);
-        } else {
-            mInfoView.setOnClickListener(null);
-        }
-    }
-
-    public void setOnDrawableClickListener(OnDrawableClickListener value) {
-        this.mOnDrawableClickListener = value;
-        OnClickListener onClickListener = mOnDrawableClickListener != null ? mOnViewClickListener : null;
-        if (mLeftIV != null) {
-            mLeftIV.setOnClickListener(onClickListener);
-        }
-        if (mRightIV != null) {
-            mRightIV.setOnClickListener(onClickListener);
-        }
-    }
-
-    @Override
-    public boolean isChecked() {
-        checkableStateValid();
-        // TODO: 2017/11/30  
-        return false;
-    }
-
-    @Override
-    public void setChecked(boolean checked) {
-        checkableStateValid();
-        // TODO: 2017/11/30  
+    private CheckBox getCheckableDrawable() {
+        return (CheckBox) (isLeftCheckable() ? mDrawableLeft : mDrawableRight);
     }
 
     private void checkableStateValid() {
         if (!isCheckDrawableStyle()) {
             throw new UnsupportedOperationException(
-                    "该InfoTextView未指定可选状态的drawableLeft或drawableRight");
+                    "this InfoTextView hasn't specified checkable drawable");
         }
     }
 
@@ -670,10 +733,8 @@ public class InfoTextView extends LinearLayout implements Checkable {
         return mDrawableRightType == Const.DRAWABLE_TYPE_CHECKABLE || mDrawableLeftType == Const.DRAWABLE_TYPE_CHECKABLE;
     }
 
-    @Override
-    public void toggle() {
-        checkableStateValid();
-        // TODO: 2017/11/30  
+    private boolean isLeftCheckable() {
+        return mDrawableLeftType == Const.DRAWABLE_TYPE_CHECKABLE;
     }
 
     public interface OnInfoViewClickListener {
@@ -684,6 +745,11 @@ public class InfoTextView extends LinearLayout implements Checkable {
         void onDrawableLeftClick(InfoTextView infoTextView, View drawableLeft);
 
         void onDrawableRightClick(InfoTextView infoTextView, View drawableRight);
+    }
+
+
+    public interface OnCheckedChangeListener {
+        void onCheckedChange(InfoTextView infoTextView, boolean isCheck);
     }
 
     private final static class DefaultConfig {

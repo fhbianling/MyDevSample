@@ -25,7 +25,7 @@ import java.util.List;
 
 public class InfoTextViewSampleActivity extends BaseActivity
         implements ImageSelector.OnResultListener, InfoTextView.OnInfoViewClickListener,
-                   InfoTextView.OnDrawableClickListener {
+                   InfoTextView.OnDrawableClickListener, InfoTextView.OnCheckedChangeListener {
     private ImageSelectHelper selectHelper;
     private InfoTextView avatar;
 
@@ -49,6 +49,8 @@ public class InfoTextViewSampleActivity extends BaseActivity
         avatar.setOnInfoViewClickListener(this);
         InfoTextView infoTextView = findViewById(R.id.drawableClick);
         infoTextView.setOnDrawableClickListener(this);
+        InfoTextView checkable = findViewById(R.id.checkable);
+        checkable.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -84,12 +86,17 @@ public class InfoTextViewSampleActivity extends BaseActivity
     }
 
     @Override
-    public void onDrawableLeftClick(InfoTextView infoTextView, ImageView drawableLeft) {
+    public void onDrawableLeftClick(InfoTextView infoTextView, View drawableLeft) {
 
     }
 
     @Override
-    public void onDrawableRightClick(InfoTextView infoTextView, ImageView drawableRight) {
-        ToastUtil.showToastShort("点击了右侧drawable");
+    public void onDrawableRightClick(InfoTextView infoTextView, View drawableRight) {
+        ToastUtil.showToastShort("点击了右侧drawable,info text:" + infoTextView.getInfoText());
+    }
+
+    @Override
+    public void onCheckedChange(InfoTextView infoTextView, boolean isCheck) {
+        ToastUtil.showToastShort("on checked change,isCheck:" + isCheck);
     }
 }

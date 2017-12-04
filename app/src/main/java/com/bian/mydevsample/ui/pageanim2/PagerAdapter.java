@@ -1,4 +1,4 @@
-package com.bian.mydevsample.ui.fragment.pageanim2;
+package com.bian.mydevsample.ui.pageanim2;
 
 import android.content.Context;
 import android.view.LayoutInflater;

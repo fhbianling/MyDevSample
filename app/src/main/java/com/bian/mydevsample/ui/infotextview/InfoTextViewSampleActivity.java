@@ -1,4 +1,4 @@
-package com.bian.mydevsample.ui;
+package com.bian.mydevsample.ui.infotextview;
 
 import android.content.Context;
 import android.content.Intent;

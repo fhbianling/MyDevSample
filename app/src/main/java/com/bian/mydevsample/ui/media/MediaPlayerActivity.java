@@ -1,7 +1,5 @@
 package com.bian.mydevsample.ui.media;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -22,15 +20,8 @@ public class MediaPlayerActivity extends BaseActivity
         implements MediaPlayerView.OnPlayerExtListenerExtListener,
                    MediaPlayerView.OnMediaPlayListener, MediaPlayerView.OnMediaPlayPrepareListener {
 
-    private static final String KEY_URL = "url";
     private MediaPlayerView mediaPlayerView;
     private TextView tv;
-
-    public static void start(Context context, String url) {
-        Intent starter = new Intent(context, MediaPlayerActivity.class);
-        starter.putExtra(KEY_URL, url);
-        context.startActivity(starter);
-    }
 
     @Override
     protected int bindLayoutId() {

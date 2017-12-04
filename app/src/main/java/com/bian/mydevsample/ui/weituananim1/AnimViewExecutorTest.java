@@ -1,22 +1,20 @@
-package com.bian.mydevsample.ui.fragment.animtest1;
+package com.bian.mydevsample.ui.weituananim1;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bian.base.baseclass.AbsBaseFragment;
 import com.bian.base.util.utilbase.ScreenUtil;
 import com.bian.mydevsample.R;
+import com.bian.mydevsample.base.BaseActivity;
 
 /**
  * author 边凌
- * date 2017/10/12 22:24
+ * date 2017/12/4 10:59
  * 类描述：
  */
 
-public class Fragment4 extends AbsBaseFragment implements View.OnClickListener {
+public class AnimViewExecutorTest extends BaseActivity implements View.OnClickListener {
     private final static int[] sIds = new int[]{R.id.v1, R.id.v2, R.id.v3, R.id.v4};
     private final static int[] imgIds = new int[]{R.id.img1, R.id.img2, R.id.img3, R.id.img4};
     private final static int[] sImgRes = new int[]{
@@ -29,18 +27,17 @@ public class Fragment4 extends AbsBaseFragment implements View.OnClickListener {
             R.mipmap.ic_7,
             R.mipmap.ic_8,
             R.mipmap.ic_9,
-    };
+            };
     private AnimViewExecutor animViewExecutor;
     private ImageView[] imageViews = new ImageView[imgIds.length];
 
     @Override
-    protected View createView(LayoutInflater inflater, ViewGroup container, Bundle
-            savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_4, container, false);
+    protected int bindLayoutId() {
+        return R.layout.activity_animviewexcetor;
     }
 
     @Override
-    protected void initView(View rootView) {
+    protected void initView(Bundle savedInstanceState) {
 
         View[] views = new View[sIds.length];
         for (int i = 0; i < sIds.length; i++) {
@@ -50,8 +47,8 @@ public class Fragment4 extends AbsBaseFragment implements View.OnClickListener {
         }
 
         animViewExecutor = new AnimViewExecutor(views);
-        animViewExecutor.setDstScale(ScreenUtil.getScreenWidth(getContext()) / 2, ScreenUtil
-                .getScreenHeight(getContext()) / 2);
+        animViewExecutor.setDstScale(ScreenUtil.getScreenWidth(this) / 2, ScreenUtil
+                .getScreenHeight(this) / 2);
         View viewById = findViewById(R.id.start);
         View viewById1 = findViewById(R.id.switchPic);
         if (viewById != null && viewById1 != null) {

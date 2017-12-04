@@ -1,23 +1,21 @@
-package com.bian.mydevsample.ui.fragment.pageanim1;
+package com.bian.mydevsample.ui.pageanim1;
 
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.bian.base.baseclass.AbsBaseFragment;
 import com.bian.base.util.utilbase.ScreenUtil;
 import com.bian.mydevsample.R;
+import com.bian.mydevsample.base.BaseActivity;
 
 /**
  * author 边凌
- * date 2017/10/9 15:46
+ * date 2017/12/4 11:10
  * 类描述：
  */
 
-public class Fragment2 extends AbsBaseFragment implements ViewPager.OnPageChangeListener {
+public class PagerAnimTest1 extends BaseActivity implements ViewPager.OnPageChangeListener {
     private ViewPager viewPager;
     private View target1;
     //当停止滑动时每个页面对应的目标终点坐标
@@ -26,16 +24,15 @@ public class Fragment2 extends AbsBaseFragment implements ViewPager.OnPageChange
     private int[] indexCache = new int[2];
 
     @Override
-    protected View createView(LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_2, container, false);
+    protected int bindLayoutId() {
+        return R.layout.activity_pageranim1;
     }
 
     @Override
-    protected void initView(View rootView) {
-        viewPager = (ViewPager) rootView.findViewById(R.id.pager);
-        target1 = rootView.findViewById(R.id.target1);
-        final PagerAdapter pagerAdapter = new PagerAdapter(getContext());
+    protected void initView(Bundle savedInstanceState) {
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        target1 = findViewById(R.id.target1);
+        final PagerAdapter pagerAdapter = new PagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
         initPointsOfTarget1();
@@ -44,8 +41,8 @@ public class Fragment2 extends AbsBaseFragment implements ViewPager.OnPageChange
     private void initPointsOfTarget1() {
         pointsOfPage[0] = new Point();
         pointsOfPage[0].set((int) target1.getX(), (int) target1.getY());
-        int screenWidth = ScreenUtil.getScreenWidth(getContext());
-        int screenHeight = ScreenUtil.getScreenHeight(getContext());
+        int screenWidth = ScreenUtil.getScreenWidth(this);
+        int screenHeight = ScreenUtil.getScreenHeight(this);
         pointsOfPage[1] = new Point(screenWidth / 3, screenHeight / 4);
         pointsOfPage[2] = new Point(screenWidth * 3 / 5, screenHeight / 7);
     }

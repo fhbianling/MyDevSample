@@ -14,10 +14,6 @@ import com.bian.mydevsample.base.BaseActivity;
  */
 
 public class Dagger2StudyActivity extends BaseActivity{
-    public static void start(Context context) {
-        Intent starter = new Intent(context, Dagger2StudyActivity.class);
-        context.startActivity(starter);
-    }
     @Override
     protected int bindLayoutId() {
         return R.layout.activity_dagger2study;

@@ -1,4 +1,4 @@
-package com.bian.mydevsample.ui.fragment.button;
+package com.bian.mydevsample.ui._main;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;

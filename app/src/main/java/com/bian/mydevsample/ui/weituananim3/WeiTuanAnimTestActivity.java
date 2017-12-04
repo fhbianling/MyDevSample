@@ -1,10 +1,8 @@
-package com.bian.mydevsample.ui;
+package com.bian.mydevsample.ui.weituananim3;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.view.View;
@@ -33,11 +31,6 @@ public class WeiTuanAnimTestActivity extends BaseActivity implements Animator.An
     private float originScaleX;
     private float originScaleY;
     private AnimatorSet startAnim;
-
-    public static void start(Context context) {
-        Intent starter = new Intent(context, WeiTuanAnimTestActivity.class);
-        context.startActivity(starter);
-    }
 
     @Override
     protected int bindLayoutId() {

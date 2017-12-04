@@ -1,4 +1,4 @@
-package com.bian.mydevsample.ui.fragment.pageanim2;
+package com.bian.mydevsample.ui.pageanim2;
 
 import android.graphics.PointF;
 import android.view.View;

@@ -1,4 +1,4 @@
-package com.bian.mydevsample.ui.fragment.adaptertest;
+package com.bian.mydevsample.ui.adaptertest;
 
 import android.app.Activity;
 import android.databinding.DataBindingUtil;

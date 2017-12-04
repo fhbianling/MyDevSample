@@ -1,40 +1,38 @@
-package com.bian.mydevsample.ui.fragment.pageanim2;
+package com.bian.mydevsample.ui.pageanim2;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bian.base.baseclass.AbsBaseFragment;
 import com.bian.mydevsample.R;
+import com.bian.mydevsample.base.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * author 边凌
- * date 2017/10/10 14:51
+ * date 2017/12/4 11:13
  * 类描述：
  */
 
-public class Fragment3 extends AbsBaseFragment implements ViewPager.OnPageChangeListener {
+public class PagerAnimTest2 extends BaseActivity implements ViewPager.OnPageChangeListener {
     private List<ViewMover> viewMovers = new ArrayList<>();
 
     @Override
-    protected View createView(LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_3, container, false);
+    protected int bindLayoutId() {
+        return R.layout.activity_pageranim2;
     }
 
     @Override
-    protected void initView(View rootView) {
-        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.pager);
-        PagerAdapter pagerAdapter = new PagerAdapter(getContext());
+    protected void initView(Bundle savedInstanceState) {
+        ViewPager viewPager = findViewById(R.id.pager);
+        PagerAdapter pagerAdapter = new PagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
-        ViewGroup group = (ViewGroup) rootView;
+        ViewGroup group = findViewById(R.id.root);
         for (int i = 0; i < group.getChildCount(); i++) {
             View childAt = group.getChildAt(i);
             if (childAt instanceof TextView) {

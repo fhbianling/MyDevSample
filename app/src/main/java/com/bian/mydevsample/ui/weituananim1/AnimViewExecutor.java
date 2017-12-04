@@ -1,4 +1,4 @@
-package com.bian.mydevsample.ui.fragment.animtest1;
+package com.bian.mydevsample.ui.weituananim1;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;

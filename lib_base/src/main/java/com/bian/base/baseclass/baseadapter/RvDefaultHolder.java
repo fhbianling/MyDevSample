@@ -17,13 +17,24 @@ import android.widget.TextView;
  * 类描述：
  */
 public class RvDefaultHolder extends RecyclerView.ViewHolder {
+    public static final int NONE = -1;
     private View root;
+    private int type;
     private SparseArray<View> viewCache;
 
     public RvDefaultHolder(View root) {
+        this(root, NONE);
+    }
+
+    public RvDefaultHolder(View root, int type) {
         super(root);
         this.root = root;
+        this.type = type;
         viewCache = new SparseArray<>();
+    }
+
+    public int getType() {
+        return type;
     }
 
     public
@@ -33,7 +44,11 @@ public class RvDefaultHolder extends RecyclerView.ViewHolder {
         View view = viewCache.get(id);
         try {
             if (view == null) {
-                t = (T) root.findViewById(id);
+                if (root.getId() == id) {
+                    t = (T) root;
+                } else {
+                    t = (T) root.findViewById(id);
+                }
                 if (t != null) {
                     viewCache.put(id, t);
                 }

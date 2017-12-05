@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.bian.base.baseclass.AbsBaseActivity;
 import com.bian.mydevsample.R;
+import com.bian.mydevsample.ui.zhihuad.ZhiHuAdActivity;
 import com.bian.mydevsample.ui.adaptertest.AdapterTest;
 import com.bian.mydevsample.ui.daggerstudy.Dagger2StudyActivity;
 import com.bian.mydevsample.ui.infotextview.InfoTextViewSampleActivity;
@@ -79,7 +80,8 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("InfoTextView封装sample", InfoTextViewSampleActivity.class));
         buttonDescs.add(new ButtonDesc("ViewPager动画1", PagerAnimTest1.class));
         buttonDescs.add(new ButtonDesc("ViewPager动画2", PagerAnimTest2.class));
-        buttonDescs.add(new ButtonDesc("ViewPager动画3访起点", QiDianViewPagerAnimActivity.class));
+        buttonDescs.add(new ButtonDesc("ViewPager动画3仿起点", QiDianViewPagerAnimActivity.class));
+        buttonDescs.add(new ButtonDesc("知乎广告效果模仿", ZhiHuAdActivity.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);
         buttonList.setOnItemClickListener(this);

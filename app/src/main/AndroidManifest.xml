@@ -28,6 +28,7 @@
         <activity android:name=".ui.weituananim2.FloatingAnimTest"/>
         <activity android:name=".ui.pageanim1.PagerAnimTest1"/>
         <activity android:name=".ui.pageanim2.PagerAnimTest2"/>
+        <activity android:name=".ui.zhihuad.ZhiHuAdActivity"/>
 
     </application>
 

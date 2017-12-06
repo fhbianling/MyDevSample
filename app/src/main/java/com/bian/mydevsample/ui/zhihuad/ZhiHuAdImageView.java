@@ -46,7 +46,6 @@ public class ZhiHuAdImageView extends AppCompatImageView
         canvas.translate(0, -dy);
         canvas.drawBitmap(bitmap, 0, 0, null);
         canvas.restore();
-        L.d("k2:" + k2 + ",dy:" + dy + ",getY:" + yOnScreen);
     }
 
     @Override

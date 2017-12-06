@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.bian.base.baseclass.AbsBaseActivity;
 import com.bian.mydevsample.R;
-import com.bian.mydevsample.ui.zhihuad.ZhiHuAdActivity;
 import com.bian.mydevsample.ui.adaptertest.AdapterTest;
 import com.bian.mydevsample.ui.daggerstudy.Dagger2StudyActivity;
 import com.bian.mydevsample.ui.infotextview.InfoTextViewSampleActivity;
@@ -22,9 +21,11 @@ import com.bian.mydevsample.ui.media.MediaPlayerActivity;
 import com.bian.mydevsample.ui.pageanim1.PagerAnimTest1;
 import com.bian.mydevsample.ui.pageanim2.PagerAnimTest2;
 import com.bian.mydevsample.ui.pageanim3qidian.QiDianViewPagerAnimActivity;
+import com.bian.mydevsample.ui.qqclean.QQCleanAnimActivity;
 import com.bian.mydevsample.ui.weituananim1.AnimViewExecutorTest;
 import com.bian.mydevsample.ui.weituananim2.FloatingAnimTest;
 import com.bian.mydevsample.ui.weituananim3.WeiTuanAnimTestActivity;
+import com.bian.mydevsample.ui.zhihuad.ZhiHuAdActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,6 @@ import java.util.List;
 public class MainActivity extends AbsBaseActivity
         implements AdapterView.OnItemClickListener {
     private Fragment[] fragments = new Fragment[6];
-    private ListView buttonList;
     private Adapter adapter;
 
     @Override
@@ -69,7 +69,7 @@ public class MainActivity extends AbsBaseActivity
 
     @Override
     protected void initView(Bundle savedInstanceState) {
-        buttonList = this.findViewById(R.id.buttonList);
+        ListView buttonList = this.findViewById(R.id.buttonList);
         List<ButtonDesc> buttonDescs = new ArrayList<>();
         buttonDescs.add(new ButtonDesc("音乐播放器", MediaPlayerActivity.class));
         buttonDescs.add(new ButtonDesc("adapter封装测试", AdapterTest.class));
@@ -82,6 +82,7 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("ViewPager动画2", PagerAnimTest2.class));
         buttonDescs.add(new ButtonDesc("ViewPager动画3仿起点", QiDianViewPagerAnimActivity.class));
         buttonDescs.add(new ButtonDesc("知乎广告效果模仿", ZhiHuAdActivity.class));
+        buttonDescs.add(new ButtonDesc("QQ清理空间动画效果", QQCleanAnimActivity.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);
         buttonList.setOnItemClickListener(this);

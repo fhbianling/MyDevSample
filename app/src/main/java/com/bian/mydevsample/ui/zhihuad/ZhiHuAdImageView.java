@@ -10,7 +10,6 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
 
-import com.bian.base.util.utilbase.L;
 import com.bian.base.util.utilbase.ScreenUtil;
 
 /**
@@ -56,13 +55,13 @@ public class ZhiHuAdImageView extends AppCompatImageView
             screenHeight = ScreenUtil.getScreenHeight(getContext());
         }
 
-        Bitmap bitmap;
-        k2 = (k1 * screenWidth - getHeight()) / (screenHeight - getHeight());
         float newHeight = screenWidth * k1;
         Matrix matrix = new Matrix();
         float sX = (float) screenWidth / bm.getWidth();
         float sY = newHeight / bm.getHeight();
         matrix.postScale(sX, sY);
+
+        Bitmap bitmap;
         try {
             bitmap = Bitmap.createBitmap(bm,
                                          0,
@@ -75,6 +74,8 @@ public class ZhiHuAdImageView extends AppCompatImageView
         } catch (Exception e) {
             bitmap = bm;
         }
+
+        k2 = (newHeight - getHeight()) / (screenHeight - getHeight());
         super.setImageBitmap(bitmap);
     }
 

@@ -21,6 +21,7 @@ import com.bian.mydevsample.ui.media.MediaPlayerActivity;
 import com.bian.mydevsample.ui.pageanim1.PagerAnimTest1;
 import com.bian.mydevsample.ui.pageanim2.PagerAnimTest2;
 import com.bian.mydevsample.ui.pageanim3qidian.QiDianViewPagerAnimActivity;
+import com.bian.mydevsample.ui.pageanim4.PageAnimFadeActivity;
 import com.bian.mydevsample.ui.qqclean.QQCleanAnimActivity;
 import com.bian.mydevsample.ui.weituananim1.AnimViewExecutorTest;
 import com.bian.mydevsample.ui.weituananim2.FloatingAnimTest;
@@ -83,6 +84,7 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("ViewPager动画3仿起点", QiDianViewPagerAnimActivity.class));
         buttonDescs.add(new ButtonDesc("知乎广告效果模仿", ZhiHuAdActivity.class));
         buttonDescs.add(new ButtonDesc("QQ清理空间动画效果", QQCleanAnimActivity.class));
+        buttonDescs.add(new ButtonDesc("相册淡入淡出", PageAnimFadeActivity.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);
         buttonList.setOnItemClickListener(this);

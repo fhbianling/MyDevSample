@@ -45,7 +45,7 @@ public class GlideUtil {
         if (errorDrawable == null) {
             errorDrawable = sErrorDrawable;
         }
-        Glide.with(imageView.getContext())
+        Glide.with(imageView.getContext().getApplicationContext())
              .load(url)
              .diskCacheStrategy(DiskCacheStrategy.ALL)
              .crossFade()
@@ -64,7 +64,7 @@ public class GlideUtil {
 
     @SuppressWarnings("WeakerAccess")
     public static void load(ImageView imageView, @DrawableRes int drawableRes) {
-        Glide.with(imageView.getContext()).
+        Glide.with(imageView.getContext().getApplicationContext()).
                 load(drawableRes).
                      diskCacheStrategy(DiskCacheStrategy.ALL).
                      crossFade().
@@ -99,7 +99,8 @@ public class GlideUtil {
     @SuppressWarnings("WeakerAccess")
     public static void loadCircle(ImageView imageView, String url, Drawable errorDrawable) {
 
-        DrawableRequestBuilder<String> stringDrawableRequestBuilder = Glide.with(imageView.getContext())
+        DrawableRequestBuilder<String> stringDrawableRequestBuilder = Glide.with(imageView.getContext()
+                                                                                          .getApplicationContext())
                                                                            .load(url)
                                                                            .diskCacheStrategy(
                                                                                    DiskCacheStrategy.ALL)
@@ -121,7 +122,8 @@ public class GlideUtil {
      */
     @SuppressWarnings("WeakerAccess")
     public static void loadCircle(ImageView imageView, int url, Drawable errorDrawable) {
-        DrawableRequestBuilder<Integer> integerDrawableRequestBuilder = Glide.with(imageView.getContext())
+        DrawableRequestBuilder<Integer> integerDrawableRequestBuilder = Glide.with(imageView.getContext()
+                                                                                            .getApplicationContext())
                                                                              .load(url)
                                                                              .diskCacheStrategy(
                                                                                      DiskCacheStrategy.ALL)
@@ -141,21 +143,21 @@ public class GlideUtil {
     }
 
     public static void loadRound(ImageView imageView, String url) {
-        Glide.with(imageView.getContext()).
+        Glide.with(imageView.getContext().getApplicationContext()).
                 load(url).
                      transform(new GlideRoundTransform(imageView.getContext(), 5)).
                      into(imageView);
     }
 
     public static void loadAsBitmap(ImageView imageView, String url) {
-        Glide.with(imageView.getContext()).
+        Glide.with(imageView.getContext().getApplicationContext()).
                 load(url).
                      asBitmap().
                      into(imageView);
     }
 
     public static void loadAsBitmap(ImageView imageView, String url, int errorRes) {
-        Glide.with(imageView.getContext()).
+        Glide.with(imageView.getContext().getApplicationContext()).
                 load(url).
                      asBitmap().
                      error(errorRes).
@@ -163,13 +165,16 @@ public class GlideUtil {
     }
 
     public static void loadBitmap(Context context, String url, final BitmapLoader target) {
-        Glide.with(context).load(url).asBitmap().into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(Bitmap resource,
-                                        GlideAnimation<? super Bitmap> glideAnimation) {
-                target.onResourceReady(resource);
-            }
-        });
+        Glide.with(context.getApplicationContext())
+             .load(url)
+             .asBitmap()
+             .into(new SimpleTarget<Bitmap>() {
+                 @Override
+                 public void onResourceReady(Bitmap resource,
+                                             GlideAnimation<? super Bitmap> glideAnimation) {
+                     target.onResourceReady(resource);
+                 }
+             });
     }
 
     public interface OnDiskClearListener {

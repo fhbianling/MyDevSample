@@ -51,7 +51,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     api project(':lib_base')
-    implementation project(':lib_image')
+    api project(':lib_image')
     implementation project(':lib_media')
     implementation "com.android.support:design:$supportLibraryVersion"
     api project(':lib_net')

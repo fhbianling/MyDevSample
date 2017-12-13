@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bian.base.baseclass.AbsBaseActivity;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.ui.adaptertest.AdapterTest;
+import com.bian.mydevsample.ui.backstage.BackStageActivity;
 import com.bian.mydevsample.ui.daggerstudy.Dagger2StudyActivity;
 import com.bian.mydevsample.ui.infotextview.InfoTextViewSampleActivity;
 import com.bian.mydevsample.ui.media.MediaPlayerActivity;
@@ -85,6 +86,7 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("知乎广告效果模仿", ZhiHuAdActivity.class));
         buttonDescs.add(new ButtonDesc("QQ清理空间动画效果", QQCleanAnimActivity.class));
         buttonDescs.add(new ButtonDesc("相册淡入淡出", PageAnimFadeActivity.class));
+        buttonDescs.add(new ButtonDesc("后台测试",BackStageActivity.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);
         buttonList.setOnItemClickListener(this);

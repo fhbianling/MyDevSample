@@ -31,6 +31,7 @@
         <activity android:name=".ui.zhihuad.ZhiHuAdActivity"/>
         <activity android:name=".ui.qqclean.QQCleanAnimActivity"/>
         <activity android:name=".ui.pageanim4.PageAnimFadeActivity"/>
+        <!--<activity android:name=".ui.backstage.BackStageActivity"/>-->
 
     </application>
 

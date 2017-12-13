@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyDevSample</string>
+    <string name="delete">删除</string>
 </resources>

@@ -55,4 +55,6 @@ dependencies {
     implementation project(':lib_media')
     implementation "com.android.support:design:$supportLibraryVersion"
     api project(':lib_net')
+
+    implementation 'com.wilddog.client:wilddog-sync-android:2.3.7'
 }

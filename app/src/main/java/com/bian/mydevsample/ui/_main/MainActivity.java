@@ -27,6 +27,7 @@ import com.bian.mydevsample.ui.qqclean.QQCleanAnimActivity;
 import com.bian.mydevsample.ui.weituananim1.AnimViewExecutorTest;
 import com.bian.mydevsample.ui.weituananim2.FloatingAnimTest;
 import com.bian.mydevsample.ui.weituananim3.WeiTuanAnimTestActivity;
+import com.bian.mydevsample.ui.wilddog.WildDogSampleActivity;
 import com.bian.mydevsample.ui.zhihuad.ZhiHuAdActivity;
 
 import java.util.ArrayList;
@@ -86,7 +87,8 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("知乎广告效果模仿", ZhiHuAdActivity.class));
         buttonDescs.add(new ButtonDesc("QQ清理空间动画效果", QQCleanAnimActivity.class));
         buttonDescs.add(new ButtonDesc("相册淡入淡出", PageAnimFadeActivity.class));
-        buttonDescs.add(new ButtonDesc("后台测试",BackStageActivity.class));
+        buttonDescs.add(new ButtonDesc("后台Toast测试",BackStageActivity.class));
+        buttonDescs.add(new ButtonDesc("野狗SDK测试", WildDogSampleActivity.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);
         buttonList.setOnItemClickListener(this);

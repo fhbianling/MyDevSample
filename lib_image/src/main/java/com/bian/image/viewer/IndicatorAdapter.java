@@ -19,9 +19,9 @@ import java.util.List;
 
 class IndicatorAdapter {
 
-    private int count;
-    private LayoutInflater inflater;
-    private List<View> viewList;
+    private final int count;
+    private final LayoutInflater inflater;
+    private final List<View> viewList;
     IndicatorAdapter(int count, Context context) {
         this.count = count;
         inflater = LayoutInflater.from(context);

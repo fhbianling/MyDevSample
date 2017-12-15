@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
  * desc ${TODO}
  */
 
-public class GlideForSmuyyLoader implements ImageLoader {
+public class GlideForSmuyyhLoader implements ImageLoader {
     @Override
     public void displayImage(Context context, String path, ImageView imageView) {
         // TODO 在这边可以自定义图片加载库来加载ImageView，例如Glide、Picasso、ImageLoader等

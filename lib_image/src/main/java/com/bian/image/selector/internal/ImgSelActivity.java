@@ -46,26 +46,18 @@ public class ImgSelActivity extends FragmentActivity implements View.OnClickList
 
     private ImgSelConfig config;
 
-    private RelativeLayout rlTitleBar;
     private TextView tvTitle;
     private TextView btnConfirm;
-    private ImageView ivBack;
     private String cropImagePath;
 
     private ImgSelFragment fragment;
 
-    private ArrayList<String> result = new ArrayList<>();
+    private final ArrayList<String> result = new ArrayList<>();
 
     public static void startActivity(Activity activity, ImgSelConfig config, int RequestCode) {
         Intent intent = new Intent(activity, ImgSelActivity.class);
         Constant.config = config;
         activity.startActivityForResult(intent, RequestCode);
-    }
-
-    public static void startActivity(Fragment fragment, ImgSelConfig config, int RequestCode) {
-        Intent intent = new Intent(fragment.getActivity(), ImgSelActivity.class);
-        Constant.config = config;
-        fragment.startActivityForResult(intent, RequestCode);
     }
 
     @Override
@@ -93,13 +85,13 @@ public class ImgSelActivity extends FragmentActivity implements View.OnClickList
     }
 
     private void initView() {
-        rlTitleBar = (RelativeLayout) findViewById(R.id.rlTitleBar);
-        tvTitle = (TextView) findViewById(R.id.tvTitle);
+        RelativeLayout rlTitleBar = findViewById(R.id.rlTitleBar);
+        tvTitle = findViewById(R.id.tvTitle);
 
-        btnConfirm = (TextView) findViewById(R.id.btnConfirm);
+        btnConfirm = findViewById(R.id.btnConfirm);
         btnConfirm.setOnClickListener(this);
 
-        ivBack = (ImageView) findViewById(R.id.ivBack);
+        ImageView ivBack = findViewById(R.id.ivBack);
         ivBack.setOnClickListener(this);
 
         if (config != null) {
@@ -183,7 +175,7 @@ public class ImgSelActivity extends FragmentActivity implements View.OnClickList
     @Override
     public void onPreviewChanged(int select, int sum, boolean visible) {
         if (visible) {
-            tvTitle.setText(select + "/" + sum);
+            tvTitle.setText(String.format("%d/%d", select, sum));
         } else {
             tvTitle.setText(config.title);
         }
@@ -208,7 +200,7 @@ public class ImgSelActivity extends FragmentActivity implements View.OnClickList
         startActivityForResult(intent, IMAGE_CROP_CODE);
     }
 
-    public Uri getImageContentUri(File imageFile) {
+    private Uri getImageContentUri(File imageFile) {
         String filePath = imageFile.getAbsolutePath();
         Cursor cursor = getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -244,7 +236,7 @@ public class ImgSelActivity extends FragmentActivity implements View.OnClickList
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void exit() {
+    private void exit() {
         Intent intent = new Intent();
         result.clear();
         result.addAll(Constant.imageList);

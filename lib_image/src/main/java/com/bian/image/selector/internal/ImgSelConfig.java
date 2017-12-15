@@ -18,7 +18,7 @@ public class ImgSelConfig {
     /**
      * 是否需要裁剪
      */
-    public boolean needCrop;
+    public final boolean needCrop;
 
     /**
      * 是否多选
@@ -38,7 +38,7 @@ public class ImgSelConfig {
     /**
      * 第一个item是否显示相机
      */
-    public boolean needCamera;
+    public final boolean needCamera;
 
     public int statusBarColor = -1;
 
@@ -50,41 +50,36 @@ public class ImgSelConfig {
     /**
      * 标题
      */
-    public String title;
+    public final String title;
 
     /**
      * 标题颜色
      */
-    public int titleColor;
+    public final int titleColor;
 
     /**
      * titlebar背景色
      */
-    public int titleBgColor;
+    public final int titleBgColor;
 
-    public String btnText;
+    public final String btnText;
 
     /**
      * 确定按钮文字颜色
      */
-    public int btnTextColor;
+    public final int btnTextColor;
 
     /**
      * 确定按钮背景色
      */
-    public int btnBgColor;
+    public final int btnBgColor;
 
-    public String allImagesText;
-
-    /**
-     * 拍照存储路径
-     */
-    public String filePath;
+    public final String allImagesText;
 
     /**
      * 自定义图片加载器
      */
-    public ImageLoader loader;
+    public final ImageLoader loader;
 
     /**
      * 裁剪输出大小
@@ -94,7 +89,7 @@ public class ImgSelConfig {
     public int outputX = 500;
     public int outputY = 500;
 
-    public ImgSelConfig(Builder builder) {
+    private ImgSelConfig(Builder builder) {
         this.needCrop = builder.needCrop;
         this.multiSelect = builder.multiSelect;
         this.rememberSelected = builder.rememberSelected;
@@ -109,7 +104,10 @@ public class ImgSelConfig {
         this.btnBgColor = builder.btnBgColor;
         this.btnTextColor = builder.btnTextColor;
         this.allImagesText = builder.allImagesText;
-        this.filePath = builder.filePath;
+        /*
+      拍照存储路径
+     */
+        String filePath = builder.filePath;
         this.loader = builder.loader;
         this.aspectX = builder.aspectX;
         this.aspectY = builder.aspectY;
@@ -117,6 +115,7 @@ public class ImgSelConfig {
         this.outputY = builder.outputY;
     }
 
+    @SuppressWarnings("SameParameterValue")
     public static class Builder implements Serializable {
 
         private boolean needCrop = false;
@@ -134,7 +133,7 @@ public class ImgSelConfig {
         private int btnBgColor;
         private String allImagesText;
         private String filePath;
-        private ImageLoader loader;
+        private final ImageLoader loader;
 
         private int aspectX = 1;
         private int aspectY = 1;

@@ -1,6 +1,7 @@
 package com.bian.image.viewer;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +23,9 @@ import uk.co.senab.photoview.PhotoView;
  */
 
 class ImageViewerAdapter extends PagerAdapter{
-    private List<String> datas;
-    private List<View> views;
-    private LayoutInflater inflater;
+    private final List<String> datas;
+    private final List<View> views;
+    private final LayoutInflater inflater;
     ImageViewerAdapter(Context context, List<String> datas) {
         this.datas = datas;
         inflater=LayoutInflater.from(context);
@@ -37,20 +38,21 @@ class ImageViewerAdapter extends PagerAdapter{
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view==object;
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         if (position<views.size()){
             View view = views.get(position);
             container.removeView(view);
         }
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View inflate = inflater.inflate(R.layout.item_imageviewer, container, false);
         showPageData(position, inflate);
         views.add(inflate);
@@ -59,7 +61,7 @@ class ImageViewerAdapter extends PagerAdapter{
     }
 
     private void showPageData(int position, View inflate) {
-        PhotoView pv= (PhotoView) inflate.findViewById(R.id.imageViewerItem_pv);
+        PhotoView pv= inflate.findViewById(R.id.imageViewerItem_pv);
         String s = datas.get(position);
         Glide.with(pv.getContext()).load(s).diskCacheStrategy(DiskCacheStrategy.ALL).into(pv);
     }

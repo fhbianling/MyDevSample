@@ -18,9 +18,10 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 // TODO: 2017/8/25
+@SuppressWarnings("SameParameterValue")
 public class GlideUtil {
 
-    private static Drawable sErrorDrawable = new ColorDrawable(Color.parseColor("#cccccc"));
+    private static final Drawable sErrorDrawable = new ColorDrawable(Color.parseColor("#cccccc"));
 
     /**
      * @param url A file path, or a uri or url

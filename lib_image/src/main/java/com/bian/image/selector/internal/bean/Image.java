@@ -7,19 +7,12 @@ package com.bian.image.selector.internal.bean;
 public class Image {
 
     public String path;
-    public String name;
-    public long time;
 
-    public boolean isCamera = false;
-
-    public Image(String path, String name, long time) {
+    public Image(String path) {
         this.path = path;
-        this.name = name;
-        this.time = time;
     }
 
-    public Image(){
-        isCamera = true;
+    public Image() {
     }
 
     @Override

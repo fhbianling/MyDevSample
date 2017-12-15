@@ -1,5 +1,6 @@
 package com.bian.image.selector.internal.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -32,21 +33,10 @@ public class CustomViewPager extends ViewPager {
         return false;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return !isLocked && super.onTouchEvent(event);
-    }
-
-    public void toggleLock() {
-        isLocked = !isLocked;
-    }
-
-    public void setLocked(boolean isLocked) {
-        this.isLocked = isLocked;
-    }
-
-    public boolean isLocked() {
-        return isLocked;
     }
 
 }

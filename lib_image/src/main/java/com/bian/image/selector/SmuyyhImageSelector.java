@@ -19,13 +19,13 @@ import java.util.List;
 
 public class SmuyyhImageSelector implements ImageSelector {
     private static final int DEFAULT_COUNT = 1;
-    private Activity activity;
+    private final Activity activity;
     private int maxMultiSelectCount = DEFAULT_COUNT;
     private OnResultListener onResultListener;
     private OpenMode openMode;
     private int requestCode;
 
-    public SmuyyhImageSelector(Activity activity) {
+    SmuyyhImageSelector(Activity activity) {
         this.activity = activity;
     }
 
@@ -43,7 +43,8 @@ public class SmuyyhImageSelector implements ImageSelector {
         this.openMode = openMode;
         this.requestCode = requestCode;
         openMode.setRequestCode(requestCode);
-        ImgSelConfig.Builder builder = new ImgSelConfig.Builder(activity, new GlideForSmuyyLoader());
+        ImgSelConfig.Builder builder = new ImgSelConfig.Builder(activity,
+                                                                new GlideForSmuyyhLoader());
         if (withCrop) {
             builder.needCrop(true);
             builder.cropSize(1, 1, 640, 640);
@@ -83,7 +84,7 @@ public class SmuyyhImageSelector implements ImageSelector {
     /**
      * 在记忆选中功能无效的情况下该方法只能控制单次最多选中
      *
-     * @param maxMultiSelectCount
+     * @param maxMultiSelectCount 最多选中个数
      */
     @Override
     public void setMaxMultiSelectCount(int maxMultiSelectCount) {
@@ -93,7 +94,7 @@ public class SmuyyhImageSelector implements ImageSelector {
     /**
      * 注意在该ImageSelector中返回的是所有的结果
      *
-     * @param onResultListener
+     * @param onResultListener {@link ImageSelector.OnResultListener}
      */
     @Override
     public void setOnResultListener(OnResultListener onResultListener) {
@@ -109,7 +110,9 @@ public class SmuyyhImageSelector implements ImageSelector {
             /*注意这里返回的是所有结果*/
             List<String> pathList = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT);
 
-            onResultListener.onImageSelectResult(filterSameElem(pathList), openMode, openMode.getRequestCode());
+            onResultListener.onImageSelectResult(filterSameElem(pathList),
+                                                 openMode,
+                                                 openMode.getRequestCode());
         }
     }
 

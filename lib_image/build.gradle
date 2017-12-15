@@ -37,9 +37,11 @@ dependencies {
     implementation("com.android.support:support-v4:$supportLibraryVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    implementation("com.android.support:recyclerview-v7:$supportLibraryVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
     api 'com.github.bumptech.glide:glide:3.7.0'
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation 'com.github.chrisbanes.photoview:library:1.2.4'
-    implementation 'com.yuyh.easyadapter:library:1.1.0'
 }

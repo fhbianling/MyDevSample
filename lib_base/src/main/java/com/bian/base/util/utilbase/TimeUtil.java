@@ -26,7 +26,6 @@ import java.util.TimeZone;
  * -------------
  * 愿麦子和麦子长在一起，愿河流和河流流归一出。
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public final class TimeUtil {
     /**
      * eg.2016-09-14

@@ -6,15 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.bian.base.util.utilbase.AppActivityManager;
-import com.bian.base.util.utilevent.EventUtil;
-import com.jude.swipbackhelper.SwipeBackHelper;
+import com.bian.base.util.utilevent.BusUtil;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -26,21 +24,55 @@ import java.util.Set;
 /**
  * 所有项目通用的基类Activity
  * Created by BianLing on 2016/8/23.
+ * <p>
+ * <p>
+ * 提供的功能：
+ * 1.事件总线
+ * {@link #shouldRegisterBus()}返回true，则该Activity会注册事件总线，否则不会。
+ * 当注册后，重写{@link #handleMessage(Object)}即可接受事件
+ * <p>
+ * 2.Activity管理
+ * {@link #onDestroy()}和{@link #settingAfterSetContentView()}两个方法中，
+ * 通过{@link AppActivityManager}对该Activity实体管理
+ * <p>
+ * 3.Fragment的支持
+ * {@link #showFragment(Fragment, int)}方法，隐藏了Fragment显示的hide,show,add三个细节，换句话说
+ * 可以直接new出Fragment的实例，并调用该方法,相应的实例会被显示
+ * {@link #getFragments()}返回已经被添加的Fragment实例的set
+ * 但是这里没有考虑对不同的containerId添加相同的Fragment的情况，需注意
+ * <p>
+ * 4.DataBinding支持
+ * 在重写了{@link #bindLayoutId()}方法后
+ * 可以在{@link #setContent(int)}方法中调用DataBindingUtil.setContentView(..)拿到Activity的binding对象
+ * 不重写setContent则默认调用的是Activity的setContentView方法
+ * <p>
+ * 5.Activity启动
+ *
+ * @see #startActivity(Class)
+ * @see #startActivity(Class, Bundle)
  */
-@SuppressWarnings({"UnusedParameters", "unused"})
 public abstract class
 AbsBaseActivity extends AppCompatActivity {
+    //在intent只需要传递单一值时，下面这个常量可以用作intent的key
     public final static String INTENT_EXTRAS = "data";
     private boolean first = true;
     private Set<Fragment> fragments = new HashSet<>();
 
     /*---------------------------------------------------------------------*/
     /*应被子类重写和可被子类重写的方法*/
+
+    /**
+     * 重写该方法
+     * 该值默认返回false，true注册EventBus,false则不注册
+     */
+    protected boolean shouldRegisterBus() {
+        return false;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         beforeOnCreate();
         super.onCreate(savedInstanceState);
-        //设置状态栏白底深色文字
         beforeSetContentView();
         setContent(bindLayoutId());
         afterSetContentView(savedInstanceState);
@@ -48,16 +80,6 @@ AbsBaseActivity extends AppCompatActivity {
 
     protected void beforeOnCreate() {
 
-    }
-
-    @CallSuper
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        if (getShouldOnCreateSwipeBack()) {
-             /*左滑退出*/
-            SwipeBackHelper.onPostCreate(this);
-        }
     }
 
     @CallSuper
@@ -75,13 +97,6 @@ AbsBaseActivity extends AppCompatActivity {
      */
     protected void firstOnResume(boolean firstOnResume) {
 
-    }
-
-    /**
-     * 是否支持左滑推出 默认返回true,可重写
-     */
-    protected boolean getShouldOnCreateSwipeBack() {
-        return true;
     }
 
     /**
@@ -108,7 +123,12 @@ AbsBaseActivity extends AppCompatActivity {
      * 可重写该方法做一些需要在{@link #setContentView(int)}之前进行的操作
      */
     protected void beforeSetContentView() {
-        settingBeforeSetContentView();
+        /*窗口没有标题栏*/
+//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        /*强制竖屏*/
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        /*软键盘模式为不自动弹出*/
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     /**
@@ -163,9 +183,6 @@ AbsBaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (getShouldOnCreateSwipeBack()) {
-            SwipeBackHelper.onDestroy(this);
-        }
         AppActivityManager.getInstance().removeActivity(this);
         fragments.clear();
     }
@@ -174,34 +191,14 @@ AbsBaseActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        unRegisterRxBus();
+        unRegisterBus();
     }
 
     @CallSuper
     @Override
     protected void onStart() {
         super.onStart();
-        registerRxBus();
-    }
-
-    /**
-     * 重写该方法以在{@link #setContentView(int)}被调用之前更改某些设置
-     */
-    @CallSuper
-    protected void settingBeforeSetContentView() {
-        /*窗口没有标题栏*/
-//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        /*强制竖屏*/
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        /*软键盘模式为不自动弹出*/
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
-        if (getShouldOnCreateSwipeBack()) {
-        /*左滑退出*/
-            SwipeBackHelper.onCreate(this);
-            SwipeBackHelper.getCurrentPage(this)
-                    .setSwipeEdge(200);
-        }
+        registerBus();
     }
 
     /**
@@ -213,27 +210,8 @@ AbsBaseActivity extends AppCompatActivity {
     }
     /*---------------------------------------------------------------------*/
 
-
-    protected final void setSwipeBackEnable(boolean enable) {
-        if (getShouldOnCreateSwipeBack()) {
-            SwipeBackHelper.getCurrentPage(this).setSwipeBackEnable(enable);
-        }
-    }
-
-    /**
-     * 订阅RxBus
-     */
-    private void registerRxBus() {
-        EventUtil.get().register(this);
-    }
-
-    /**
-     * 取消订阅RxBus
-     */
-    private void unRegisterRxBus() {
-        EventUtil.get().unregister(this);
-    }
-
+    /*---------------------------------------------------------------------*/
+    //可供调用的方法
     public final void startActivity(Class cls) {
         Intent starter = new Intent(this, cls);
         startActivity(starter);
@@ -245,20 +223,16 @@ AbsBaseActivity extends AppCompatActivity {
         startActivity(starter);
     }
 
-    private void addFragment(Fragment fragment, @IdRes int containerId) {
-        fragments.add(fragment);
-        getSupportFragmentManager().beginTransaction().add(containerId, fragment,
-                fragment.getClass().getSimpleName()).commit();
-    }
-
     public final void showFragment(Fragment fragment, @IdRes int containerId) {
-        if (!fragments.contains(fragment)) {
-            addFragment(fragment, containerId);
-        }
         FragmentTransaction mFragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (!fragments.contains(fragment)) {
+            //未添加则先添加
+            fragments.add(fragment);
+            mFragmentTransaction.add(containerId, fragment, fragment.getClass().getSimpleName());
+        }
+        //相应的fragment显示，其他隐藏
         for (Fragment fragmentTemp : fragments) {
-            if (fragmentTemp.getClass().getSimpleName().equals(
-                    fragment.getClass().getSimpleName())) {
+            if (fragmentTemp.equals(fragment)) {
                 mFragmentTransaction.show(fragmentTemp);
             } else {
                 mFragmentTransaction.hide(fragmentTemp);
@@ -266,5 +240,27 @@ AbsBaseActivity extends AppCompatActivity {
         }
         mFragmentTransaction.commit();
     }
+
+    public Set<Fragment> getFragments() {
+        return fragments;
+    }
+    /*---------------------------------------------------------------------*/
+
+    /**
+     * 订阅事件Bus
+     */
+    private void registerBus() {
+        if (!shouldRegisterBus()) return;
+        BusUtil.get().register(this);
+    }
+
+    /**
+     * 取消订阅事件Bus
+     */
+    private void unRegisterBus() {
+        if (!shouldRegisterBus()) return;
+        BusUtil.get().unregister(this);
+    }
+
 }
 

@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
     }
     buildTypes {
         release {
@@ -15,33 +15,36 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions{
+        abortOnError false
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "com.android.support:support-v4:$supportLibraryVersion"
-    compile 'com.tencent.bugly:crashreport:latest.release'
-    compile "com.android.support:support-annotations:$supportLibraryVersion"
-    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation("com.android.support:support-v4:$supportLibraryVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation 'com.tencent.bugly:crashreport:2.6.6.1'
+    implementation "com.android.support:support-annotations:$supportLibraryVersion"
+    implementation("com.android.support:recyclerview-v7:$supportLibraryVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
     //左滑退出
-    compile 'com.jude:swipebackhelper:3.1.2'
+    implementation 'com.jude:swipebackhelper:3.1.2'
     /*eventbus*/
-    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation 'org.greenrobot:eventbus:3.0.0'
     /*上下拉刷新*/
-    compile 'com.liaoinstan.springview:library:1.2.7'
+    implementation 'com.liaoinstan.springview:library:1.3.0'
     /*rx*/
-    compile "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
-    compile "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     /*retrofit*/
-    compile 'com.squareup.retrofit2:retrofit:2.0.0'
-    compile 'com.squareup.retrofit2:retrofit-converters:2.0.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.1.2'
-    compile 'com.google.code.gson:gson:2.7'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     /*leakcanary*/
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     /*滚轮选择器*/
-    compile 'com.contrarywind:Android-PickerView:3.2.4'
+    implementation 'com.contrarywind:Android-PickerView:3.2.4'
 }

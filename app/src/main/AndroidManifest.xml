@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bian.mydevsample">
+          package="com.bian.mydevsample">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".application.MyApp"
@@ -10,13 +13,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+        <!--<activity android:name=".ui.InfoTextViewActivity">-->
+        <activity android:name=".ui._main.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.media.MediaPlayerActivity"/>
+        <activity android:name=".ui.weituananim3.WeiTuanAnimTestActivity"/>
+        <activity android:name=".ui.daggerstudy.Dagger2StudyActivity"/>
+        <activity android:name=".ui.infotextview.InfoTextViewSampleActivity"/>
+        <activity android:name=".ui.pageanim3qidian.QiDianViewPagerAnimActivity"/>
+        <activity android:name=".ui.weituananim1.AnimViewExecutorTest"/>
+        <activity android:name=".ui.adaptertest.AdapterTest"/>
+        <activity android:name=".ui.weituananim2.FloatingAnimTest"/>
+        <activity android:name=".ui.pageanim1.PagerAnimTest1"/>
+        <activity android:name=".ui.pageanim2.PagerAnimTest2"/>
+        <activity android:name=".ui.zhihuad.ZhiHuAdActivity"/>
+        <activity android:name=".ui.qqclean.QQCleanAnimActivity"/>
+        <activity android:name=".ui.pageanim4.PageAnimFadeActivity"/>
+        <activity android:name=".ui.wilddog.WildDogSampleActivity"/>
+        <activity android:name=".ui.backstage.BackStageActivity"/>
+
+        <receiver android:name="com.wilddog.client.receiver.WilddogAuthCastReceiver">
+            <intent-filter>
+                <action android:name="com.wilddog.wilddogauth.signinsuccess"/>
+                <action android:name="com.wilddog.wilddogauth.signoutsuccess"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

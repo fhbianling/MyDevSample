@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="InfoTextView">
+        <attr name="hintText" format="string"/>
+        <attr name="infoHintText" format="string"/>
+        <attr name="infoText" format="string"/>
+        <attr name="infoImageViewSrc" format="reference"/>
+
+        <attr name="hintColor" format="color"/>
+        <attr name="infoTextColor" format="color"/>
+        <attr name="infoHintColor" format="color"/>
+
+        <attr name="hintSize" format="dimension"/>
+        <attr name="infoTextViewSize" format="dimension"/>
+
+        <attr name="infoPadding" format="dimension"/>
+        <attr name="hintWidth" format="dimension"/>
+        <attr name="infoImageViewSideLength" format="dimension"/>
+
+        <attr name="hintBackground" format="reference"/>
+        <attr name="infoBackground" format="reference"/>
+
+        <attr name="goneIfInfoEmpty" format="boolean"/>
+        <attr name="autoAdjustHintLetterSpacing" format="boolean"/>
+
+        <attr name="infoViewSingleLine" format="boolean"/>
+        <attr name="infoViewHeight" format="dimension"/>
+        <attr name="infoViewLeftPadding" format="dimension"/>
+        <attr name="infoViewRightPadding" format="dimension"/>
+        <attr name="infoViewTopMargin" format="dimension"/>
+        <attr name="infoViewBottomMargin" format="dimension"/>
+
+        <attr name="drawableLeft" format="reference"/>
+        <attr name="drawableLeftSideLength" format="dimension"/>
+        <attr name="drawableLeftPadding" format="dimension"/>
+
+        <attr name="drawableRightType" format="enum">
+            <enum name="Image" value="1"/>
+            <enum name="Checkable" value="2"/>
+        </attr>
+
+        <attr name="drawableLeftType" format="enum">
+            <enum name="Image" value="1"/>
+            <enum name="Checkable" value="2"/>
+        </attr>
+
+        <attr name="drawableRight" format="reference"/>
+        <attr name="drawableRightSideLength" format="dimension"/>
+        <attr name="drawableRightPadding" format="dimension"/>
+
+        <attr name="dividerTopColor" format="color"/>
+        <attr name="dividerTopPaddingLeft" format="dimension"/>
+        <attr name="dividerTopPaddingRight" format="dimension"/>
+        <attr name="dividerTopHeight" format="dimension"/>
+
+        <attr name="dividerBottomColor" format="color"/>
+        <attr name="dividerBottomPaddingLeft" format="dimension"/>
+        <attr name="dividerBottomPaddingRight" format="dimension"/>
+        <attr name="dividerBottomHeight" format="dimension"/>
+
+        <attr name="paddingLeft" format="dimension"/>
+        <attr name="paddingRight" format="dimension"/>
+
+        <attr name="gravity" format="enum">
+            <enum name="Top" value="1"/>
+            <enum name="CenterVertical" value="2"/>
+            <enum name="Bottom" value="3"/>
+        </attr>
+
+        <attr name="infoTextGravity" format="enum">
+            <enum name="Left" value="1"/>
+            <enum name="Center" value="2"/>
+            <enum name="Right" value="3"/>
+        </attr>
+
+        <attr name="infoViewType" format="enum">
+            <enum name="TextView" value="1"/>
+            <enum name="ImageView" value="2"/>
+            <enum name="EditText" value="3"/>
+        </attr>
+
+        <attr name="infoEditTextInputType" format="enum">
+            <enum name="Number" value="1"/>
+            <enum name="NumberDecimal" value="2"/>
+            <enum name="NumberPassword" value="3"/>
+            <enum name="TextPassword" value="4"/>
+            <enum name="Text" value="5"/>
+        </attr>
+
+
+    </declare-styleable>
+</resources>

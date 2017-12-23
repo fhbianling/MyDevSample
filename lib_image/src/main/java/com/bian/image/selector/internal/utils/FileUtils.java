@@ -1,10 +1,8 @@
 package com.bian.image.selector.internal.utils;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.os.Environment;
-
+import android.util.Log;
 
 import java.io.File;
 
@@ -14,18 +12,17 @@ import java.io.File;
  */
 public class FileUtils {
 
-    private static final String TAG = FileUtils.class.getSimpleName();
-
     /**
      * 创建根缓存目录
-     *
-     * @return
      */
     public static String createRootPath(Context context) {
-        String cacheRootPath = "";
+        String cacheRootPath = null;
         if (isSdCardAvailable()) {
             // /sdcard/Android/data/<application package>/cache
-            cacheRootPath = context.getExternalCacheDir().getPath();
+            File externalCacheDir = context.getExternalCacheDir();
+            if (externalCacheDir != null) {
+                cacheRootPath = externalCacheDir.getPath();
+            }
         } else {
             // /data/data/<application package>/cache
             cacheRootPath = context.getCacheDir().getPath();
@@ -40,19 +37,19 @@ public class FileUtils {
     /**
      * 递归创建文件夹
      *
-     * @param dirPath
      * @return 创建失败返回""
      */
+    @SuppressWarnings({"UnusedReturnValue", "ResultOfMethodCallIgnored"})
     public static String createDir(String dirPath) {
         try {
             File file = new File(dirPath);
             if (file.getParentFile().exists()) {
-                LogUtils.i("----- 创建文件夹" + file.getAbsolutePath());
+                i("----- 创建文件夹" + file.getAbsolutePath());
                 file.mkdir();
                 return file.getAbsolutePath();
             } else {
                 createDir(file.getParentFile().getAbsolutePath());
-                LogUtils.i("----- 创建文件夹" + file.getAbsolutePath());
+                i("----- 创建文件夹" + file.getAbsolutePath());
                 file.mkdir();
             }
         } catch (Exception e) {
@@ -62,39 +59,27 @@ public class FileUtils {
     }
 
     /**
-     * 递归创建文件夹
+     * 创建文件
      *
-     * @param file
      * @return 创建失败返回""
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static String createFile(File file) {
         try {
-            if (file.getParentFile().exists()) {
-                LogUtils.i("----- 创建文件" + file.getAbsolutePath());
-                file.createNewFile();
-                return file.getAbsolutePath();
-            } else {
+            if (!file.getParentFile().exists()) {
                 createDir(file.getParentFile().getAbsolutePath());
-                file.createNewFile();
-                LogUtils.i("----- 创建文件" + file.getAbsolutePath());
             }
+            boolean newFile = file.createNewFile();
+            String absolutePath = file.getAbsolutePath();
+            i("创建文件:" + absolutePath + (newFile ? "成功" : "失败"));
+            return absolutePath;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return "";
     }
 
-    public static String getApplicationId(Context appContext) throws IllegalArgumentException {
-        ApplicationInfo applicationInfo = null;
-        try {
-            applicationInfo = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
-            if (applicationInfo == null) {
-                throw new IllegalArgumentException(" get application info = null, has no meta data! ");
-            }
-            LogUtils.d(appContext.getPackageName() + " " + applicationInfo.metaData.getString("APP_ID"));
-            return applicationInfo.metaData.getString("APP_ID");
-        } catch (PackageManager.NameNotFoundException e) {
-            throw new IllegalArgumentException(" get application info error! ", e);
-        }
+    private static void i(String msg) {
+        Log.i("ImageSelector", msg);
     }
 }

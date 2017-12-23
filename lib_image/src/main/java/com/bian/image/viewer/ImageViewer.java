@@ -27,13 +27,13 @@ import uk.co.senab.photoview.PhotoView;
  * 类描述：大图浏览
  */
 
+@SuppressWarnings("SameParameterValue")
 public class ImageViewer extends AppCompatActivity
         implements ViewPager.OnPageChangeListener, View.OnClickListener {
     private final static String MULTI = "MULTI";
     private static final String CHECKPOS = "checkPos";
     private PhotoView mPhotoView;
     private ViewPager mViewPager;
-    private ImageView back;
     private LinearLayout mIndicator;
     private List<String> filePaths;
     private int checkPos = 0;
@@ -45,7 +45,7 @@ public class ImageViewer extends AppCompatActivity
      * @param urlOrPaths url集合，可以是url也可以是本地路径，也可以时两者混合
      * @param checkPos   设置默认选中位置，当非0时，界面打开后初始时会自动滚动到选中位置
      */
-    public static void start(Context context, List<String> urlOrPaths, int checkPos) {
+    private static void start(Context context, List<String> urlOrPaths, int checkPos) {
         Intent starter = new Intent(context, ImageViewer.class);
         starter.putStringArrayListExtra(MULTI, new ArrayList<>(urlOrPaths));
         starter.putExtra(CHECKPOS, checkPos);
@@ -106,11 +106,11 @@ public class ImageViewer extends AppCompatActivity
     }
 
     private void findView() {
-        back = (ImageView) findViewById(R.id.imageViewer_back);
-        mPhotoView = (PhotoView) findViewById(R.id.imageViewer_pv);
-        mViewPager = (ViewPager) findViewById(R.id.imageViewer_vp);
+        ImageView back = findViewById(R.id.imageViewer_back);
+        mPhotoView = findViewById(R.id.imageViewer_pv);
+        mViewPager = findViewById(R.id.imageViewer_vp);
         mViewPager.setPageMargin(20);
-        mIndicator = (LinearLayout) findViewById(R.id.imageViewer_indicator);
+        mIndicator = findViewById(R.id.imageViewer_indicator);
 
         back.setOnClickListener(this);
     }

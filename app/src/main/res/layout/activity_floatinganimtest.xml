@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="100dp"
+        android:text="暂停"/>
+
+    <Button
+        android:id="@+id/toastOneTall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="弹一条高度高的"/>
+
+    <Button
+        android:id="@+id/toastOneShort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/toastOneTall"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="弹一条高度低的"/>
+
+    <Button
+        android:id="@+id/toastADialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/toastOneShort"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="弹一条类似弹窗的"/>
+
+    <TextView
+        android:id="@+id/toastDelay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:textColor="@android:color/black"
+        android:textSize="26sp"
+        tools:text="点击次数：12次"/>
+</RelativeLayout>

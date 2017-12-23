@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppDialog" parent="Base.Theme.AppCompat.Light.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
@@ -8,16 +9,28 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
-    <style name="LoadingDialog" parent="@android:style/Theme.Dialog">
-        <!-- 设置未浮动窗口 -->
-        <item name="android:windowIsFloating">true</item>
-        <!-- 设置无边框 -->
-        <item name="android:windowFrame">@null</item>
-        <!-- 设置无标题 -->
-        <item name="android:windowNoTitle">true</item>
-        <!-- 设置完全透明 -->
-        <item name="android:windowBackground">@color/testloadingbg</item>
-        <!-- 设置屏幕变暗 -->
-        <item name="android:backgroundDimEnabled">false</item>
+
+    <style name="Line_H">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">#ccc</item>
+    </style>
+
+    <style name="Line_V">
+        <item name="android:layout_width">0.5dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">#ccc</item>
+    </style>
+
+    <style name="SpaceHolder_H">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">1dp</item>
+    </style>
+
+    <style name="SpaceHolder_V">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">0dp</item>
     </style>
 </resources>

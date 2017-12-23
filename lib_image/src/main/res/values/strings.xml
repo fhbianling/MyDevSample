@@ -16,4 +16,5 @@
     <string name="permission_storage_denied">请打开存储空间权限</string>
 
     <string name="permission_camera_denied">请打开相机权限</string>
+    <string name="title">图片</string>
 </resources>

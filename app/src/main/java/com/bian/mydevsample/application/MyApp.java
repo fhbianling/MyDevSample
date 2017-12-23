@@ -3,8 +3,8 @@ package com.bian.mydevsample.application;
 import android.app.Application;
 
 import com.bian.base.BaseUtilManager;
-import com.bian.base.component.net.Api;
 import com.bian.mydevsample.BuildConfig;
+import com.bian.net.Api;
 
 import static com.bian.mydevsample.consts.Const.BOOK_BASE_URL;
 

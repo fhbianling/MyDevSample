@@ -11,6 +11,20 @@ import java.util.List;
  */
 
 public interface ImageSelector {
+    void open(OpenMode openMode, int requestCode, boolean withCrop);
+
+    void open(OpenMode openMode, boolean withCrop);
+
+    void setMaxMultiSelectCount(int maxMultiSelectCount);
+
+    void setOnResultListener(OnResultListener onResultListener);
+
+    void onActivityResult(int requestCode, int resultCode, Intent data);
+
+    void filter(List<String> filter);
+
+    void release();
+
     enum OpenMode {
         /*相册单选*/
         AlbumSingle(0x11),
@@ -23,10 +37,11 @@ public interface ImageSelector {
         /*拍照+相册多选*/
         Both_AlbumMulti(0x15);
         private int requestCode;
-        private int defaultRequestCode;
+        private final int defaultRequestCode;
+
         OpenMode(int requestCode) {
             this.requestCode = requestCode;
-            this.defaultRequestCode =requestCode;
+            this.defaultRequestCode = requestCode;
         }
 
         public int getRequestCode() {
@@ -41,20 +56,6 @@ public interface ImageSelector {
             return defaultRequestCode;
         }
     }
-
-    void open(OpenMode openMode, int requestCode, boolean withCrop);
-
-    void open(OpenMode openMode,boolean withCrop);
-
-    void setMaxMultiSelectCount(int maxMultiSelectCount);
-
-    void setOnResultListener(OnResultListener onResultListener);
-
-    void onActivityResult(int requestCode, int resultCode, Intent data) ;
-
-    void filter(List<String> filter);
-
-    void release();
 
     interface OnResultListener {
         void onImageSelectResult(List<String> imageResult, OpenMode openMode, int requestCode);

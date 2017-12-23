@@ -15,8 +15,8 @@ import java.util.List;
 public class ImageCompressUtil implements ImageOnCompressListener {
 
     private Dialog dialog;
-    private CompressorImpl compressor;
-    private Context context;
+    private final CompressorImpl compressor;
+    private final Context context;
     private OnMultiCompressListener multiCompressListener;
     private OnSingleCompressListener singleCompressListener;
     private OnFailedAction onFailedAction;

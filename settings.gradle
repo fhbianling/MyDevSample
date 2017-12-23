@@ -1,1 +1,1 @@
-include ':app', ':lib_base', ':lib_media', ':lib_image'
+include ':app', ':lib_base', ':lib_media', ':lib_image', ':lib_net'

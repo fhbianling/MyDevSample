@@ -1,5 +1,7 @@
 package com.bian.image.loader;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -12,11 +14,14 @@ import com.bian.image.viewer.ImageViewer;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 // TODO: 2017/8/25
+@SuppressWarnings("SameParameterValue")
 public class GlideUtil {
 
-    private static Drawable sErrorDrawable = new ColorDrawable(Color.parseColor("#cccccc"));
+    private static final Drawable sErrorDrawable = new ColorDrawable(Color.parseColor("#cccccc"));
 
     /**
      * @param url A file path, or a uri or url
@@ -36,16 +41,17 @@ public class GlideUtil {
      * @param url A file path, or a uri or url
      */
     @SuppressWarnings("WeakerAccess")
-    public static void load(final ImageView imageView, final String url, @Nullable Drawable errorDrawable) {
+    public static void load(final ImageView imageView, final String url,
+                            @Nullable Drawable errorDrawable) {
         if (errorDrawable == null) {
-            errorDrawable=sErrorDrawable;
+            errorDrawable = sErrorDrawable;
         }
-        Glide.with(imageView.getContext())
-                .load(url)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade()
-                .placeholder(errorDrawable)
-                .error(errorDrawable).into(imageView);
+        Glide.with(imageView.getContext().getApplicationContext())
+             .load(url)
+             .diskCacheStrategy(DiskCacheStrategy.ALL)
+             .crossFade()
+             .placeholder(errorDrawable)
+             .error(errorDrawable).into(imageView);
 
         if (!imageView.isClickable()) {
             imageView.setOnClickListener(new View.OnClickListener() {
@@ -59,11 +65,11 @@ public class GlideUtil {
 
     @SuppressWarnings("WeakerAccess")
     public static void load(ImageView imageView, @DrawableRes int drawableRes) {
-        Glide.with(imageView.getContext()).
+        Glide.with(imageView.getContext().getApplicationContext()).
                 load(drawableRes).
-                diskCacheStrategy(DiskCacheStrategy.ALL).
-                crossFade().
-                into(imageView);
+                     diskCacheStrategy(DiskCacheStrategy.ALL).
+                     crossFade().
+                     into(imageView);
     }
 
     /**
@@ -94,11 +100,14 @@ public class GlideUtil {
     @SuppressWarnings("WeakerAccess")
     public static void loadCircle(ImageView imageView, String url, Drawable errorDrawable) {
 
-        DrawableRequestBuilder<String> stringDrawableRequestBuilder = Glide.with(imageView.getContext())
-                .load(url)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .transform(new GlideCircleTransform(imageView.getContext()))
-                .crossFade();
+        DrawableRequestBuilder<String> stringDrawableRequestBuilder = Glide.with(imageView.getContext()
+                                                                                          .getApplicationContext())
+                                                                           .load(url)
+                                                                           .diskCacheStrategy(
+                                                                                   DiskCacheStrategy.ALL)
+                                                                           .transform(new GlideCircleTransform(
+                                                                                   imageView.getContext()))
+                                                                           .crossFade();
         if (errorDrawable != null) {
             stringDrawableRequestBuilder
                     .placeholder(errorDrawable)
@@ -114,11 +123,14 @@ public class GlideUtil {
      */
     @SuppressWarnings("WeakerAccess")
     public static void loadCircle(ImageView imageView, int url, Drawable errorDrawable) {
-        DrawableRequestBuilder<Integer> integerDrawableRequestBuilder = Glide.with(imageView.getContext())
-                .load(url)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .transform(new GlideCircleTransform(imageView.getContext()))
-                .crossFade();
+        DrawableRequestBuilder<Integer> integerDrawableRequestBuilder = Glide.with(imageView.getContext()
+                                                                                            .getApplicationContext())
+                                                                             .load(url)
+                                                                             .diskCacheStrategy(
+                                                                                     DiskCacheStrategy.ALL)
+                                                                             .transform(new GlideCircleTransform(
+                                                                                     imageView.getContext()))
+                                                                             .crossFade();
         if (errorDrawable != null) {
             integerDrawableRequestBuilder
                     .placeholder(errorDrawable)
@@ -132,31 +144,48 @@ public class GlideUtil {
     }
 
     public static void loadRound(ImageView imageView, String url) {
-        Glide.with(imageView.getContext()).
+        Glide.with(imageView.getContext().getApplicationContext()).
                 load(url).
-                transform(new GlideRoundTransform(imageView.getContext(), 5)).
-                into(imageView);
+                     transform(new GlideRoundTransform(imageView.getContext(), 5)).
+                     into(imageView);
     }
 
     public static void loadAsBitmap(ImageView imageView, String url) {
-        Glide.with(imageView.getContext()).
+        Glide.with(imageView.getContext().getApplicationContext()).
                 load(url).
-                asBitmap().
-                into(imageView);
+                     asBitmap().
+                     into(imageView);
     }
 
     public static void loadAsBitmap(ImageView imageView, String url, int errorRes) {
-        Glide.with(imageView.getContext()).
+        Glide.with(imageView.getContext().getApplicationContext()).
                 load(url).
-                asBitmap().
-                error(errorRes).
-                into(imageView);
+                     asBitmap().
+                     error(errorRes).
+                     into(imageView);
+    }
+
+    public static void loadBitmap(Context context, String url, final BitmapLoader target) {
+        Glide.with(context.getApplicationContext())
+             .load(url)
+             .asBitmap()
+             .into(new SimpleTarget<Bitmap>() {
+                 @Override
+                 public void onResourceReady(Bitmap resource,
+                                             GlideAnimation<? super Bitmap> glideAnimation) {
+                     target.onResourceReady(resource);
+                 }
+             });
     }
 
     public interface OnDiskClearListener {
         void clearStart();
 
         void clearFinish();
+    }
+
+    public interface BitmapLoader {
+        void onResourceReady(Bitmap resource);
     }
 
 }

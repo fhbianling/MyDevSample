@@ -1,7 +1,12 @@
 package com.bian.image.selector.internal.adapter;
 
 import android.content.Context;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bian.image.R;
@@ -9,57 +14,82 @@ import com.bian.image.selector.internal.ImgSelConfig;
 import com.bian.image.selector.internal.bean.Image;
 import com.bian.image.selector.internal.common.Constant;
 import com.bian.image.selector.internal.common.OnItemClickListener;
-import com.yuyh.easyadapter.recyclerview.EasyRVAdapter;
-import com.yuyh.easyadapter.recyclerview.EasyRVHolder;
 
 import java.util.List;
 
-/**
- * @author yuyh.
- * @date 2016/8/5.
- */
-public class ImageListAdapter extends EasyRVAdapter<Image> {
+public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Holder> {
 
+    private static final int TYPE_SHOW_CAMERA = 1;
+    private static final int TYPE_NORMAL = 0;
     private boolean showCamera;
-    private boolean mutiSelect;
+    private boolean multiSelect;
 
-    private ImgSelConfig config;
-    private Context context;
+    private final List<Image> list;
+    private final ImgSelConfig config;
+    private final Context context;
     private OnItemClickListener listener;
+    private final LayoutInflater inflater;
 
     public ImageListAdapter(Context context, List<Image> list, ImgSelConfig config) {
-        super(context, list, R.layout.item_img_sel, R.layout.item_img_sel_take_photo);
         this.context = context;
+        this.list = list;
         this.config = config;
+        inflater = LayoutInflater.from(context);
+    }
+
+    public void setShowCamera(boolean showCamera) {
+        this.showCamera = showCamera;
+    }
+
+    public void setMultiSelect(boolean multiSelect) {
+        this.multiSelect = multiSelect;
     }
 
     @Override
-    protected void onBindData(final EasyRVHolder viewHolder, final int position, final Image item) {
+    public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView;
+        if (viewType == TYPE_SHOW_CAMERA) {
+            itemView = inflater.inflate(R.layout.item_img_sel_take_photo, parent, false);
+        } else {
+            itemView = inflater.inflate(R.layout.item_img_sel, parent, false);
+        }
+        return new Holder(itemView);
+    }
 
-        if (position == 0 && showCamera) {
-            ImageView iv = viewHolder.getView(R.id.ivTakePhoto);
+    @Override
+    public void onBindViewHolder(final Holder holder, final int pos) {
+
+        if (list == null) {
+            return;
+        }
+        final Image item = list.get(holder.getAdapterPosition());
+
+        if (holder.getAdapterPosition() == 0 && showCamera) {
+            ImageView iv = (ImageView) holder.getView(R.id.ivTakePhoto);
             iv.setImageResource(R.drawable.ic_take_photo);
             iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null)
-                        listener.onImageClick(position, item);
+                        listener.onImageClick(holder.getAdapterPosition(), item);
                 }
             });
             return;
         }
 
-        if (mutiSelect) {
-            viewHolder.getView(R.id.ivPhotoCheaked).setOnClickListener(new View.OnClickListener() {
+        if (multiSelect) {
+            holder.getView(R.id.ivPhotoCheaked).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        int ret = listener.onCheckedClick(position, item);
+                        int ret = listener.onCheckedClick(holder.getAdapterPosition(), item);
                         if (ret == 1) { // 局部刷新
                             if (Constant.imageList.contains(item.path)) {
-                                viewHolder.setImageResource(R.id.ivPhotoCheaked, R.drawable.ic_checked);
+                                holder.setImageResource(R.id.ivPhotoCheaked,
+                                                        R.drawable.ic_checked);
                             } else {
-                                viewHolder.setImageResource(R.id.ivPhotoCheaked, R.drawable.ic_uncheck);
+                                holder.setImageResource(R.id.ivPhotoCheaked,
+                                                        R.drawable.ic_uncheck);
                             }
                         }
                     }
@@ -67,46 +97,71 @@ public class ImageListAdapter extends EasyRVAdapter<Image> {
             });
         }
 
-        viewHolder.setOnItemViewClickListener(new View.OnClickListener() {
+        holder.setOnItemViewClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null)
-                    listener.onImageClick(position, item);
+                    listener.onImageClick(holder.getAdapterPosition(), item);
             }
         });
 
-        final ImageView iv = viewHolder.getView(R.id.ivImage);
+        final ImageView iv = (ImageView) holder.getView(R.id.ivImage);
         config.loader.displayImage(context, item.path, iv);
 
-        if (mutiSelect) {
-            viewHolder.setVisible(R.id.ivPhotoCheaked, true);
+        if (multiSelect) {
+            holder.setVisible(R.id.ivPhotoCheaked, true);
             if (Constant.imageList.contains(item.path)) {
-                viewHolder.setImageResource(R.id.ivPhotoCheaked, R.drawable.ic_checked);
+                holder.setImageResource(R.id.ivPhotoCheaked, R.drawable.ic_checked);
             } else {
-                viewHolder.setImageResource(R.id.ivPhotoCheaked, R.drawable.ic_uncheck);
+                holder.setImageResource(R.id.ivPhotoCheaked, R.drawable.ic_uncheck);
             }
         } else {
-            viewHolder.setVisible(R.id.ivPhotoCheaked, false);
+            holder.setVisible(R.id.ivPhotoCheaked, false);
         }
-    }
-
-    public void setShowCamera(boolean showCamera) {
-        this.showCamera = showCamera;
-    }
-
-    public void setMutiSelect(boolean mutiSelect) {
-        this.mutiSelect = mutiSelect;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0 && showCamera) {
-            return 1;
+            return TYPE_SHOW_CAMERA;
         }
-        return 0;
+        return TYPE_NORMAL;
+    }
+
+    @Override
+    public int getItemCount() {
+        return list != null ? list.size() : 0;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+
+    static class Holder extends RecyclerView.ViewHolder {
+
+        Holder(View itemView) {
+            super(itemView);
+        }
+
+        View getView(@IdRes int idRes) {
+            View viewById = itemView.findViewById(idRes);
+            if (viewById == null) {
+                throw new NullPointerException("can't find view of id:" + idRes);
+            }
+            return viewById;
+        }
+
+        void setVisible(@IdRes int idRes, boolean visible) {
+            getView(idRes).setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+
+        void setImageResource(@IdRes int idRes, @DrawableRes int imgRes) {
+            ImageView imageView = (ImageView) getView(idRes);
+            imageView.setImageResource(imgRes);
+        }
+
+        void setOnItemViewClickListener(View.OnClickListener onClickListener) {
+            itemView.setOnClickListener(onClickListener);
+        }
     }
 }

@@ -2,13 +2,13 @@ package com.bian.base.util.utilthrowable;
 
 import android.content.Context;
 
+import com.bian.base.util.utilbase.L;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 
-import com.bian.base.util.utilbase.L;
 import com.bian.base.util.utilbase.ToastUtil;
 
 /**
@@ -39,8 +39,6 @@ public class ThrowableHandler {
             } else if (t instanceof ConnectException ||
                     t instanceof NoRouteToHostException) {
                 ToastUtil.showToastShort("服务器暂时无法连接，请稍后重试");
-            } else if (t instanceof ResponseBodyNullException){
-                ToastUtil.showToastShort("服务器异常，请稍后重试");
             }
         } else {
             L.e("要处理的异常对象为空");

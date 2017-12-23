@@ -1,6 +1,7 @@
 package com.bian.image.selector.internal.adapter;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +15,11 @@ import com.bian.image.selector.internal.common.OnItemClickListener;
 
 import java.util.List;
 
-/**
- * @author yuyh.
- * @date 2016/9/28.
- */
 public class PreviewAdapter extends PagerAdapter {
 
-    private Activity activity;
-    private List<Image> images;
-    private ImgSelConfig config;
+    private final Activity activity;
+    private final List<Image> images;
+    private final ImgSelConfig config;
     private OnItemClickListener listener;
 
     public PreviewAdapter(Activity activity, List<Image> images, ImgSelConfig config) {
@@ -39,11 +36,12 @@ public class PreviewAdapter extends PagerAdapter {
             return images.size();
     }
 
+    @NonNull
     @Override
-    public View instantiateItem(ViewGroup container, final int position) {
+    public View instantiateItem(@NonNull ViewGroup container, final int position) {
         View root = View.inflate(activity, R.layout.item_pager_img_sel, null);
-        final ImageView photoView = (ImageView) root.findViewById(R.id.ivImage);
-        final ImageView ivChecked = (ImageView) root.findViewById(R.id.ivPhotoCheaked);
+        final ImageView photoView = root.findViewById(R.id.ivImage);
+        final ImageView ivChecked = root.findViewById(R.id.ivPhotoCheaked);
 
         if (config.multiSelect) {
 
@@ -84,7 +82,7 @@ public class PreviewAdapter extends PagerAdapter {
         }
 
         container.addView(root, ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+                          ViewGroup.LayoutParams.MATCH_PARENT);
 
         displayImage(photoView, images.get(config.needCamera ? position + 1 : position).path);
 
@@ -96,12 +94,12 @@ public class PreviewAdapter extends PagerAdapter {
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
     }
 

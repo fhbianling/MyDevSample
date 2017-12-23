@@ -11,7 +11,7 @@ class CompressorImpl implements ImageCompressor{
 
     private ImageOnCompressListener mOnCompressListener;
 
-    private ImageCompressor mImageCompressor;
+    private final ImageCompressor mImageCompressor;
 
     CompressorImpl() {
         mImageCompressor = new ZeloryImageCompressor();

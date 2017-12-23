@@ -2,11 +2,15 @@ package com.bian.base.util.utilbase;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +60,6 @@ public final class ToastUtil {
     /**
      * 展示一个toast,duration可以为{@link Toast#LENGTH_LONG}或{@link Toast#LENGTH_SHORT}，
      * 也可以为一个自定义的值(此时值不能去0，1)，单位为ms
-     *
      */
     public static void showToast(Context mContext, String text, int duration) {
         Toast mToast = getToast(mContext, text, duration);
@@ -90,9 +93,7 @@ public final class ToastUtil {
     private static Toast getToast(Context mContext, String text, int duration) {
         Toast mToast;
         if (sLayoutRes != NONE && sTextViewId != NONE) {
-            View inflate = LayoutInflater.from(mContext).inflate(sLayoutRes, null, false);
-            TextView textView = (TextView) inflate.findViewById(sTextViewId);
-            textView.setText(text);
+            View inflate = getMsgContentView(mContext, text);
             mToast = new Toast(mContext);
             mToast.setGravity(Gravity.CENTER, 0, 0);
             mToast.setDuration(duration);
@@ -102,6 +103,15 @@ public final class ToastUtil {
         }
         return mToast;
     }
+
+    @NonNull
+    private static View getMsgContentView(Context mContext, String text) {
+        View inflate = LayoutInflater.from(mContext).inflate(sLayoutRes, null, false);
+        TextView textView = inflate.findViewById(sTextViewId);
+        textView.setText(text);
+        return inflate;
+    }
+
     /**
      * 为Toast设置布局id和文字id
      *
@@ -115,6 +125,53 @@ public final class ToastUtil {
 
     public static void showToast(Context mContext, int resId, int duration) {
         showToast(mContext, mContext.getResources().getString(resId), duration);
+    }
+
+    public static void showToastInBackground(Context context, String msg, int duration) {
+        final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (wm == null) return;
+        WindowManager.LayoutParams lp;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            lp = new WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        } else {
+            lp = new WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_TOAST);
+        }
+        lp.gravity = Gravity.BOTTOM;
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        final View msgContentView = getBackgroundMsgContentView(context, msg);
+        wm.addView(msgContentView, lp);
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                wm.removeViewImmediate(msgContentView);
+            }
+        };
+        timer.schedule(timerTask, duration);
+    }
+
+    @NonNull
+    private static View getBackgroundMsgContentView(Context context, String msg) {
+        if (sLayoutRes != NONE && sTextViewId != NONE) {
+            return getMsgContentView(ToastUtil.context, msg);
+        } else {
+            return getDefaultToastView(context, msg);
+        }
+    }
+
+    @NonNull
+    private static View getDefaultToastView(Context context, String msg) {
+        TextView textView = new TextView(context);
+        textView.setBackgroundColor(Color.parseColor("#33575757"));
+        textView.setPadding(15, 5, 15, 5);
+        int textColor = context.getResources().getColor(android.R.color.background_light);
+        textView.setBackgroundColor(Color.parseColor("#eeaaaaaa"));
+        textView.setTextColor(textColor);
+        textView.setGravity(Gravity.CENTER_HORIZONTAL);
+        textView.setText(msg);
+        return textView;
     }
 
 }

@@ -24,6 +24,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.bian.image.R;
+import com.bian.image.selector.ImageSelectHelper;
 import com.bian.image.selector.internal.adapter.FolderListAdapter;
 import com.bian.image.selector.internal.adapter.ImageListAdapter;
 import com.bian.image.selector.internal.adapter.PreviewAdapter;
@@ -42,37 +44,35 @@ import com.bian.image.selector.internal.common.Constant;
 import com.bian.image.selector.internal.common.OnFolderChangeListener;
 import com.bian.image.selector.internal.common.OnItemClickListener;
 import com.bian.image.selector.internal.utils.FileUtils;
-import com.bian.image.selector.internal.utils.LogUtils;
 import com.bian.image.selector.internal.widget.CustomViewPager;
 import com.bian.image.selector.internal.widget.DividerGridItemDecoration;
-import com.bian.image.selector.ImageSelectHelper;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ImgSelFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener {
+public class ImgSelFragment extends Fragment
+        implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
     private static final int LOADER_ALL = 0;
     private static final int LOADER_CATEGORY = 1;
     private static final int REQUEST_CAMERA = 5;
     private static final int CAMERA_REQUEST_CODE = 1;
+    private final List<Folder> folderList = new ArrayList<>();
+    private final List<Image> imageList = new ArrayList<>();
     private RecyclerView rvImageList;
     private Button btnAlbumSelected;
     private View rlBottom;
     private CustomViewPager viewPager;
     private ImgSelConfig config;
     private Callback callback;
-    private List<Folder> folderList = new ArrayList<>();
-    private List<Image> imageList = new ArrayList<>();
     private ListPopupWindow folderPopupWindow;
     private ImageListAdapter imageListAdapter;
     private FolderListAdapter folderListAdapter;
     private PreviewAdapter previewAdapter;
     private boolean hasFolderGened = false;
-    private File tempFile;
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private final LoaderManager.LoaderCallbacks<Cursor> mLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
 
         private final String[] IMAGE_PROJECTION = {
                 MediaStore.Images.Media.DATA,
@@ -83,15 +83,19 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             if (id == LOADER_ALL) {
-                CursorLoader cursorLoader = new CursorLoader(getActivity(),
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                        null, null, IMAGE_PROJECTION[2] + " DESC");
-                return cursorLoader;
+                return new CursorLoader(getActivity(),
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                        IMAGE_PROJECTION,
+                                        null,
+                                        null,
+                                        IMAGE_PROJECTION[2] + " DESC");
             } else if (id == LOADER_CATEGORY) {
-                CursorLoader cursorLoader = new CursorLoader(getActivity(),
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                        IMAGE_PROJECTION[0] + " like '%" + args.getString("path") + "%'", null, IMAGE_PROJECTION[2] + " DESC");
-                return cursorLoader;
+                return new CursorLoader(getActivity(),
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                        IMAGE_PROJECTION,
+                                        IMAGE_PROJECTION[0] + " like '%" + args.getString("path") + "%'",
+                                        null,
+                                        IMAGE_PROJECTION[2] + " DESC");
             }
             return null;
         }
@@ -107,7 +111,7 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
                         String path = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[0]));
                         String name = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[1]));
                         long dateTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
-                        Image image = new Image(path, name, dateTime);
+                        Image image = new Image(path);
                         if (!image.path.endsWith("gif"))
                             tempImageList.add(image);
                         if (!hasFolderGened) {
@@ -158,6 +162,7 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
 
         }
     };
+    private File tempFile;
 
     public static ImgSelFragment instance() {
         ImgSelFragment fragment = new ImgSelFragment();
@@ -167,25 +172,26 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_img_sel, container, false);
-        rvImageList = (RecyclerView) view.findViewById(R.id.rvImageList);
-        btnAlbumSelected = (Button) view.findViewById(R.id.btnAlbumSelected);
+        rvImageList = view.findViewById(R.id.rvImageList);
+        btnAlbumSelected = view.findViewById(R.id.btnAlbumSelected);
         btnAlbumSelected.setOnClickListener(this);
         rlBottom = view.findViewById(R.id.rlBottom);
-        viewPager = (CustomViewPager) view.findViewById(R.id.viewPager);
+        viewPager = view.findViewById(R.id.viewPager);
         viewPager.addOnPageChangeListener(this);
         return view;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         config = Constant.config;
         try {
             callback = (Callback) getActivity();
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         btnAlbumSelected.setText(config.allImagesText);
@@ -197,12 +203,12 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
 
         imageListAdapter = new ImageListAdapter(getActivity(), imageList, config);
         imageListAdapter.setShowCamera(config.needCamera);
-        imageListAdapter.setMutiSelect(config.multiSelect);
+        imageListAdapter.setMultiSelect(config.multiSelect);
         rvImageList.setAdapter(imageListAdapter);
         imageListAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public int onCheckedClick(int position, Image image) {
-                return checkedImage(position, image);
+                return checkedImage(image);
             }
 
             @Override
@@ -211,11 +217,13 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
                     showCameraAction();
                 } else {
                     if (config.multiSelect) {
-                        viewPager.setAdapter((previewAdapter = new PreviewAdapter(getActivity(), imageList, config)));
+                        viewPager.setAdapter((previewAdapter = new PreviewAdapter(getActivity(),
+                                                                                  imageList,
+                                                                                  config)));
                         previewAdapter.setListener(new OnItemClickListener() {
                             @Override
                             public int onCheckedClick(int position, Image image) {
-                                return checkedImage(position, image);
+                                return checkedImage(image);
                             }
 
                             @Override
@@ -244,7 +252,7 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
         getActivity().getSupportLoaderManager().initLoader(LOADER_ALL, null, mLoaderCallback);
     }
 
-    private int checkedImage(int position, Image image) {
+    private int checkedImage(Image image) {
         if (image != null) {
             if (Constant.imageList.contains(image.path)) {
                 Constant.imageList.remove(image.path);
@@ -253,7 +261,9 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
                 }
             } else {
                 if (config.maxNum <= Constant.imageList.size()) {
-                    Toast.makeText(getActivity(), String.format(getString(R.string.maxnum), config.maxNum), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),
+                                   String.format(getString(R.string.maxnum), config.maxNum),
+                                   Toast.LENGTH_SHORT).show();
                     return 0;
                 }
 
@@ -276,12 +286,14 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
         folderPopupWindow.setHeight(height);
         folderPopupWindow.setAnchorView(rlBottom);
         folderPopupWindow.setModal(true);
-        folderListAdapter.setOnFloderChangeListener(new OnFolderChangeListener() {
+        folderListAdapter.setOnFolderChangeListener(new OnFolderChangeListener() {
             @Override
             public void onChange(int position, Folder folder) {
                 folderPopupWindow.dismiss();
                 if (position == 0) {
-                    getActivity().getSupportLoaderManager().restartLoader(LOADER_ALL, null, mLoaderCallback);
+                    getActivity().getSupportLoaderManager().restartLoader(LOADER_ALL,
+                                                                          null,
+                                                                          mLoaderCallback);
                     btnAlbumSelected.setText(config.allImagesText);
                 } else {
                     imageList.clear();
@@ -308,7 +320,10 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
             } else {
                 folderPopupWindow.show();
                 if (folderPopupWindow.getListView() != null) {
-                    folderPopupWindow.getListView().setDivider(new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.bottom_bg)));
+                    folderPopupWindow.getListView()
+                                     .setDivider(new ColorDrawable(ContextCompat.getColor(
+                                             getActivity(),
+                                             R.color.bottom_bg)));
                 }
                 int index = folderListAdapter.getSelectIndex();
                 index = index == 0 ? index : index - 1;
@@ -320,7 +335,9 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
     private void showCameraAction() {
 
         if (config.maxNum <= Constant.imageList.size()) {
-            Toast.makeText(getActivity(), String.format(getString(R.string.maxnum), config.maxNum), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),
+                           String.format(getString(R.string.maxnum), config.maxNum),
+                           Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -334,23 +351,28 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
 
         if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             tempFile = new File(FileUtils.createRootPath(getActivity()) + "/" + System.currentTimeMillis() + ".jpg");
-            LogUtils.e(tempFile.getAbsolutePath());
+            Log.e("ImageSelector", "showCamera,tempFilePath:" + tempFile.getAbsolutePath());
             FileUtils.createFile(tempFile);
 
             Uri uri = FileProvider.getUriForFile(getActivity(),
-                    ImageSelectHelper.FILE_PROVIDER_PATH, tempFile);
+                                                 ImageSelectHelper.FILE_PROVIDER_PATH, tempFile);
             List<ResolveInfo> resInfoList = getActivity().getPackageManager()
-                    .queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                                                         .queryIntentActivities(cameraIntent,
+                                                                                PackageManager.MATCH_DEFAULT_ONLY);
             for (ResolveInfo resolveInfo : resInfoList) {
                 String packageName = resolveInfo.activityInfo.packageName;
-                getActivity().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                getActivity().grantUriPermission(packageName,
+                                                 uri,
+                                                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                                         | Intent.FLAG_GRANT_READ_URI_PERMISSION);
             }
 
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri); //Uri.fromFile(tempFile)
             startActivityForResult(cameraIntent, REQUEST_CAMERA);
         } else {
-            Toast.makeText(getActivity(), getString(R.string.open_camera_failure), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),
+                           getString(R.string.open_camera_failure),
+                           Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -373,14 +395,17 @@ public class ImgSelFragment extends Fragment implements View.OnClickListener, Vi
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case CAMERA_REQUEST_CODE:
                 if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     showCameraAction();
                 } else {
-                    Toast.makeText(getActivity(), getString(R.string.permission_camera_denied), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),
+                                   getString(R.string.permission_camera_denied),
+                                   Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:

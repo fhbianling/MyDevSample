@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<activity android:name=".ui.InfoTextViewActivity">-->
+
+        <!-- <activity android:name=".ui.InfoTextViewActivity"> -->
         <activity android:name=".ui._main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -36,6 +37,7 @@
         <activity android:name=".ui.pageanim4.PageAnimFadeActivity"/>
         <activity android:name=".ui.wilddog.WildDogSampleActivity"/>
         <activity android:name=".ui.backstage.BackStageActivity"/>
+        <activity android:name=".ui.kugouanim.KuGouMainAnimActivity"/>
 
         <receiver android:name="com.wilddog.client.receiver.WilddogAuthCastReceiver">
             <intent-filter>
@@ -43,6 +45,7 @@
                 <action android:name="com.wilddog.wilddogauth.signoutsuccess"/>
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

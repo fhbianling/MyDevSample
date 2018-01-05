@@ -38,6 +38,7 @@
         <activity android:name=".ui.wilddog.WildDogSampleActivity"/>
         <activity android:name=".ui.backstage.BackStageActivity"/>
         <activity android:name=".ui.kugouanim.KuGouMainAnimActivity"/>
+        <activity android:name=".ui.halfcolortext.HalfColorTextViewActivity"/>
 
         <receiver android:name="com.wilddog.client.receiver.WilddogAuthCastReceiver">
             <intent-filter>

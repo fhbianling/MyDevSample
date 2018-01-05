@@ -3,7 +3,6 @@ package com.bian.mydevsample.ui._main;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -35,7 +34,6 @@ import java.util.List;
 
 public class MainActivity extends AbsBaseActivity
         implements AdapterView.OnItemClickListener {
-    private Fragment[] fragments = new Fragment[6];
     private Adapter adapter;
 
     @Override
@@ -47,6 +45,7 @@ public class MainActivity extends AbsBaseActivity
                 if ("TextView".equals(name)) {
                     TextView textView = new TextView(context, attrs);
                     textView.setTypeface(Typeface.create("", Typeface.ITALIC));
+//                    changeBg(textView);
                     return textView;
                 }
                 return null;
@@ -58,10 +57,25 @@ public class MainActivity extends AbsBaseActivity
                 if ("TextView".equals(name)) {
                     TextView textView = new TextView(context, attrs);
                     textView.setTypeface(Typeface.create("", Typeface.ITALIC));
+//                    changeBg(textView);
                     return textView;
                 }
                 return null;
             }
+
+//            private void changeBg(TextView textView) {
+//                OvalShape ovalShape = new OvalShape() {
+//                    @Override
+//                    public void draw(Canvas canvas, Paint paint) {
+//                        int orgColor = paint.getColor();
+//                        paint.setColor(Color.RED);
+//                        canvas.drawOval(rect(), paint);
+//                        paint.setColor(orgColor);
+//                    }
+//                };
+//                ShapeDrawable shapeDrawable = new ShapeDrawable(ovalShape);
+//                textView.setBackground(shapeDrawable);
+//            }
         });
     }
 
@@ -87,7 +101,7 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("知乎广告效果模仿", ZhiHuAdActivity.class));
         buttonDescs.add(new ButtonDesc("QQ清理空间动画效果", QQCleanAnimActivity.class));
         buttonDescs.add(new ButtonDesc("相册淡入淡出", PageAnimFadeActivity.class));
-        buttonDescs.add(new ButtonDesc("后台Toast测试",BackStageActivity.class));
+        buttonDescs.add(new ButtonDesc("后台Toast测试", BackStageActivity.class));
         buttonDescs.add(new ButtonDesc("野狗SDK测试", WildDogSampleActivity.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);

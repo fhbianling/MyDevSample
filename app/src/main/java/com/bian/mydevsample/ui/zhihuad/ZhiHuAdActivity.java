@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsBaseRecycleViewAdapter;
+import com.bian.base.baseclass.baseadapter.AbsRVAdapter;
 import com.bian.base.baseclass.baseadapter.RvDefaultHolder;
 import com.bian.image.loader.GlideUtil;
 import com.bian.mydevsample.R;
@@ -67,7 +67,7 @@ public class ZhiHuAdActivity extends BaseActivity {
         private String msg;
     }
 
-    private class Adapter extends AbsBaseRecycleViewAdapter<Item, RvDefaultHolder> {
+    private class Adapter extends AbsRVAdapter<Item, RvDefaultHolder> {
 
         Adapter(List<Item> data, Activity context) {
             super(data, context);

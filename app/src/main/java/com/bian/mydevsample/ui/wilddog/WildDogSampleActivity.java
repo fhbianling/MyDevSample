@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsBaseAdapter;
+import com.bian.base.baseclass.baseadapter.AbsAdapter;
 import com.bian.base.util.utilbase.ToastUtil;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;
@@ -108,7 +108,7 @@ public class WildDogSampleActivity extends BaseActivity
         ToastUtil.showToastShort("添加成功");
     }
 
-    private class Adapter extends AbsBaseAdapter<User, Holder> {
+    private class Adapter extends AbsAdapter<User, Holder> {
 
         Adapter(Activity mActivity) {
             super(mActivity);
@@ -132,7 +132,7 @@ public class WildDogSampleActivity extends BaseActivity
         }
     }
 
-    private class Holder extends AbsBaseAdapter.ViewHolder
+    private class Holder extends AbsAdapter.ViewHolder
             implements View.OnClickListener, SyncReference.CompletionListener {
 
         private ItemWilddotBinding binding;

@@ -1,5 +1,6 @@
 package com.bian.mydevsample.binding;
 
+import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bian.image.loader.GlideUtil;
@@ -12,6 +13,7 @@ import com.bian.image.loader.GlideUtil;
 
 public class BindingUtil {
 
+    @BindingAdapter("app:img")
     public static void img(ImageView imageView, String url) {
         GlideUtil.load(imageView, url);
     }

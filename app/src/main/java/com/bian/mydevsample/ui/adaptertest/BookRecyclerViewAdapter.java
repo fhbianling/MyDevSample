@@ -7,9 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.BaseRecycleViewPTRAdapter;
-import com.bian.base.baseclass.baseadapter.DataLoader;
-import com.bian.base.baseclass.baseadapter.LoadType;
+import com.bian.base.baseclass.baseadapter.BaseRVPtrAdapter;
+import com.bian.base.baseclass.baseadapter.IPtr;
 import com.bian.base.baseclass.baseadapter.RetrofitDataLoader;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.bean.BookBean;
@@ -29,19 +28,19 @@ import retrofit2.Call;
  */
 
 class BookRecyclerViewAdapter
-        extends BaseRecycleViewPTRAdapter<BookBean, BookRecyclerViewAdapter.Holder> {
+        extends BaseRVPtrAdapter<BookBean, BookRecyclerViewAdapter.Holder> {
 
     BookRecyclerViewAdapter(Activity mActivity) {
         super(mActivity);
     }
 
     @Override
-    protected DataLoader<BookBean> getDataLoader() {
+    public DataLoader<BookBean> getDataLoader() {
         return new RetrofitDataLoader<BookRequest, BookBean>() {
 
             @Override
             public Call<BookRequest> getCall(int pageIndex, int pageSize,
-                                             LoadType loadType) {
+                                             IPtr.LoadType loadType) {
                 int start = 0;
                 int count = 0;
                 switch (loadType) {

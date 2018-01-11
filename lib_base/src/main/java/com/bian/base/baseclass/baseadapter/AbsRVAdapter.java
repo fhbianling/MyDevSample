@@ -18,28 +18,28 @@ import java.util.List;
  * date 2017/9/26 10:25
  * 类描述：
  * update 2017/9/26 对原有的RecycleView的BaseAdapter基类进行进一步抽象
- * 将BaseAdapter的基本功能抽象到该类，并将数据加载和上下拉刷新功能拆开到其子类{@link BaseRecycleViewPTRAdapter}中
+ * 将BaseAdapter的基本功能抽象到该类，并将数据加载和上下拉刷新功能拆开到其子类{@link BaseRVPtrAdapter}中
  *
- * @see AbsBaseAdapter 抽象思路同该类
+ * @see AbsAdapter 抽象思路同该类
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerView.ViewHolder>
+public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
     private final static long INTERVAL = 300;
     private final Context CONTEXT;
     private final LayoutInflater INFLATER;
-    protected List<DataType> mData = new ArrayList<>();
+    private List<DataType> mData = new ArrayList<>();
     private long lastClickTime;
     private OnItemLongClickListener onItemLongClickListener;
     private OnItemClickListener onItemClickListener;
 
-    public AbsBaseRecycleViewAdapter(Context context) {
+    public AbsRVAdapter(Context context) {
         this.CONTEXT = context;
         INFLATER = LayoutInflater.from(context);
     }
 
-    public AbsBaseRecycleViewAdapter(List<DataType> data, Activity context) {
+    public AbsRVAdapter(List<DataType> data, Activity context) {
         this(context);
         this.mData = dataAssignment(data);
     }
@@ -48,7 +48,7 @@ public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerVie
         return CONTEXT;
     }
 
-    protected
+    public
     @Nullable
     List<DataType> dataAssignment(@Nullable List<DataType> data) {
         return data;
@@ -164,6 +164,14 @@ public abstract class AbsBaseRecycleViewAdapter<DataType, VH extends RecyclerVie
         DataType data = dataAssignment(dataType);
         mData.add(data);
         notifyItemInserted(getItemCount() - 1);
+    }
+
+    public final void addData(List<DataType> data) {
+        List<DataType> dataTypes = dataAssignment(data);
+        if (dataTypes != null) {
+            mData.addAll(data);
+            notifyDataSetChanged();
+        }
     }
 
     public final void removeData(int position) {

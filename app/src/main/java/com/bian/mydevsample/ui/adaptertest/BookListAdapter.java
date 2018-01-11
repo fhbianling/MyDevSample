@@ -6,10 +6,9 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsBaseAdapter;
-import com.bian.base.baseclass.baseadapter.BasePTRAdapter;
-import com.bian.base.baseclass.baseadapter.DataLoader;
-import com.bian.base.baseclass.baseadapter.LoadType;
+import com.bian.base.baseclass.baseadapter.AbsAdapter;
+import com.bian.base.baseclass.baseadapter.BasePtrAdapter;
+import com.bian.base.baseclass.baseadapter.IPtr;
 import com.bian.base.baseclass.baseadapter.RetrofitDataLoader;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.bean.BookBean;
@@ -28,19 +27,19 @@ import retrofit2.Call;
  * 类描述：
  */
 
-class BookListAdapter extends BasePTRAdapter<BookBean, BookListAdapter.Holder> {
+class BookListAdapter extends BasePtrAdapter<BookBean, BookListAdapter.Holder> {
 
-    BookListAdapter(Activity mActivity, boolean loadData) {
-        super(mActivity, loadData);
+    BookListAdapter(Activity mActivity) {
+        super(mActivity);
     }
 
     @Override
-    protected DataLoader<BookBean> getDataLoader() {
+    public DataLoader<BookBean> getDataLoader() {
         return new RetrofitDataLoader<BookRequest, BookBean>() {
 
             @Override
             public Call<BookRequest> getCall(int pageIndex, int pageSize,
-                                             LoadType loadType) {
+                                             IPtr.LoadType loadType) {
                 int start = 0;
                 int count = 0;
                 switch (loadType) {
@@ -80,7 +79,7 @@ class BookListAdapter extends BasePTRAdapter<BookBean, BookListAdapter.Holder> {
     }
 
 
-    class Holder extends AbsBaseAdapter.ViewHolder {
+    class Holder extends AbsAdapter.ViewHolder {
 
         private ItemBookBinding root;
 

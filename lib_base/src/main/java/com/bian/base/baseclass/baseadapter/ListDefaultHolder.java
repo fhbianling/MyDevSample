@@ -15,7 +15,7 @@ import android.widget.TextView;
  * date 2017/9/26 10:14
  * 类描述：
  */
-public class ListDefaultHolder extends AbsBaseAdapter.ViewHolder {
+public class ListDefaultHolder extends AbsAdapter.ViewHolder {
     private View root;
     private SparseArray<View> viewCache;
 

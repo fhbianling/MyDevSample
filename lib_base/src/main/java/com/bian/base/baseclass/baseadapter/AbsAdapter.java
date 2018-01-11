@@ -1,6 +1,7 @@
 package com.bian.base.baseclass.baseadapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,31 +18,30 @@ import java.util.List;
  * date 2017/9/26 9:52
  * 类描述：
  * update 2017/9/26 对原有的AbsListView的BaseAdapter基类进行进一步抽象
- * 将BaseAdapter的基本功能抽象到该类，并将数据加载和上下拉刷新功能拆开到其子类{@link BasePTRAdapter}中
+ * 将BaseAdapter的基本功能抽象到该类，并将数据加载和上下拉刷新功能拆开到其子类{@link BasePtrAdapter}中
  * <p>
  * 换句话说现在在不使用数据加载和上下拉刷新功能时,可以直接继承该类。
  */
 
-@SuppressWarnings({"WeakerAccess", "unused"})
-public abstract class AbsBaseAdapter<DataType, VH extends AbsBaseAdapter.ViewHolder>
+@SuppressWarnings({"unused", "WeakerAccess"})
+public abstract class AbsAdapter<DataType, VH extends AbsAdapter.ViewHolder>
         extends BaseAdapter {
-    protected Activity mActivity;
     protected LayoutInflater inflater;
+    private Context mContext;
     private List<DataType> mData;
-    private OnDataNotifyListener onDataNotifyListener;
 
-    public AbsBaseAdapter(Activity mActivity) {
-        this.mActivity = mActivity;
-        inflater = LayoutInflater.from(mActivity);
+    public AbsAdapter(Context context) {
+        this.mContext = context;
+        inflater = LayoutInflater.from(context);
     }
 
-    public AbsBaseAdapter(List<DataType> mData, Activity mActivity) {
-        this(mActivity);
+    public AbsAdapter(List<DataType> mData, Activity mContext) {
+        this(mContext);
         this.mData = dataAssignment(mData);
     }
 
-    public final Activity getActivity() {
-        return mActivity;
+    public final Context getContext() {
+        return mContext;
     }
 
     /**
@@ -49,7 +49,7 @@ public abstract class AbsBaseAdapter<DataType, VH extends AbsBaseAdapter.ViewHol
      * <p>
      * 默认实现不做任何转换
      */
-    protected
+    public
     @Nullable
     List<DataType> dataAssignment(@Nullable List<DataType> data) {
         return data;
@@ -140,13 +140,6 @@ public abstract class AbsBaseAdapter<DataType, VH extends AbsBaseAdapter.ViewHol
         return new ArrayList<>(mData);
     }
 
-    /**
-     * 设置data，注意，该方法仅仅会设置mData，不会做任何额外的操作，
-     */
-    protected final void setData(List<DataType> data) {
-        mData = data;
-    }
-
     @CallSuper
     @Override
     public int getCount() {
@@ -184,28 +177,7 @@ public abstract class AbsBaseAdapter<DataType, VH extends AbsBaseAdapter.ViewHol
         return view;
     }
 
-    @CallSuper
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
-        if (onDataNotifyListener != null) {
-            onDataNotifyListener.onNotifyDataSetChanged();
-        }
-    }
-
-    @CallSuper
-    @Override
-    public void notifyDataSetInvalidated() {
-        super.notifyDataSetInvalidated();
-        if (onDataNotifyListener != null) {
-            onDataNotifyListener.onNotifyDataSetInvalidated();
-        }
-    }
-
-    public final void setOnDataNotifyListener(OnDataNotifyListener onDataNotifyListener) {
-        this.onDataNotifyListener = onDataNotifyListener;
-    }
-
+    @SuppressWarnings("WeakerAccess")
     public static class ViewHolder {
         private View itemView;
 

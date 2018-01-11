@@ -1,13 +1,18 @@
 package com.bian.mydevsample.ui.adaptertest;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import com.bian.base.baseclass.baseadapter.PullToRefresh;
+import com.bian.base.baseclass.baseadapter.IPtr;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;
+import com.bian.mydevsample.bean.BookBean;
+
+import java.util.List;
 
 /**
  * author 边凌
@@ -16,6 +21,12 @@ import com.bian.mydevsample.base.BaseActivity;
  */
 
 public class AdapterTest extends BaseActivity {
+
+    private TextView listInfo;
+    private TextView rvInfo;
+    private BookRecyclerViewAdapter bookRecyclerViewAdapter;
+    private BookListAdapter bookListAdapter;
+
     @Override
     protected int bindLayoutId() {
         return R.layout.fragment_1;
@@ -23,20 +34,69 @@ public class AdapterTest extends BaseActivity {
 
     @Override
     protected void initView(Bundle savedInstanceState) {
-        ListView mList = (ListView) findViewById(R.id.list);
-        BookListAdapter bookListAdapter = new BookListAdapter(this, true);
-        mList.setAdapter(bookListAdapter);
-        bookListAdapter.bindToPullToRefreshLayout((PullToRefresh) findViewById(R.id.ptr),
-                                                  PullToRefresh.Mode.Both);
+        listInfo = findViewById(R.id.info1);
+        rvInfo = findViewById(R.id.info2);
 
-        RecyclerView mRv = (RecyclerView) findViewById(R.id.list2);
-        BookRecyclerViewAdapter bookRecyclerViewAdapter = new BookRecyclerViewAdapter(
+        ListView mList = findViewById(R.id.list);
+        RecyclerView mRv = findViewById(R.id.list2);
+
+        bookListAdapter = new BookListAdapter(this);
+        mList.setAdapter(bookListAdapter);
+        bookListAdapter.bindPtrLayout((IPtr.PullToRefresh) findViewById(R.id.ptr),
+                                      IPtr.PtrMode.Both);
+        bookRecyclerViewAdapter = new BookRecyclerViewAdapter(
                 this);
         mRv.setLayoutManager(new LinearLayoutManager(this));
         mRv.setAdapter(bookRecyclerViewAdapter);
-        bookRecyclerViewAdapter.initLoad();
-        bookRecyclerViewAdapter.bindToPullToRefreshLayout(
-                (PullToRefresh) findViewById(R.id.ptr2),
-                PullToRefresh.Mode.Both);
+        bookRecyclerViewAdapter.bindPtrLayout(
+                (IPtr.PullToRefresh) findViewById(R.id.ptr2),
+                IPtr.PtrMode.Both);
+
+        bookRecyclerViewAdapter.firstLoad();
+        bookListAdapter.firstLoad();
+        initAdptListener();
+    }
+
+    private void initAdptListener() {
+        bookRecyclerViewAdapter.setOnDataLoadListener(new IPtr.OnDataLoadListener() {
+            @Override
+            public void onLoadSuccess() {
+                CharSequence type = rvInfo.getText();
+                List<BookBean> data = bookRecyclerViewAdapter.getData();
+                String info = type + "\n页数:" + bookRecyclerViewAdapter.getPageNum() +
+                        "\n数据总数:" + (data != null ? data.size() : -1);
+                rvInfo.setText(info);
+            }
+
+            @Override
+            public void onLoadFailed(int errorCode, @Nullable String msg) {
+
+            }
+
+            @Override
+            public void onLoadStart(IPtr.LoadType type) {
+                rvInfo.setText(type.toString());
+            }
+        });
+        bookListAdapter.setOnDataLoadListener(new IPtr.OnDataLoadListener() {
+            @Override
+            public void onLoadSuccess() {
+                CharSequence type = listInfo.getText();
+                List<BookBean> data = bookListAdapter.getData();
+                String info = type + "\n页数:" + bookListAdapter.getPageNum() +
+                        "\n数据总数:" + (data != null ? data.size() : -1);
+                listInfo.setText(info);
+            }
+
+            @Override
+            public void onLoadFailed(int errorCode, @Nullable String msg) {
+
+            }
+
+            @Override
+            public void onLoadStart(IPtr.LoadType type) {
+                listInfo.setText(type.toString());
+            }
+        });
     }
 }

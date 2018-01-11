@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bian.base.R;
-import com.bian.base.baseclass.baseadapter.BaseRecycleViewPTRAdapter;
-import com.bian.base.baseclass.baseadapter.PullToRefresh;
+import com.bian.base.baseclass.baseadapter.BaseRVPtrAdapter;
+import com.bian.base.baseclass.baseadapter.IPtr;
 import com.liaoinstan.springview.container.AliFooter;
 import com.liaoinstan.springview.container.AliHeader;
 import com.liaoinstan.springview.container.BaseFooter;
@@ -19,21 +19,21 @@ import com.liaoinstan.springview.widget.SpringView;
 /**
  * author 边凌
  * date 2017/4/26 15:55
- * desc ${用于和{@link BaseRecycleViewPTRAdapter}相配合，
- * 使用该子类且实现{@link PullToRefresh}接口，达到上下拉刷新在adapter中直接控制}
- *
+ * desc ${用于和{@link BaseRVPtrAdapter}相配合，
+ * 使用该子类且实现{@link IPtr.PullToRefresh}接口，达到上下拉刷新在adapter中直接控制}
+ * <p>
  * 若发现该类无法满足需求，可以继承其他上下拉刷新ViewGroup的第三方
  */
 
-public class SpringViewPTR extends SpringView implements PullToRefresh {
+public class SpringViewPTR extends SpringView implements IPtr.PullToRefresh {
 
     public SpringViewPTR(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void setMode(Mode mode) {
-        switch (mode) {
+    public void setPtrMode(IPtr.PtrMode PtrMode) {
+        switch (PtrMode) {
             case Both:
                 setHeader(new AliHeader(getContext()));
                 setFooter(new AliFooter(getContext()));
@@ -55,7 +55,7 @@ public class SpringViewPTR extends SpringView implements PullToRefresh {
     }
 
     @Override
-    public void setOnRefreshListener(final OnRefreshListener onRefreshListener) {
+    public void setOnRefreshListener(final IPtr.OnRefreshListener onRefreshListener) {
         setListener(new OnFreshListener() {
             @Override
             public void onRefresh() {
@@ -73,11 +73,11 @@ public class SpringViewPTR extends SpringView implements PullToRefresh {
         });
     }
 
-    private class NullViewHeader extends BaseHeader{
+    private class NullViewHeader extends BaseHeader {
 
         @Override
         public View getView(LayoutInflater inflater, ViewGroup viewGroup) {
-            return inflater.inflate(R.layout.ptr_nullheader,viewGroup,false);
+            return inflater.inflate(R.layout.ptr_nullheader, viewGroup, false);
         }
 
         @Override
@@ -106,11 +106,11 @@ public class SpringViewPTR extends SpringView implements PullToRefresh {
         }
     }
 
-    private class NullViewFooter extends BaseFooter{
+    private class NullViewFooter extends BaseFooter {
 
         @Override
         public View getView(LayoutInflater inflater, ViewGroup viewGroup) {
-            return inflater.inflate(R.layout.ptr_nullheader,viewGroup,false);
+            return inflater.inflate(R.layout.ptr_nullheader, viewGroup, false);
         }
 
         @Override

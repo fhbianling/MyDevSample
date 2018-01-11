@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsBaseAdapter;
+import com.bian.base.baseclass.baseadapter.AbsAdapter;
 import com.bian.base.baseclass.baseadapter.ListDefaultHolder;
 import com.bian.mydevsample.R;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * 类描述：
  */
 
-public class Adapter extends AbsBaseAdapter<ButtonDesc, ListDefaultHolder> {
+public class Adapter extends AbsAdapter<ButtonDesc, ListDefaultHolder> {
     public Adapter(List<ButtonDesc> mData, Activity mActivity) {
         super(mData, mActivity);
     }

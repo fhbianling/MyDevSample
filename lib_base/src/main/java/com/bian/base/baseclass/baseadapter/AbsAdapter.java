@@ -23,25 +23,28 @@ import java.util.List;
  * 换句话说现在在不使用数据加载和上下拉刷新功能时,可以直接继承该类。
  */
 
-@SuppressWarnings({"unused", "WeakerAccess"})
 public abstract class AbsAdapter<DataType, VH extends AbsAdapter.ViewHolder>
         extends BaseAdapter {
-    protected LayoutInflater inflater;
-    private Context mContext;
+    private final LayoutInflater INFLATER;
+    private final Context CONTEXT;
     private List<DataType> mData;
 
     public AbsAdapter(Context context) {
-        this.mContext = context;
-        inflater = LayoutInflater.from(context);
+        this.CONTEXT = context;
+        INFLATER = LayoutInflater.from(context);
     }
 
-    public AbsAdapter(List<DataType> mData, Activity mContext) {
-        this(mContext);
+    public AbsAdapter(List<DataType> mData, Activity CONTEXT) {
+        this(CONTEXT);
         this.mData = dataAssignment(mData);
     }
 
+    protected final LayoutInflater getInflater() {
+        return INFLATER;
+    }
+
     public final Context getContext() {
-        return mContext;
+        return CONTEXT;
     }
 
     /**
@@ -49,7 +52,7 @@ public abstract class AbsAdapter<DataType, VH extends AbsAdapter.ViewHolder>
      * <p>
      * 默认实现不做任何转换
      */
-    public
+    protected
     @Nullable
     List<DataType> dataAssignment(@Nullable List<DataType> data) {
         return data;
@@ -161,7 +164,7 @@ public abstract class AbsAdapter<DataType, VH extends AbsAdapter.ViewHolder>
         int viewType = getItemViewType(i);
         VH holder;
         if (view == null) {
-            holder = onCreateHolder(inflater, viewGroup, viewType);
+            holder = onCreateHolder(INFLATER, viewGroup, viewType);
             view = holder.getItemView();
             view.setTag(holder);
         } else {
@@ -177,7 +180,6 @@ public abstract class AbsAdapter<DataType, VH extends AbsAdapter.ViewHolder>
         return view;
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static class ViewHolder {
         private View itemView;
 

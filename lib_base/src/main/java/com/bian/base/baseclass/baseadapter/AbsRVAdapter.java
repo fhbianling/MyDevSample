@@ -23,7 +23,6 @@ import java.util.List;
  * @see AbsAdapter 抽象思路同该类
  */
 
-@SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
     private final static long INTERVAL = 300;
@@ -48,19 +47,26 @@ public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
         return CONTEXT;
     }
 
-    public
+    public final LayoutInflater getINFLATER() {
+        return INFLATER;
+    }
+
+    protected
     @Nullable
     List<DataType> dataAssignment(@Nullable List<DataType> data) {
         return data;
     }
 
-    protected DataType dataAssignment(@Nullable DataType dataType) {
+    protected @Nullable
+    DataType dataAssignment(@Nullable DataType dataType) {
         return dataType;
     }
 
     @Override
     public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
-        return onCreateHolder(INFLATER, parent, viewType);
+        final VH vh = onCreateHolder(INFLATER, parent, viewType);
+        bindItemClickListener(vh);
+        return vh;
     }
 
     protected abstract VH onCreateHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
@@ -76,24 +82,6 @@ public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
     @CallSuper
     @Override
     public void onBindViewHolder(final VH holder, int position) {
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isFastClick()) return;
-                if (onItemClickListener != null) {
-                    onItemClickEvent(holder);
-                }
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (onItemLongClickListener != null) {
-                    onItemLongClickEvent(holder);
-                }
-                return true;
-            }
-        });
         int itemViewType = getItemViewType(position);
         boolean isLast = position == getItemCount() - 1;
         DataType item = getItem(positionAssignment(position));
@@ -104,32 +92,6 @@ public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
 
     protected int positionAssignment(int position) {
         return position;
-    }
-
-    /**
-     * 当单项点击发生时可通过重写该方法对单项进行改动
-     * <p>
-     * 注意，在重写该方法后，若没有调用{@link #setOnItemClickListener(OnItemClickListener)}，则这个方法中的逻辑不会生效
-     */
-    @CallSuper
-    protected void onItemLongClickEvent(VH holder) {
-        onItemLongClickListener.onItemLongClick(positionAssignment(holder.getAdapterPosition()));
-    }
-
-    /**
-     * 当单项长按发生时可通过重写该方法对单项进行改动
-     * <p>
-     * 注意，在重写该方法后，若没有调用{@link #setOnItemLongClickListener(OnItemLongClickListener)}，则这个方法中的逻辑不会生效
-     */
-    @CallSuper
-    protected void onItemClickEvent(VH holder) {
-        onItemClickListener.onItemClick(positionAssignment(holder.getAdapterPosition()));
-    }
-
-    private boolean isFastClick() {
-        boolean isFastClick = System.currentTimeMillis() - lastClickTime < INTERVAL;
-        lastClickTime = System.currentTimeMillis();
-        return isFastClick;
     }
 
     protected abstract void bindView(int position, int viewType, @NonNull VH holder,
@@ -182,6 +144,33 @@ public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
     public final void resetData(List<DataType> dataTypes) {
         mData = dataAssignment(dataTypes);
         notifyDataSetChanged();
+    }
+
+    private boolean isFastClick() {
+        boolean isFastClick = System.currentTimeMillis() - lastClickTime < INTERVAL;
+        lastClickTime = System.currentTimeMillis();
+        return isFastClick;
+    }
+
+    private void bindItemClickListener(final VH vh) {
+        vh.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isFastClick()) return;
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(positionAssignment(vh.getAdapterPosition()));
+                }
+            }
+        });
+        vh.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (onItemLongClickListener != null) {
+                    onItemLongClickListener.onItemLongClick(positionAssignment(vh.getAdapterPosition()));
+                }
+                return true;
+            }
+        });
     }
 
     public interface OnItemClickListener {

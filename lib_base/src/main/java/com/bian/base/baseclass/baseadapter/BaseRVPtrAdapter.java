@@ -19,7 +19,7 @@ import java.util.List;
 public abstract class BaseRVPtrAdapter<DataType, VH extends RecyclerView.ViewHolder>
         extends AbsRVAdapter<DataType, VH>
         implements IPtr, IPtr.Model<DataType> {
-    private IPtrHandler ptrAdapterHandler;
+    private IPtrImpl iPtr;
 
     public BaseRVPtrAdapter(Context context) {
         super(context);
@@ -32,51 +32,51 @@ public abstract class BaseRVPtrAdapter<DataType, VH extends RecyclerView.ViewHol
     }
 
     private void init() {
-        ptrAdapterHandler = new IPtrHandler<>(this);
+        iPtr = new IPtrImpl<>(this);
     }
 
     @Override
-    public void refreshUp() {
-        ptrAdapterHandler.refreshUp();
+    public final void refreshUp() {
+        iPtr.refreshUp();
     }
 
     @Override
-    public void refreshDown() {
-        ptrAdapterHandler.refreshDown();
+    public final void refreshDown() {
+        iPtr.refreshDown();
     }
 
     @Override
-    public void firstLoad() {
-        ptrAdapterHandler.firstLoad();
+    public final void firstLoad() {
+        iPtr.firstLoad();
     }
 
     @Override
-    public void reload() {
-        ptrAdapterHandler.reload();
+    public final void reload() {
+        iPtr.reload();
     }
 
     @Override
-    public int getPageNum() {
-        return ptrAdapterHandler.getPageNum();
+    public final int getPageNum() {
+        return iPtr.getPageNum();
     }
 
     @Override
-    public void setOnDataLoadListener(OnDataLoadListener onDataLoadListener) {
-        ptrAdapterHandler.setOnDataLoadListener(onDataLoadListener);
+    public final void setOnDataLoadListener(OnDataLoadListener onDataLoadListener) {
+        iPtr.setOnDataLoadListener(onDataLoadListener);
     }
 
     @Override
-    public void bindPtrLayout(PullToRefresh pullToRefresh, PtrMode mode) {
-        ptrAdapterHandler.bindPtrLayout(pullToRefresh, mode);
+    public final void bindPtrLayout(PullToRefresh pullToRefresh, PtrMode mode) {
+        iPtr.bindPtrLayout(pullToRefresh, mode);
     }
 
     @Override
-    public void setDefaultPageSize(int defaultPageSize) {
-        ptrAdapterHandler.setDefaultPageSize(defaultPageSize);
+    public final void setDefaultPageSize(int defaultPageSize) {
+        iPtr.setDefaultPageSize(defaultPageSize);
     }
 
     @Override
-    public int getDataCount() {
+    public final int getDataCount() {
         return getItemCount();
     }
 }

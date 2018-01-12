@@ -15,9 +15,9 @@ import static com.bian.base.baseclass.baseadapter.IPtr.LoadType.Reload;
 /**
  * author 边凌
  * date 2018/1/11 16:43
- * 类描述：
+ * 类描述：{@link IPtr}的真正实现类
  */
-class IPtrHandler<T extends IPtr & IPtr.Model<DataType>, DataType>
+class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
         implements IPtr {
 
     private PullToRefresh ptr;
@@ -27,7 +27,7 @@ class IPtrHandler<T extends IPtr & IPtr.Model<DataType>, DataType>
     private InnerDataLoader innerDataLoader;
     private int pageNum = 1;
 
-    IPtrHandler(T adapter) {
+    IPtrImpl(T adapter) {
         this.adapter = adapter;
         innerDataLoader = new InnerDataLoader(adapter.getDataLoader());
     }

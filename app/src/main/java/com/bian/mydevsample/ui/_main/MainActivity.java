@@ -16,6 +16,7 @@ import com.bian.mydevsample.R;
 import com.bian.mydevsample.ui.adaptertest.AdapterTest;
 import com.bian.mydevsample.ui.backstage.BackStageActivity;
 import com.bian.mydevsample.ui.daggerstudy.Dagger2StudyActivity;
+import com.bian.mydevsample.ui.flipover.FlipOverActivity;
 import com.bian.mydevsample.ui.halfcolortext.HalfColorTextViewActivity;
 import com.bian.mydevsample.ui.infotextview.InfoTextViewSampleActivity;
 import com.bian.mydevsample.ui.kugouanim.KuGouMainAnimActivity;
@@ -107,6 +108,7 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("野狗SDK测试", WildDogSampleActivity.class));
         buttonDescs.add(new ButtonDesc("酷狗翻页动画", KuGouMainAnimActivity.class));
         buttonDescs.add(new ButtonDesc("滚轮测试", HalfColorTextViewActivity.class));
+        buttonDescs.add(new ButtonDesc("翻页动画", FlipOverActivity.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);
         buttonList.setOnItemClickListener(this);

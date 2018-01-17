@@ -39,6 +39,7 @@
         <activity android:name=".ui.backstage.BackStageActivity"/>
         <activity android:name=".ui.kugouanim.KuGouMainAnimActivity"/>
         <activity android:name=".ui.halfcolortext.HalfColorTextViewActivity"/>
+        <activity android:name=".ui.flipover.FlipOverActivity"/>
 
         <receiver android:name="com.wilddog.client.receiver.WilddogAuthCastReceiver">
             <intent-filter>

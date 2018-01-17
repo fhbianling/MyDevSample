@@ -1,17 +1,22 @@
 package com.bian.mydevsample.ui.flipover;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.Region;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
+
+import com.bian.base.util.utilbase.L;
 
 
 /**
@@ -32,8 +37,8 @@ public class FlipOverPageContainer extends FrameLayout {
     private PointF mMovePoint;
     private PointF mDownPoint;
     private Paint mPaint;
-    private PathComputer.PathInfo pathInfo;
     private int revertProcessRate = NONE;
+    private Bitmap bitmap;
 
     public FlipOverPageContainer(@NonNull Context context) {
         super(context);
@@ -52,29 +57,44 @@ public class FlipOverPageContainer extends FrameLayout {
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.GRAY);
-        mPaint.setStrokeWidth(10);
+        mPaint.setStrokeWidth(1);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+    }
 
+    private Path mRect;
+
+    @Override
+    public void draw(Canvas canvas) {
+        if (mRect == null) {
+            mRect = new Path();
+            mRect.moveTo(0, 0);
+            mRect.lineTo(0, getHeight());
+            mRect.lineTo(getWidth(), getHeight());
+            mRect.lineTo(getWidth(), 0);
+            mRect.lineTo(0, 0);
+            mRect.close();
+        }
+        super.draw(canvas);
         if (pathComputer != null) {
             Path backPath = pathComputer.getBackPath();
             mPaint.setColor(Color.RED);
 
             canvas.drawPath(backPath, mPaint);
             Path nextPagePath = pathComputer.getNextPagePath();
-
-            mPaint.setColor(Color.WHITE);
-            canvas.drawPath(nextPagePath, mPaint);
-
-            pathComputer.drawPoint(canvas, mPaint);
+            canvas.clipPath(mRect);
+            canvas.clipPath(nextPagePath, Region.Op.REPLACE);
+            if (bitmap != null) {
+                canvas.drawBitmap(bitmap, 0, 0, mPaint);
+            }
         }
-
         if (revertProcessRate != NONE) {
             revert();
         }
     }
+
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -129,6 +149,11 @@ public class FlipOverPageContainer extends FrameLayout {
 //        }
     }
 
+    public void setNextBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+        invalidate();
+    }
+
     private void revert() {
         if (revertProcessRate == NONE) {
             revertProcessRate = 0;
@@ -148,6 +173,7 @@ public class FlipOverPageContainer extends FrameLayout {
         double slop = Math.sqrt(Math.pow(event.getX() - mDownPoint.x,
                                          2) + Math.pow(event.getY() - mDownPoint.y,
                                                        2));
+        L.d("slop:" + slop);
         if (sTouchSlop == 0) {
             sTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         }
@@ -159,10 +185,10 @@ public class FlipOverPageContainer extends FrameLayout {
             pathComputer = new PathComputer(getX() + getWidth(),
                                             getY() + getHeight());
         }
-        pathInfo = pathComputer.computePathInfo(mDownPoint.x,
-                                                mDownPoint.y,
-                                                mMovePoint.x,
-                                                mMovePoint.y);
+        pathComputer.computePathInfo(mDownPoint.x,
+                                     mDownPoint.y,
+                                     mMovePoint.x,
+                                     mMovePoint.y);
     }
 
     @Override

@@ -27,13 +27,13 @@ class PathComputer {
      */
     private PointF Pprt = new PointF();
     /**
-     * 页面左边界中点
+     * 页面右边界中点
      */
-    private PointF Pelc = new PointF();
+    private PointF Perc = new PointF();
     /**
      * (可能经历过对称变换)的手指位置，在求解过程中需为已知条件
      */
-    private PointF Pfm = new PointF();
+    private PointF PfMatrix = new PointF();
 
     /**
      * 真实的手指位置,主要是用于计算恢复动画时会用到
@@ -44,15 +44,11 @@ class PathComputer {
 
     //待求解值--------------->
     /**
-     * 待求解值，手指与右下顶点的连线的中垂线的斜率
-     */
-    private float Kclr;
-    /**
      * 待求解值，页面左下折页开始处点
      */
     private PointF Plb = new PointF();
     /**
-     * 待求解值，页面左下折页路径弧形部分斜率与{@link #Kclr}相等的点
+     * 待求解值，页面左下折页路径弧形部分斜率与 手指与右下顶点的连线的中垂线的斜率 相等的点
      */
     private PointF Pal = new PointF();
     /**
@@ -65,7 +61,7 @@ class PathComputer {
     private PointF Prc = new PointF();
 
     /**
-     * 待求解值，页面右上折页路径弧形部分斜率与{@link #Kclr}相等的点
+     * 待求解值，页面右上折页路径弧形部分斜率与 手指与右下顶点的连线的中垂线的斜率 相等的点
      */
     private PointF Par = new PointF();
 
@@ -96,7 +92,7 @@ class PathComputer {
     /**
      * 包含计算好的路径信息的封装类
      * <p>
-     * 折页上路径为 弧线段(Plb,Pal,Plc)，直线段(Plc,Pfm),直线段(Pfm,Prc),弧线段(Prc,Par,Prt)连线
+     * 折页上路径为 弧线段(Plb,Pal,Plc)，直线段(Plc,PfMatrix),直线段(PfMatrix,Prc),弧线段(Prc,Par,Prt)连线
      * 折页下路径为 弧线段(Plb,Pal)，直线段(Pal,Par),弧线段(Par,Prt)
      */
     private PathInfo pathInfo;
@@ -128,19 +124,22 @@ class PathComputer {
 
 
     //调试
-    private PointF[] pointFS = new PointF[]{Pfm, PfReal, Plc, Pal, Plb, Plce, Pprb, Prce, Prt, Par,
+    private PointF[] pointFS = new PointF[]{PfReal, Plc, Pal, Plb, Plce, Pprb, Prce, Prt, Par,
                                             Prc, Pcfrb, Pcfrb4};
 
     PathComputer(float width, float height) {
         Pprb.set(width, height);
         Pprt.set(width, 0);
-        Pelc.set(0, height / 2);
+        Perc.set(width, height / 2);
         pathInfo = new PathInfo();
     }
 
+    /**
+     * 该方法用于调试
+     */
     void drawPoint(Canvas canvas, Paint mPaint) {
         mPaint.setStrokeWidth(0);
-        mPaint.setTextSize(16);
+        mPaint.setTextSize(32);
         mPaint.setColor(Color.BLACK);
         for (int i = 0; i < pointFS.length; i++) {
             PointF pointF = pointFS[i];
@@ -152,7 +151,7 @@ class PathComputer {
         }
     }
 
-    PathInfo computePathInfo(float startX, float startY, float fingerX, float fingerY) {
+    void computePathInfo(float startX, float startY, float fingerX, float fingerY) {
         if (pathInfo == null) {
             pathInfo = new PathInfo();
             pathInfo.mPath1 = new Path();
@@ -175,7 +174,7 @@ class PathComputer {
             transformMatrix.postTranslate(0, Pprb.y);
         }
 
-        Pfm.set(fingerX, Pfy);
+        PfMatrix.set(fingerX, Pfy);
         PfReal.set(fingerX, fingerY);
 
         realCompute(isFromLeftToRight);
@@ -183,7 +182,6 @@ class PathComputer {
         if (transformMatrix != null) {
             pathInfo.transform(transformMatrix);
         }
-        return pathInfo;
     }
 
     void computeRevert(@FloatRange(from = 0f, to = 1f) float processRate) {
@@ -195,7 +193,7 @@ class PathComputer {
         PointF startPoint = PfReal;
         PointF endPoint;
         if (pathInfo.downAtLeft) {
-            endPoint = Pelc;
+            endPoint = Perc;
         } else if (pathInfo.downAtTop) {
             endPoint = Pprt;
         } else {
@@ -211,7 +209,7 @@ class PathComputer {
             computeStraight();
         } else {
             //手指和右下定点连线斜率
-            float Kfrb = (Pprb.y - Pfm.y) / (Pprb.x - Pfm.x);
+            float Kfrb = (Pprb.y - PfMatrix.y) / (Pprb.x - PfMatrix.x);
 
             //连线斜率大于0时可以正常表现折页效果，其他情况需要换公式，这里把这种情况简化
             //注意由于手机坐标系和平常使用的平面坐标系y轴方向，所以这里不要把方向和斜率正负关系搞错
@@ -219,8 +217,7 @@ class PathComputer {
             if (Kfrb > 0.02) {
                 //中垂线斜率
                 pathInfo.flipState = FlipState.Normal;
-                Kclr = -1 / Kfrb;
-                computeFold();
+                computeFold(-1 / Kfrb);
             } else {
                 pathInfo.flipState = FlipState.Infinity;
                 computeStraight();
@@ -240,38 +237,43 @@ class PathComputer {
 
     private void computeStraight() {
         pathInfo.computeStraight = true;
-        Pilt.set(Pfm.x, 0);
-        Pilb.set(Pfm.x, Pprb.y);
-        Pirt.set((Pfm.x + Pprb.x) / 2f, 0);
-        Pirb.set((Pfm.x + Pprb.x) / 2f, Pprb.y);
+        Pilt.set(PfMatrix.x, 0);
+        Pilb.set(PfMatrix.x, Pprb.y);
+        Pirt.set((PfMatrix.x + Pprb.x) / 2f, 0);
+        Pirb.set((PfMatrix.x + Pprb.x) / 2f, Pprb.y);
     }
 
-    private void computeFold() {
+    /**
+     * @param Kclr 手指与右下顶点的连线的中垂线的斜率
+     */
+    private void computeFold(float Kclr) {
         pathInfo.computeStraight = false;
         //中垂线中点
-        Pcfrb.set((Pprb.x + Pfm.x) / 2f, (Pprb.y + Pfm.y) / 2f);
+        Pcfrb.set((Pprb.x + PfMatrix.x) / 2f, (Pprb.y + PfMatrix.y) / 2f);
 
         //中垂线y轴截距
         float Bclr = Pcfrb.y - Kclr * Pcfrb.x;
+        //Pf与Prb连线四等分点，既是Pcfrb与Pf的中点
+        Pcfrb4.set((PfMatrix.x + Pcfrb.x) / 2f, (PfMatrix.y + Pcfrb.y) / 2f);
+
+        //四等分线y轴截距
+        float Bclr4 = Pcfrb4.y - Kclr * Pcfrb4.x;
+        //该点用于边界条件检测
+
+        Plb.set((Pprb.y - Bclr4) / Kclr, Pprb.y);
+
         //中垂线与下边界交点
         Plce.set((Pprb.y - Bclr) / Kclr, Pprb.y);
         //中垂线与右边界交点
         Prce.set(Pprb.x, Kclr * Pprb.x + Bclr);
 
-        //Pf与Prb连线四等分点，既是Pcfrb与Pf的中点
-        Pcfrb4.set((Pfm.x + Pcfrb.x) / 2f, (Pfm.y + Pcfrb.y) / 2f);
 
-        //四等分线y轴截距
-        float Bclr4 = Pcfrb4.y - Kclr * Pcfrb4.x;
-
-        //求解6个点
-        Plb.set(Math.max(0, (Pprb.y - Bclr4) / Kclr), Math.max(0, Pprb.y));
-
+        //求解剩余5个点
         Prt.set(Pprb.x, Kclr * Pprb.x + Bclr4);
         //Plc实际上也是Pf与Plce的中点
-        Plc.set((Pfm.x + Plce.x) / 2f, (Pfm.y + Plce.y) / 2f);
+        Plc.set((PfMatrix.x + Plce.x) / 2f, (PfMatrix.y + Plce.y) / 2f);
         //Prc实际上也是Pf与Prce的中点
-        Prc.set((Pfm.x + Prce.x) / 2f, (Pfm.y + Prce.y) / 2f);
+        Prc.set((PfMatrix.x + Prce.x) / 2f, (PfMatrix.y + Prce.y) / 2f);
 
         //Plb,Plc的中点与Plce中点连线的中点即为Pal,Prt与Prc的中点与Prce的中点的连线的中点即为Par
         Pal.set(((Plb.x + Plc.x) / 2f + Plce.x) / 2f, ((Plb.y + Plc.y) / 2f + Plce.y) / 2f);
@@ -283,7 +285,7 @@ class PathComputer {
         Normal
     }
 
-    class PathInfo {
+    private class PathInfo {
         /**
          * 该页与背面的分割线
          */
@@ -319,6 +321,11 @@ class PathComputer {
          */
         private Path mFlipPath = new Path();
 
+        /**
+         * 缓存上一次的矩阵变换后的手指点位置
+         */
+        private PointF mLastPfMatrix = new PointF();
+
         private void transform(Matrix matrix) {
             mBackPath.transform(matrix);
             mNextPagePath.transform(matrix);
@@ -337,7 +344,7 @@ class PathComputer {
             } else {
                 computeStraight();
             }
-
+            mLastPfMatrix.set(PfMatrix);
         }
 
         private void computeStraight() {
@@ -367,7 +374,7 @@ class PathComputer {
 
         private void computeBackPath() {
             PathHelper.getInstance().endHalfCut(arc1, mBackPath, true);
-            mBackPath.lineTo(Pfm.x, Pfm.y);
+            mBackPath.lineTo(PfMatrix.x, PfMatrix.y);
             mBackPath.lineTo(Prc.x, Prc.y);
             PathHelper.getInstance().startHalfCut(arc2, mBackPath, false);
             mBackPath.lineTo(Pal.x, Pal.y);

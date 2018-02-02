@@ -8,7 +8,10 @@ import java.util.List;
 /**
  * author 边凌
  * date 2018/1/11 15:08
- * 类描述：
+ * 类描述：对于ListView和RecyclerView的上下拉刷新和数据加载逻辑提取共性抽成接口。
+ * 由该接口的实现类来处理上述逻辑。
+ *
+ * @see IPtrImpl 实现类
  */
 
 public interface IPtr {

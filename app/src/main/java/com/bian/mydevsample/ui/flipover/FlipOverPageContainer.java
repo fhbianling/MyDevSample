@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
@@ -31,7 +30,7 @@ public class FlipOverPageContainer extends FrameLayout {
     //恢复动画进程最大值
     public static final float MAX_REVERT_RATE = 100f;
     //恢复动画的步进值，调整該值可以改变恢复动画速率
-    public static final int REVERT_RATE_STEP = 10;
+    public static final int REVERT_RATE_STEP = 5;
     private static int sTouchSlop;
     private PathComputer pathComputer;
     private PointF mMovePoint;
@@ -39,6 +38,7 @@ public class FlipOverPageContainer extends FrameLayout {
     private Paint mPaint;
     private int revertProcessRate = NONE;
     private Bitmap bitmap;
+    private Path mRect;
 
     public FlipOverPageContainer(@NonNull Context context) {
         super(context);
@@ -64,8 +64,6 @@ public class FlipOverPageContainer extends FrameLayout {
     protected void onDraw(Canvas canvas) {
     }
 
-    private Path mRect;
-
     @Override
     public void draw(Canvas canvas) {
         if (mRect == null) {
@@ -80,9 +78,12 @@ public class FlipOverPageContainer extends FrameLayout {
         super.draw(canvas);
         if (pathComputer != null) {
             Path backPath = pathComputer.getBackPath();
-            mPaint.setColor(Color.RED);
-
+            mPaint.setColor(Color.WHITE);
+            canvas.clipPath(mRect);
+            canvas.clipPath(backPath, Region.Op.REPLACE);
             canvas.drawPath(backPath, mPaint);
+
+
             Path nextPagePath = pathComputer.getNextPagePath();
             canvas.clipPath(mRect);
             canvas.clipPath(nextPagePath, Region.Op.REPLACE);
@@ -103,13 +104,17 @@ public class FlipOverPageContainer extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        int[] outLocation = new int[2];
+        getLocationOnScreen(outLocation);
         int action = event.getAction();
+        float eventX = event.getRawX() - outLocation[0];
+        float eventY = event.getRawY() - outLocation[1];
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (mDownPoint == null) {
                     mDownPoint = new PointF();
                 }
-                mDownPoint.set(event.getX(), event.getY());
+                mDownPoint.set(eventX, eventY);
                 break;
             case MotionEvent.ACTION_UP:
 
@@ -124,7 +129,7 @@ public class FlipOverPageContainer extends FrameLayout {
                 if (mMovePoint == null) {
                     mMovePoint = new PointF();
                 }
-                mMovePoint.set(event.getX(), event.getY());
+                mMovePoint.set(eventX, eventY);
                 computePath();
                 invalidate();
                 return true;

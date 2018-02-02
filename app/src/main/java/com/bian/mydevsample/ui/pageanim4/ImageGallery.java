@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bian.base.widget.SimpleAnimListener;
+import com.bian.widget.SimpleAnimListener;
 import com.bian.image.loader.GlideUtil;
 
 import java.util.ArrayList;

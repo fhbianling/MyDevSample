@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.bian.base.widget.info.InfoTextView
+    <com.bian.widget.infotextview.InfoTextView
         android:id="@+id/avatar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -22,7 +22,7 @@
         app:paddingLeft="13dp"
         app:paddingRight="13dp"/>
 
-    <com.bian.base.widget.info.InfoTextView
+    <com.bian.widget.infotextview.InfoTextView
         android:id="@+id/nickNameShow"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -43,7 +43,7 @@
         app:paddingLeft="13dp"
         app:paddingRight="13dp"/>
 
-    <com.bian.base.widget.info.InfoTextView
+    <com.bian.widget.infotextview.InfoTextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center_vertical"
@@ -61,7 +61,7 @@
         app:paddingLeft="13dp"
         app:paddingRight="13dp"/>
 
-    <com.bian.base.widget.info.InfoTextView
+    <com.bian.widget.infotextview.InfoTextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center_vertical"
@@ -89,7 +89,7 @@
         app:paddingLeft="13dp"
         app:paddingRight="13dp"/>
 
-    <com.bian.base.widget.info.InfoTextView
+    <com.bian.widget.infotextview.InfoTextView
         android:id="@+id/drawableClick"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -109,7 +109,7 @@
         app:paddingLeft="13dp"
         app:paddingRight="13dp"/>
 
-    <com.bian.base.widget.info.InfoTextView
+    <com.bian.widget.infotextview.InfoTextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         app:dividerBottomColor="#ccc"
@@ -123,7 +123,7 @@
         app:paddingLeft="10dp"
         app:paddingRight="13dp"/>
 
-    <com.bian.base.widget.info.InfoTextView
+    <com.bian.widget.infotextview.InfoTextView
         android:id="@+id/checkable"
         android:layout_width="match_parent"
         android:layout_height="50dp"

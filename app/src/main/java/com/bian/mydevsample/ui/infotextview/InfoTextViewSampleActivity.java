@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.bian.base.util.utilbase.ParamChecker;
-import com.bian.base.util.utilbase.ToastUtil;
-import com.bian.base.widget.info.InfoTextView;
+import com.bian.util.core.ParamChecker;
+import com.bian.util.core.ToastUtil;
+import com.bian.widget.infotextview.InfoTextView;
 import com.bian.image.loader.GlideUtil;
 import com.bian.image.selector.ImageSelectHelper;
 import com.bian.image.selector.ImageSelector;

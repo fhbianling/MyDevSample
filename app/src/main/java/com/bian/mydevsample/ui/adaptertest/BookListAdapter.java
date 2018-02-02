@@ -6,10 +6,10 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsAdapter;
-import com.bian.base.baseclass.baseadapter.BasePtrAdapter;
-import com.bian.base.baseclass.baseadapter.IPtr;
-import com.bian.base.baseclass.baseadapter.RetrofitDataLoader;
+import com.bian.adapter.AbsAdapter;
+import com.bian.adapter.BasePtrAdapter;
+import com.bian.adapter.IPtr;
+import com.bian.adapter.RetrofitDataLoader;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.bean.BookBean;
 import com.bian.mydevsample.bean.BookRequest;

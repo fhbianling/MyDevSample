@@ -4,7 +4,7 @@ import android.graphics.PointF;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-import com.bian.base.util.utilbase.ScreenUtil;
+import com.bian.util.core.ScreenUtil;
 
 
 /**

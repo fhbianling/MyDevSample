@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bian.base.baseclass.baseadapter.IPtr;
+import com.bian.adapter.IPtr;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;
 import com.bian.mydevsample.bean.BookBean;

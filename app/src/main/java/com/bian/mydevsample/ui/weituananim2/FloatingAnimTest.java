@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bian.base.util.utilbase.ToastUtil;
+import com.bian.util.core.ToastUtil;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;
 

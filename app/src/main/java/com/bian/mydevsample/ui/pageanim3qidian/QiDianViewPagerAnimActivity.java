@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bian.base.util.utilbase.L;
+import com.bian.util.core.L;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;
 

@@ -2,7 +2,7 @@ package com.bian.mydevsample.application;
 
 import android.app.Application;
 
-import com.bian.base.BaseUtilManager;
+import com.bian.util.BaseUtilManager;
 import com.bian.mydevsample.BuildConfig;
 import com.bian.net.Api;
 

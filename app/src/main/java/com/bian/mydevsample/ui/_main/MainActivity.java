@@ -11,7 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bian.base.baseclass.AbsBaseActivity;
+import com.bian.base.AbsBaseActivity;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.ui.adaptertest.AdapterTest;
 import com.bian.mydevsample.ui.backstage.BackStageActivity;

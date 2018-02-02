@@ -1,23 +1,11 @@
 package com.bian.mydevsample.ui.wilddog;
 
 import android.content.Context;
-import android.text.TextUtils;
 
-import com.bian.base.util.utilbase.L;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.wilddog.client.DataSnapshot;
-import com.wilddog.client.SyncError;
 import com.wilddog.client.SyncReference;
-import com.wilddog.client.ValueEventListener;
 import com.wilddog.client.WilddogSync;
 import com.wilddog.wilddogcore.WilddogApp;
 import com.wilddog.wilddogcore.WilddogOptions;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * author 边凌

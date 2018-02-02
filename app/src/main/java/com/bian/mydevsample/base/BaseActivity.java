@@ -1,6 +1,6 @@
 package com.bian.mydevsample.base;
 
-import com.bian.base.baseclass.AbsBaseActivity;
+import com.bian.base.AbsBaseActivity;
 
 /**
  * author 边凌

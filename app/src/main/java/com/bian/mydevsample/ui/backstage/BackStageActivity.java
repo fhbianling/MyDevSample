@@ -3,8 +3,8 @@ package com.bian.mydevsample.ui.backstage;
 import android.app.ActivityManager;
 import android.os.Bundle;
 
-import com.bian.base.util.utilbase.L;
-import com.bian.base.util.utilbase.ToastUtil;
+import com.bian.util.core.L;
+import com.bian.util.core.ToastUtil;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;
 

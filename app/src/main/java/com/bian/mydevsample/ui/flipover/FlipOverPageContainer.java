@@ -15,7 +15,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
-import com.bian.base.util.utilbase.L;
+import com.bian.util.core.L;
 
 
 /**

@@ -10,7 +10,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
 
-import com.bian.base.util.utilbase.ScreenUtil;
+import com.bian.util.core.ScreenUtil;
 
 /**
  * author 边凌

@@ -7,6 +7,5 @@ package com.bian.mydevsample.consts;
  */
 
 public class Const {
-    public static final String TEST_LOG_URL = "http://dev.iwhere.com:8010/";
     public static final String BOOK_BASE_URL = "https://api.douban.com";
 }

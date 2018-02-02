@@ -13,7 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.bian.base.util.utilbase.ScreenUtil;
+import com.bian.util.core.ScreenUtil;
 import com.bian.mydevsample.R;
 
 /**

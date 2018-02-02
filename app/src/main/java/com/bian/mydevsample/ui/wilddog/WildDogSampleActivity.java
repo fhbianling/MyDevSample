@@ -13,8 +13,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsAdapter;
-import com.bian.base.util.utilbase.ToastUtil;
+import com.bian.adapter.AbsAdapter;
+import com.bian.util.core.ToastUtil;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;
 import com.bian.mydevsample.databinding.ItemWilddotBinding;

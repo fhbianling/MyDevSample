@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.bian.base.util.utilbase.ScreenUtil;
+import com.bian.util.core.ScreenUtil;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;
 

@@ -7,9 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.BaseRVPtrAdapter;
-import com.bian.base.baseclass.baseadapter.IPtr;
-import com.bian.base.baseclass.baseadapter.RetrofitDataLoader;
+import com.bian.adapter.BaseRVPtrAdapter;
+import com.bian.adapter.IPtr;
+import com.bian.adapter.RetrofitDataLoader;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.bean.BookBean;
 import com.bian.mydevsample.bean.BookRequest;

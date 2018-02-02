@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsAdapter;
-import com.bian.base.baseclass.baseadapter.ListDefaultHolder;
+import com.bian.adapter.AbsAdapter;
+import com.bian.adapter.ListDefaultHolder;
 import com.bian.mydevsample.R;
 
 import java.util.List;

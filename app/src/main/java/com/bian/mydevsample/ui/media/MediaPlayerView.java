@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.bian.base.util.utilbase.L;
+import com.bian.util.core.L;
 import com.bian.mydevsample.R;
 
 import java.io.IOException;

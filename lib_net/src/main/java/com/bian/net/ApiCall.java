@@ -69,32 +69,30 @@ public class ApiCall {
      */
     public <T> void enqueue(Call<T> call, final ApiCallBack<T> apiCallBack) {
         if (call.isExecuted()) return;
-        show();
+        showLoadingDialog();
         call.enqueue(new Callback<T>() {
             @Override
             public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
+                hideLoadingDialog();
                 if (apiCallBack == null) {
-                    hide();
                     return;
                 }
 
-                if (!checkResponseNull(response)) {
-                    //这里经过check后body不可能为Null
+                if (!isResponseNull(response)) {
+                    //这里经过检测后body不可能为Null
                     //noinspection ConstantConditions
                     apiCallBack.onSuccess(response.body());
                 } else {
-                    apiCallBack.onFailure(new ResponseBodyNullException());
+                    onFailure(call, new ResponseBodyNullException());
                 }
-
-                hide();
             }
 
             @Override
             public void onFailure(@NonNull Call<T> call, @NonNull Throwable t) {
+                hideLoadingDialog();
                 if (apiCallBack != null) {
                     apiCallBack.onFailure(t);
                 }
-                hide();
             }
         });
     }
@@ -114,14 +112,15 @@ public class ApiCall {
     public void release() {
         if (loadingDialog != null) {
             loadingDialog.dismiss();
+            loadingDialog = null;
         }
     }
 
-    private <T> boolean checkResponseNull(Response<T> response) {
+    private <T> boolean isResponseNull(Response<T> response) {
         return response == null || response.body() == null;
     }
 
-    private void show() {
+    private void showLoadingDialog() {
         if (!showLoadingDialog) {
             return;
         }
@@ -139,7 +138,7 @@ public class ApiCall {
     }
 
 
-    private void hide() {
+    private void hideLoadingDialog() {
         if (!showLoadingDialog) {
             return;
         }

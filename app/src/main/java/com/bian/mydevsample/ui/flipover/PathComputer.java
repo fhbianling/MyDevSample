@@ -8,7 +8,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.support.annotation.FloatRange;
 
-import com.bian.base.util.utilbase.L;
+import com.bian.util.core.L;
 
 /**
  * author 边凌

@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bian.base.baseclass.baseadapter.AbsRVAdapter;
-import com.bian.base.baseclass.baseadapter.RvDefaultHolder;
+import com.bian.adapter.AbsRVAdapter;
+import com.bian.adapter.RvDefaultHolder;
 import com.bian.image.loader.GlideUtil;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;

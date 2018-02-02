@@ -25,7 +25,7 @@
             android:textColor="#333"
             android:textSize="20sp"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/darker_gray"
@@ -42,7 +42,7 @@
             app:infoTextGravity="Right"
             app:infoTextViewSize="14sp"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -58,7 +58,7 @@
             app:infoTextGravity="Center"
             app:infoTextViewSize="16sp"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -74,7 +74,7 @@
             app:infoTextColor="@android:color/white"
             app:infoTextViewSize="16sp"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -91,7 +91,7 @@
             app:infoTextViewSize="16sp"
             app:infoViewSingleLine="true"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -107,7 +107,7 @@
             app:infoTextGravity="Center"
             app:infoTextViewSize="16sp"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -118,7 +118,7 @@
             app:infoTextGravity="Center"
             app:infoTextViewSize="16sp"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -131,7 +131,7 @@
             app:infoTextGravity="Center"
             app:infoTextViewSize="16sp"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -150,7 +150,7 @@
             app:infoTextViewSize="16sp"
             app:infoViewType="EditText"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -170,7 +170,7 @@
             app:infoViewSingleLine="true"
             app:infoViewType="EditText"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -190,7 +190,7 @@
             app:infoViewSingleLine="true"
             app:infoViewType="EditText"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -210,7 +210,7 @@
             app:infoViewSingleLine="true"
             app:infoViewType="EditText"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -230,7 +230,7 @@
             app:infoViewSingleLine="true"
             app:infoViewType="EditText"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -250,7 +250,7 @@
             app:infoViewSingleLine="true"
             app:infoViewType="EditText"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -270,7 +270,7 @@
             app:infoViewSingleLine="true"
             app:infoViewType="EditText"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -284,7 +284,7 @@
             app:infoImageViewSrc="@mipmap/icon_qq_zone"
             app:infoViewType="ImageView"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -298,7 +298,7 @@
             app:infoImageViewSrc="@mipmap/icon_qq_zone"
             app:infoViewType="ImageView"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="10dp"
@@ -312,7 +312,7 @@
             app:infoText="默认padding,定高60"
             app:infoViewType="TextView"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="10dp"
@@ -329,7 +329,7 @@
             app:infoViewSingleLine="true"
             app:infoViewType="TextView"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="10dp"
@@ -346,7 +346,7 @@
             app:infoViewSingleLine="true"
             app:infoViewType="TextView"/>
 
-        <com.bian.base.widget.info.InfoTextView
+        <com.bian.widget.infotextview.InfoTextView
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="10dp"

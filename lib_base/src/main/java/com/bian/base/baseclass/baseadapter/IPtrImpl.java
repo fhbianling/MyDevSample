@@ -24,12 +24,12 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
     private int dataPageSize = 10;
     private int pageSize = dataPageSize;
     private T adapter;
-    private InnerDataLoader innerDataLoader;
+    private InnerDataHandler innerDataHandler;
     private int pageNum = 1;
 
     IPtrImpl(T adapter) {
         this.adapter = adapter;
-        innerDataLoader = new InnerDataLoader(adapter.getDataLoader());
+        innerDataHandler = new InnerDataHandler(adapter.getDataLoader());
     }
 
     /**
@@ -38,8 +38,8 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
      * @param loadType {@link IPtr.LoadType}
      */
     private void loadData(IPtr.LoadType loadType) {
-        if (innerDataLoader.isLoading()) return;
-        innerDataLoader.loadData(pageNum, pageSize, loadType);
+        if (innerDataHandler.isLoading()) return;
+        innerDataHandler.loadData(pageNum, pageSize, loadType);
     }
 
 
@@ -77,7 +77,7 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
 
     @Override
     public void setOnDataLoadListener(OnDataLoadListener onDataLoadListener) {
-        innerDataLoader.setOnDataLoadListener(onDataLoadListener);
+        innerDataHandler.setOnDataLoadListener(onDataLoadListener);
     }
 
     @Override
@@ -108,13 +108,16 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
         this.dataPageSize = defaultSize;
     }
 
-    private class InnerDataLoader implements DataLoader<DataType>, DataSetter<DataType> {
+    /**
+     * 该内部类同时处理了{@link IPtr.DataLoader}和{@link IPtr.DataSetter}的职能
+     */
+    private class InnerDataHandler implements DataLoader<DataType>, DataSetter<DataType> {
         private DataLoader<DataType> dataLoader;
         private boolean isLoading;
         private OnDataLoadListener onDataLoadListener;
         private LoadType loadType;
 
-        InnerDataLoader(DataLoader<DataType> dataTypeDataLoader) {
+        InnerDataHandler(DataLoader<DataType> dataTypeDataLoader) {
             dataLoader = dataTypeDataLoader;
             if (dataLoader == null) {
                 throw new UnsupportedOperationException(

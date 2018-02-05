@@ -1,10 +1,10 @@
 package com.bian.mydevsample.application;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
-import com.bian.util.BaseUtilManager;
 import com.bian.mydevsample.BuildConfig;
 import com.bian.net.Api;
+import com.bian.util.BaseUtilManager;
 
 import static com.bian.mydevsample.consts.Const.BOOK_BASE_URL;
 
@@ -14,7 +14,7 @@ import static com.bian.mydevsample.consts.Const.BOOK_BASE_URL;
  * 类描述：
  */
 
-public class MyApp extends Application {
+public class MyApp extends MultiDexApplication {
 
     @Override
     public void onCreate() {

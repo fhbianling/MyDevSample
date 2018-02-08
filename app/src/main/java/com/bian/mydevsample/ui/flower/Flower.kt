@@ -1,141 +1,149 @@
 package com.bian.mydevsample.ui.flower
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PointF
 import android.view.View
-import com.bian.util.core.L
 
 /**
  * author 边凌
  * date 2018/2/5 15:31
  * 类描述：
  */
-class Flower(view: View) {
-    private var radius: Int = (Math.random() * 8 + 2).toInt()
-    private var process: Float = 0f
-
+class Flower(view : View) {
     private val widthScope = view.width
     private val heightScope = view.height
-    private val startX = (Math.random() * widthScope).toFloat()
-    private val startY: Float = if (Math.random() > 0.3f) (Math.random() * heightScope).toFloat() else 0f
-    private
-    val paint: Paint by lazy {
-        Paint().apply {
-            isAntiAlias = true
-            color = Color.RED
+    private var radius : Float = (Math.random() * 4 + 4).toFloat()
+    private var computer = Computer()
+
+    init {
+        computer.initialValue()
+    }
+
+    fun move(canvas : Canvas, paint : Paint) {
+        if (computer.finish) {
+            computer.initialValue()
         }
-    }
-    private
-    val step = Math.random() * 0.25 + 0.05
-    private
-    val directionDegree = Math.random() * 65 + 15
-    private
-    val maxProcess = Math.random() * 0.6 + 0.4
-    private
-    val computer = Computer()
-    val finish: Boolean get() = process < maxProcess
-
-    fun move(canvas: Canvas) {
-        debug(canvas)
+        val drawPosition = computer.getDrawPosition()
+        canvas.drawCircle(drawPosition.x, drawPosition.y, radius, paint)
+//        debug(canvas)
     }
 
-    private fun debug(canvas: Canvas) {
-        L.d("move")
-        paint.color = Color.RED
-        val startX = computer.startPosition.x
-        val startY = computer.startPosition.y
-        val endX = computer.endPosition.x
-        val endY = computer.endPosition.y
-        val edgeX = computer.edgePosition.x
-        val edgeY = computer.edgePosition.y
-
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 2f
-        canvas.drawPath(Path().apply {
-            moveTo(startX, startY)
-            lineTo(endX, endY)
-        }, paint)
-        val effect = DashPathEffect(floatArrayOf(1f, 2f), 10f)
-        paint.pathEffect = effect
-        paint.color = Color.GRAY
-        canvas.drawPath(Path().apply {
-            moveTo(endX, endY)
-            lineTo(edgeX, edgeY)
-        }, paint)
-
-        paint.textSize = 12f
-        paint.strokeWidth = 0f
-        paint.color = Color.BLACK
-        canvas.drawText("(${startX.toInt()},${startY.toInt()})", startX, startY, paint)
-        paint.color = Color.MAGENTA
-        canvas.drawText("(${endX.toInt()},${endY.toInt()})", endX, endY, paint)
-        val centerX = Math.abs((startX + endX) / 2)
-        val centerY = Math.abs((startY + endY) / 2)
+    private fun debug(canvas : Canvas, paint : Paint) {
+        val tempColor = paint.color
+        val tempStrokeWidth = paint.strokeWidth
         paint.color = Color.BLUE
-        canvas.drawText("maxProcess:${String.format("%.2f", maxProcess)}," +
-                "directionDegree:${String.format("%.2f", directionDegree)}", centerX, centerY, paint)
-        paint.color = Color.GREEN
-        paint.style = Paint.Style.FILL
-        val circleRadius = 4f
-        canvas.drawCircle(centerX, centerY, circleRadius, paint)
-        paint.color = Color.BLACK
-        canvas.drawCircle(startX, startY, circleRadius, paint)
-        paint.color = Color.BLUE
-        canvas.drawCircle(endX, endY, circleRadius, paint)
-        canvas.drawCircle(if (edgeX == 0f) edgeX + circleRadius else edgeX,
-                if (edgeY == heightScope.toFloat()) edgeY - circleRadius else edgeY, circleRadius, paint)
+        paint.strokeWidth = 3f
+        canvas.drawLine(computer.startX,
+                        computer.startY,
+                        computer.getDrawPosition().x,
+                        computer.getDrawPosition().y,
+                        paint)
+        paint.color = tempColor
+        paint.strokeWidth = tempStrokeWidth
     }
-
-    override fun toString(): String {
-        return "Flower(radius=$radius, " +
-                "process=$process, " +
-                "widthScope=$widthScope, " +
-                "heightScope=$heightScope, " +
-                "startX=$startX, " +
-                "startY=$startY, " +
-                "step=$step, " +
-                "directionDegree=$directionDegree, " +
-                "maxProcess=$maxProcess, " +
-                "computer=$computer)"
-    }
-
 
     inner class Computer {
-        private val drawPosition = PointF()
-        val startPosition by lazy {
-            PointF().apply {
-                x = startX
-                y = startY
+        private var process = 0f
+        var startX = 0f
+        var startY = 0f
+        private var left = 0f
+        private var top = 0f
+        private var right = widthScope.toFloat()
+        private var bottom = heightScope.toFloat()
+        private var step = 0f
+        private var directionDegree = 0.0
+        private var maxProcess = 0f
+        private var drawPosition = PointF()
+        private var endX = startX
+        private var endY = startY
+        val finish : Boolean get() = process == maxProcess
+
+        fun initialValue() {
+            generateRandomInitCondition()
+            computeBoundaryCondition()
+        }
+
+        private fun generateRandomInitCondition() {
+            process = 0f
+
+            directionDegree = 90 + 1 * Math.random()
+            generateRandomStartPosition()
+            step = (Math.random() * 0.0045 + 0.0005).toFloat()
+            maxProcess = (Math.random() * 0.6 + 0.4).toFloat()
+            drawPosition.set(0f, 0f)
+            endX = startX
+            endY = startY
+        }
+
+        private fun generateRandomStartPosition() {
+            val aHalfScopeDiff = Math.abs(widthScope - heightScope) / 2f
+            val maxScope = Math.max(widthScope, heightScope)
+            val enlargeScopeMin = - aHalfScopeDiff
+            val enlargeScopeMax = maxScope - aHalfScopeDiff
+
+            val randomEnlargedScope = (Math.random() * (enlargeScopeMax - enlargeScopeMin) + enlargeScopeMin).toFloat()
+
+
+            if (widthScope > heightScope) {
+                startX = (Math.random() * maxScope).toFloat()
+                startY = randomEnlargedScope
+                left = 0f
+                right = maxScope.toFloat()
+                top = enlargeScopeMin
+                bottom = enlargeScopeMax
+            } else {
+                startX = randomEnlargedScope
+                startY = (Math.random() * maxScope).toFloat()
+                left = enlargeScopeMin
+                right = enlargeScopeMax
+                top = 0f
+                bottom = maxScope.toFloat()
             }
         }
 
-        val edgePosition by lazy {
-            PointF().apply {
-                val k = Math.tan(Math.toRadians(directionDegree + 90))
-                val b = startPosition.y - k * startPosition.x
-                val kToLeftBottom = (startPosition.y - heightScope) / (startPosition.x - 0)
-                val edgePointX: Float
-                val edgePointY: Float
-                if (kToLeftBottom > k) {
-                    edgePointX = ((heightScope - b) / k).toFloat()
-                    edgePointY = heightScope.toFloat()
-                } else {
-                    edgePointX = 0f
-                    edgePointY = b.toFloat()
-                }
-                x = edgePointX
-                y = edgePointY
+        private fun computeBoundaryCondition() {
+            val k = Math.tan(Math.toRadians(directionDegree))
+            val b = startY - k * startX
+
+            //下边界交点
+            val edge1Y = bottom
+            val edge1X = (edge1Y - b) / k
+
+            //左边界或右边界交点
+            val edge2X = if (k > 0) right else left
+            val edge2Y = (edge2X * k + b).toFloat()
+
+            if (edge2Y > bottom) {
+                endX = edge1X.toFloat()
+                endY = edge1Y
+            } else {
+                endX = edge2X
+                endY = edge2Y
             }
+
+            drawPosition.set(startX, startY)
         }
 
-        val endPosition by lazy {
-            PointF().apply {
-                val endRate = 1 - maxProcess
-                val edgePositionX = edgePosition.x
-                val edgePositionY = edgePosition.y
-                x = edgePositionX + (endRate * (startPosition.x - edgePositionX)).toFloat()
-                y = edgePositionY - (endRate * (edgePositionY - startPosition.y)).toFloat()
-            }
+        fun getDrawPosition() : PointF {
+            process += step
+            process = Math.min(maxProcess, process)
+            return drawPosition * process
         }
+
+        @Suppress("unused")
+        private operator fun PointF.times(process : Float) : PointF {
+            val dstX = ((endX - startX) / maxProcess) * process + startX
+            val dstY = ((endY - startY) / maxProcess) * process + startY
+            drawPosition.set(dstX, dstY)
+            return drawPosition
+        }
+
+        override fun toString() : String {
+            return "Computer(process=$process, startX=$startX, startY=$startY, step=$step, directionDegree=$directionDegree, maxProcess=$maxProcess, endX=$endX, endY=$endY)"
+        }
+
 
     }
 }

@@ -113,9 +113,9 @@
 -keep public class * extends android.view.View{
     *** get*();
     void set*(***);
-    public <init>(android.content.Context);
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public <initialValue>(android.content.Context);
+    public <initialValue>(android.content.Context, android.util.AttributeSet);
+    public <initialValue>(android.content.Context, android.util.AttributeSet, int);
 }
 
 # 保留Parcelable序列化类不被混淆

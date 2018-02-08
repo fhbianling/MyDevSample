@@ -5,6 +5,34 @@
     android:layout_height="match_parent">
 
     <com.bian.mydevsample.ui.flower.FlowerView
+        android:id="@+id/mFlower"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="@android:color/darker_gray"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/mBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="move"/>
+
+        <Button
+            android:id="@+id/mAutoMove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="set auto move"/>
+
+        <Button
+            android:id="@+id/changeSeedDirection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="change direction"/>
+    </LinearLayout>
 </RelativeLayout>

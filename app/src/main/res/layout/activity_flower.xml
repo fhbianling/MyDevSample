@@ -33,6 +33,19 @@
             android:id="@+id/changeSeedDirection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="change direction"/>
+            android:text="change degree"/>
     </LinearLayout>
+
+    <com.bian.mydevsample.ui.flower.OvalDegreeIndicator
+        android:id="@+id/degreeIndicator"
+        android:layout_width="@dimen/w200dp"
+        android:layout_height="@dimen/w200dp"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/angleInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@android:color/white"/>
 </RelativeLayout>

@@ -29,12 +29,7 @@ class FlowerView(context : Context?, attrs : AttributeSet?) : View(context, attr
         height / 2f
     }
     var seedDirection = 0f
-        set(value) {
-            field = value
-            flowerList.clear()
-            initParam()
-        }
-    var autoMove : Boolean = false
+    var autoMove : Boolean = true
         set(value) {
             field = value
             if (value) invalidate()
@@ -50,13 +45,13 @@ class FlowerView(context : Context?, attrs : AttributeSet?) : View(context, attr
         if (flowerList.isEmpty()) {
             initParam()
         }
-        canvas?.let {
-            canvas.save()
-            canvas.rotate(seedDirection, centerX, centerY)
+        canvas?.apply {
+            save()
+            rotate(seedDirection - 90f, centerX, centerY)
             flowerList.forEach {
-                it.move(canvas, paint)
+                it.draw(canvas, paint)
             }
-            canvas.restore()
+            restore()
             if (autoMove) {
                 invalidate()
             }

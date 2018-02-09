@@ -3,7 +3,6 @@ package com.bian.mydevsample.ui.flower
 import android.app.Activity
 import android.os.Bundle
 import com.bian.mydevsample.R
-import com.bian.util.core.L
 import kotlinx.android.synthetic.main.activity_flower.*
 
 /**
@@ -23,7 +22,12 @@ class FlowerActivity : Activity() {
         }
         changeSeedDirection.setOnClickListener {
             mFlower.seedDirection = (Math.random() * 360f).toFloat()
-            L.d("seedDirection:" + mFlower.seedDirection)
+            angleInfo.text = String.format("%.2f", mFlower.seedDirection)
+            degreeIndicator.angle = mFlower.seedDirection.toDouble()
+        }
+        degreeIndicator.angelChangeListener = {
+            mFlower.seedDirection = it.toFloat()
+            angleInfo.text = String.format("%.2f", it)
         }
     }
 }

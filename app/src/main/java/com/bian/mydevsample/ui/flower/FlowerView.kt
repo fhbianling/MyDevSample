@@ -28,13 +28,13 @@ class FlowerView(context : Context?, attrs : AttributeSet?) : View(context, attr
     private val centerY by lazy {
         height / 2f
     }
-    var seedDirection = - 90f
+    var seedDirection = 0f
         set(value) {
-            field = value - 90f
+            field = value
             flowerList.clear()
             initParam()
         }
-    var autoMove : Boolean = true
+    var autoMove : Boolean = false
         set(value) {
             field = value
             if (value) invalidate()

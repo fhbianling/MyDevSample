@@ -8,6 +8,7 @@ import android.graphics.Path
 import android.media.audiofx.Visualizer
 import android.util.AttributeSet
 import android.view.View
+import com.bian.util.core.L
 
 /**
  * author 边凌
@@ -17,7 +18,7 @@ import android.view.View
 
 class MusicStreamView(context: Context?, attributes: AttributeSet?) : View(context, attributes) {
 
-    var waveData: ByteArray? = null
+    var data: ByteArray? = null
 
     private val paint = Paint().apply {
         isAntiAlias = true
@@ -29,19 +30,19 @@ class MusicStreamView(context: Context?, attributes: AttributeSet?) : View(conte
     fun bind(vis: Visualizer) {
         mVis = vis
         vis.apply {
-            captureSize = Visualizer.getCaptureSizeRange()[1]
+            captureSize = Visualizer.getCaptureSizeRange()[0]
             setDataCaptureListener(object : Visualizer.OnDataCaptureListener {
                 override fun onWaveFormDataCapture(visualizer: Visualizer?, waveform: ByteArray?, samplingRate: Int) {
-                    waveform?.apply {
-                        waveData = copyOf()
+                }
+
+                override fun onFftDataCapture(visualizer: Visualizer?, fft: ByteArray?, samplingRate: Int) {
+                    fft?.apply {
+                        data = copyOf()
                         invalidate()
                     }
                 }
 
-                override fun onFftDataCapture(visualizer: Visualizer?, fft: ByteArray?, samplingRate: Int) {
-                }
-
-            }, Visualizer.getMaxCaptureRate() / 2, true, false)
+            }, Visualizer.getMaxCaptureRate() / 2, false, true)
             enabled = true
         }
     }
@@ -59,15 +60,16 @@ class MusicStreamView(context: Context?, attributes: AttributeSet?) : View(conte
     }
 
     private val path: Path = Path()
-    private val lineCount = 8
+    private val lineCount = 16
     override fun onDraw(canvas: Canvas?) {
         canvas?.apply {
-            waveData?.apply {
+            data?.apply {
                 val lineWidth = width / lineCount
                 path.reset()
-                val combineCount = size / 10f.toInt()
+                val combineCount = (size / (lineCount.toFloat())).toInt()
+                L.d(combineCount)
                 for (i in 0 until lineCount) {
-                    val byte = (i * combineCount..(i + 1) * combineCount).sumBy { this[it].toInt() } / combineCount
+                    val byte = (i * combineCount..(i + 1) * combineCount).filter { it < size }.sumBy { this[it].toInt() } / combineCount
                     val startX = lineWidth * i.toFloat()
                     val stopX = lineWidth * (i + 1f)
                     val ratio = ((byte + 128) / 256f) * 0.5f

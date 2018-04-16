@@ -27,6 +27,7 @@ import com.bian.mydevsample.ui.pageanim2.PagerAnimTest2;
 import com.bian.mydevsample.ui.pageanim3qidian.QiDianViewPagerAnimActivity;
 import com.bian.mydevsample.ui.pageanim4.PageAnimFadeActivity;
 import com.bian.mydevsample.ui.qqclean.QQCleanAnimActivity;
+import com.bian.mydevsample.ui.stream.MusicStreamActivity;
 import com.bian.mydevsample.ui.weituananim1.AnimViewExecutorTest;
 import com.bian.mydevsample.ui.weituananim2.FloatingAnimTest;
 import com.bian.mydevsample.ui.weituananim3.WeiTuanAnimTestActivity;
@@ -111,6 +112,7 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("滚轮测试", HalfColorTextViewActivity.class));
         buttonDescs.add(new ButtonDesc("翻页动画", FlipOverActivity.class));
         buttonDescs.add(new ButtonDesc("雪花动画", FlowerActivity.class));
+        buttonDescs.add(new ButtonDesc("波形测试", MusicStreamActivity.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);
         buttonList.setOnItemClickListener(this);

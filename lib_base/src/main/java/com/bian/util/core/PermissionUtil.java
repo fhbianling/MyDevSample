@@ -54,7 +54,7 @@ public final class PermissionUtil {
         return deniedPermissions.toArray(new String[deniedPermissions.size()]);
     }
 
-    public static void checkAndRequestPermissions(Activity activity, String[] permissions) {
+    public static void checkAndRequestPermissions(Activity activity, String...permissions) {
         String[] deniedPermissions = filterDeniedPermissions(activity, permissions);
         if (deniedPermissions.length != 0) {
             ActivityCompat.requestPermissions(activity, deniedPermissions, REQUEST_CODE);

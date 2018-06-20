@@ -14,13 +14,14 @@ import java.util.List;
  */
 class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
         implements IPtr {
-
+    //初始页页号，考虑到不同后端人员风格不一样，故抽为常量以便于更改，这个值有的后台会用1，一般为0
+    private final static int INITIAL_PAGE_NUM = 0;
     private PullToRefresh ptr;
     private int dataPageSize = 10;
     private int pageSize = dataPageSize;
     private T adapter;
     private InnerDataHandler innerDataHandler;
-    private int pageNum = 1;
+    private int pageNum = INITIAL_PAGE_NUM;
 
     IPtrImpl(T adapter) {
         this.adapter = adapter;
@@ -46,21 +47,21 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
 
     @Override
     public void refreshDown() {
-        pageNum = 1;
+        pageNum = INITIAL_PAGE_NUM;
         pageSize = Math.max(dataPageSize, adapter.getDataCount());
         loadData(LoadType.Refresh);
     }
 
     @Override
     public void firstLoad() {
-        pageNum = 1;
+        pageNum = INITIAL_PAGE_NUM;
         pageSize = dataPageSize;
         loadData(LoadType.FirstLoad);
     }
 
     @Override
     public void reload() {
-        pageNum = 1;
+        pageNum = INITIAL_PAGE_NUM;
         pageSize = Math.max(dataPageSize, adapter.getDataCount());
         loadData(LoadType.Reload);
     }
@@ -110,6 +111,7 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
         private DataLoader<DataType> dataLoader;
         private boolean isLoading;
         private OnDataLoadListener onDataLoadListener;
+        private int pageNum;
         private LoadType loadType;
 
         InnerDataHandler(DataLoader<DataType> dataTypeDataLoader) {
@@ -136,6 +138,7 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
         }
 
         private void loadData(int pageNum, int pageSize, LoadType loadType) {
+            this.pageNum = pageNum;
             this.loadType = loadType;
             if (onDataLoadListener != null) {
                 onDataLoadListener.onLoadStart(loadType);
@@ -158,7 +161,7 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
             }
 
             if (onDataLoadListener != null) {
-                onDataLoadListener.onLoadSuccess();
+                onDataLoadListener.onLoadSuccess(loadType, pageNum);
             }
             if (ptr != null) {
                 ptr.onRefreshComplete();
@@ -167,9 +170,11 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
 
         private void loadSuccessButDataIsEmpty() {
             L.v("load success but data is empty");
+            //当接口加载数据为空时，充值页面页号为前一页，若请求的是第一页数据，则重置为初始页页号
             pageNum = pageNum - 1;
-            pageNum = Math.max(1, pageNum);
+            pageNum = Math.max(INITIAL_PAGE_NUM, pageNum);
             if (loadType == LoadType.Refresh || loadType == LoadType.Reload) {
+                //如果当前加载类型是刷新或者重载，即意味着第一页就没数据，需要resetData以刷新UI
                 adapter.resetData(new ArrayList<DataType>());
             }
         }
@@ -178,14 +183,14 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
         public void setFailed(int errorCode, @Nullable String dataErrorMsg) {
             setLoading(false);
             if (onDataLoadListener != null) {
-                onDataLoadListener.onLoadFailed(errorCode, dataErrorMsg);
+                onDataLoadListener.onLoadFailed(loadType, errorCode, dataErrorMsg);
             }
         }
 
         private void loadSuccess(List<DataType> dataTypes) {
-            if (pageNum == 1) {
+            if (pageNum == INITIAL_PAGE_NUM) {
                 adapter.resetData(dataTypes);
-            } else if (pageNum > 1) {
+            } else if (pageNum > INITIAL_PAGE_NUM) {
                 adapter.addData(dataTypes);
             }
         }

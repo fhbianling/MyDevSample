@@ -128,9 +128,9 @@ public interface IPtr {
      * 接口描述：数据加载监听器，当该适配器被用于加载数据时，会在加载开始，失败，成功三种状态回调该接口方法
      */
     interface OnDataLoadListener {
-        void onLoadSuccess();
+        void onLoadSuccess(LoadType loadType, int pageNum);
 
-        void onLoadFailed(int errorCode, @Nullable String msg);
+        void onLoadFailed(LoadType loadType, int errorCode, @Nullable String msg);
 
         void onLoadStart(LoadType type);
     }

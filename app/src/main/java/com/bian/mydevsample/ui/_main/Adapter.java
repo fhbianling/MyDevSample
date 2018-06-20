@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.bian.adapter.AbsAdapter;
 import com.bian.adapter.ListDefaultHolder;
+import com.bian.image.loader.GlideUtil;
 import com.bian.mydevsample.R;
 
 import java.util.List;
@@ -33,6 +34,5 @@ public class Adapter extends AbsAdapter<ButtonDesc, ListDefaultHolder> {
     protected void bindView(int position, int viewType, @NonNull ListDefaultHolder holder,
                             @NonNull ButtonDesc buttonDesc, boolean isLast) {
         holder.setText(R.id.tv, buttonDesc.name);
-
     }
 }

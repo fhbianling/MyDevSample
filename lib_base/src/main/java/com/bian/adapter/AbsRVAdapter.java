@@ -22,13 +22,14 @@ import java.util.List;
  *
  * @see AbsAdapter 抽象思路同该类
  */
-
+@SuppressWarnings("WeakerAccess")
 public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
-        extends RecyclerView.Adapter<VH> {
+        extends RecyclerView.Adapter<VH> implements IAdapter<DataType> {
     private final static long INTERVAL = 300;
     private final Context CONTEXT;
     private final LayoutInflater INFLATER;
-    private List<DataType> mData = new ArrayList<>();
+    private List<DataType> mOriginData;
+    private List<DataType> mPretreatmentData;
     private long lastClickTime;
     private OnItemLongClickListener onItemLongClickListener;
     private OnItemClickListener onItemClickListener;
@@ -40,26 +41,132 @@ public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
 
     public AbsRVAdapter(List<DataType> data, Activity context) {
         this(context);
-        this.mData = dataAssignment(data);
+        resetData(data);
     }
 
+    protected abstract VH onCreateHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
+
+    protected abstract void bindView(int position, int viewType, @NonNull VH holder,
+                                     @NonNull DataType item, boolean isLast);
+
+    /**
+     * @see IAdapter#dataAssignment(List)
+     */
+    @Override
+    public @Nullable List<DataType> dataAssignment(@Nullable List<DataType> data) {
+        return data;
+    }
+
+    @CallSuper
+    @Override
+    public void onBindViewHolder(final VH holder, int position) {
+        int itemViewType = getItemViewType(position);
+        boolean isLast = position == getItemCount() - 1;
+        DataType item = getItem(position);
+        if (item != null) {
+            bindView(position, itemViewType, holder, item, isLast);
+        }
+    }
+
+    /**
+     * @see IAdapter#getData()
+     */
+    @Override
+    public final @Nullable List<DataType> getData() {
+        return mOriginData;
+    }
+
+    /**
+     * @see IAdapter#getPretreatmentData()
+     */
+    @Override
+    public final @Nullable List<DataType> getPretreatmentData() {
+        return mPretreatmentData;
+    }
+
+    /**
+     * @see IAdapter#addData(Object)
+     */
+    @Override
+    public final void addData(DataType data) {
+        if (data != null) {
+            ensureOriginDataNonNull();
+            mOriginData.add(data);
+            handleOriginDataUpdate(false);
+            notifyItemInserted(getItemCount() - 1);
+        }
+    }
+
+    /**
+     * @see IAdapter#addData(List)
+     */
+    @Override
+    public final void addData(List<DataType> data) {
+        if (data != null) {
+            ensureOriginDataNonNull();
+            mOriginData.addAll(data);
+            handleOriginDataUpdate(true);
+        }
+    }
+
+    /**
+     * @see IAdapter#removeData(Object)
+     */
+    @Override
+    public final void removeData(DataType data) {
+        ensureOriginDataNonNull();
+        mOriginData.remove(data);
+        int originIndex = -1;
+        if (mPretreatmentData != null) {
+            originIndex = mPretreatmentData.indexOf(data);
+        }
+        handleOriginDataUpdate(false);
+        if (originIndex == -1) {
+            notifyDataSetChanged();
+        } else {
+            notifyItemRemoved(originIndex);
+        }
+    }
+
+    /**
+     * @see IAdapter#removeData(int)
+     */
+    @Override
+    public final void removeData(int position) {
+        ensureOriginDataNonNull();
+        if (mPretreatmentData != null && position < mPretreatmentData.size()) {
+            DataType dataType = mPretreatmentData.get(position);
+            removeData(dataType);
+        }
+    }
+
+    /**
+     * @see IAdapter#resetData(List)
+     */
+    @Override
+    public final void resetData(List<DataType> dataTypes) {
+        ensureOriginDataNonNull();
+        mOriginData = dataTypes;
+        handleOriginDataUpdate(true);
+    }
+
+    public @Nullable final DataType getItem(int position) {
+        return indexValid(position, mPretreatmentData) ? mPretreatmentData.get(position) : null;
+    }
+
+    @Override
+    public final int getItemCount() {
+        return mPretreatmentData != null ? mPretreatmentData.size() : 0;
+    }
+
+    @Override
     public final Context getContext() {
         return CONTEXT;
     }
 
-    public final LayoutInflater getINFLATER() {
+    @Override
+    public final LayoutInflater getInflater() {
         return INFLATER;
-    }
-
-    protected
-    @Nullable
-    List<DataType> dataAssignment(@Nullable List<DataType> data) {
-        return data;
-    }
-
-    protected @Nullable
-    DataType dataAssignment(@Nullable DataType dataType) {
-        return dataType;
     }
 
     @Override
@@ -69,37 +176,10 @@ public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
         return vh;
     }
 
-    protected abstract VH onCreateHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
-
-    public final List<DataType> getData() {
-        if (mData == null) {
-            return null;
-        } else {
-            return new ArrayList<>(mData);
-        }
-    }
-
-    @CallSuper
-    @Override
-    public void onBindViewHolder(final VH holder, int position) {
-        int itemViewType = getItemViewType(position);
-        boolean isLast = position == getItemCount() - 1;
-        DataType item = getItem(positionAssignment(position));
-        if (item != null) {
-            bindView(position, itemViewType, holder, item, isLast);
-        }
-    }
-
-    protected int positionAssignment(int position) {
-        return position;
-    }
-
-    protected abstract void bindView(int position, int viewType, @NonNull VH holder,
-                                     @NonNull DataType item, boolean isLast);
-
     /**
      * 设置单项点击监听器
      */
+    @SuppressWarnings("unused")
     public final void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
@@ -107,43 +187,28 @@ public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
     /**
      * 设置单项长按监听器
      */
+    @SuppressWarnings("unused")
     public final void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
-    public
-    @Nullable
-    DataType getItem(int position) {
-        return position > mData.size() - 1 ? null : mData.get(position);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mData != null ? mData.size() : 0;
-    }
-
-    public final void addData(DataType dataType) {
-        DataType data = dataAssignment(dataType);
-        mData.add(data);
-        notifyItemInserted(getItemCount() - 1);
-    }
-
-    public final void addData(List<DataType> data) {
-        List<DataType> dataTypes = dataAssignment(data);
-        if (dataTypes != null) {
-            mData.addAll(data);
+    private void handleOriginDataUpdate(boolean notify) {
+        if (mPretreatmentData != null) {
+            mPretreatmentData.clear();
+        }
+        List<DataType> pretreatment = dataAssignment(mOriginData);
+        if (pretreatment != null) {
+            mPretreatmentData = new ArrayList<>(pretreatment);
+        }
+        if (notify) {
             notifyDataSetChanged();
         }
     }
 
-    public final void removeData(int position) {
-        mData.remove(positionAssignment(position));
-        notifyItemRemoved(positionAssignment(position));
-    }
-
-    public final void resetData(List<DataType> dataTypes) {
-        mData = dataAssignment(dataTypes);
-        notifyDataSetChanged();
+    private void ensureOriginDataNonNull() {
+        if (mOriginData == null) {
+            mOriginData = new ArrayList<>();
+        }
     }
 
     private boolean isFastClick() {
@@ -158,7 +223,7 @@ public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
             public void onClick(View v) {
                 if (isFastClick()) return;
                 if (onItemClickListener != null) {
-                    onItemClickListener.onItemClick(positionAssignment(vh.getAdapterPosition()));
+                    onItemClickListener.onItemClick(vh.getAdapterPosition());
                 }
             }
         });
@@ -166,11 +231,15 @@ public abstract class AbsRVAdapter<DataType, VH extends RecyclerView.ViewHolder>
             @Override
             public boolean onLongClick(View v) {
                 if (onItemLongClickListener != null) {
-                    onItemLongClickListener.onItemLongClick(positionAssignment(vh.getAdapterPosition()));
+                    onItemLongClickListener.onItemLongClick(vh.getAdapterPosition());
                 }
                 return true;
             }
         });
+    }
+
+    private static boolean indexValid(int index, List<?> list) {
+        return list != null && index >= 0 && index < list.size();
     }
 
     public interface OnItemClickListener {

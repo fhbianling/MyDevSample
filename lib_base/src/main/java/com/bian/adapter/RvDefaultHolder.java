@@ -31,6 +31,11 @@ public class RvDefaultHolder extends RecyclerView.ViewHolder {
         this.root = root;
         this.type = type;
         viewCache = new SparseArray<>();
+        init(root);
+    }
+
+    protected void init(View root) {
+
     }
 
     public int getType() {

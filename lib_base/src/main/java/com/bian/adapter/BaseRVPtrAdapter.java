@@ -31,8 +31,8 @@ public abstract class BaseRVPtrAdapter<DataType, VH extends RecyclerView.ViewHol
         init();
     }
 
-    private void init() {
-        iPtr = new IPtrImpl<>(this);
+    public final void setInitialPageNum(int initialPageNum) {
+        iPtr.setInitialPageNum(initialPageNum);
     }
 
     @Override
@@ -78,5 +78,9 @@ public abstract class BaseRVPtrAdapter<DataType, VH extends RecyclerView.ViewHol
     @Override
     public final int getDataCount() {
         return getItemCount();
+    }
+
+    private void init() {
+        iPtr = new IPtrImpl<>(this);
     }
 }

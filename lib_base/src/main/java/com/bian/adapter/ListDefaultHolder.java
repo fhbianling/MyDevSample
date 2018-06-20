@@ -23,6 +23,11 @@ public class ListDefaultHolder extends AbsAdapter.ViewHolder {
         super(root);
         this.root = root;
         viewCache = new SparseArray<>();
+        init(root);
+    }
+
+    protected void init(View root) {
+
     }
 
     public

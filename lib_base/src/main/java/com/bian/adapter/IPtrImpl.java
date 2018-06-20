@@ -15,7 +15,7 @@ import java.util.List;
 class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
         implements IPtr {
     //初始页页号，考虑到不同后端人员风格不一样，故抽为常量以便于更改，这个值有的后台会用1，一般为0
-    private final static int INITIAL_PAGE_NUM = 0;
+    private int INITIAL_PAGE_NUM = 0;
     private PullToRefresh ptr;
     private int dataPageSize = 10;
     private int pageSize = dataPageSize;
@@ -27,17 +27,6 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
         this.adapter = adapter;
         innerDataHandler = new InnerDataHandler(adapter.getDataLoader());
     }
-
-    /**
-     * 从网络获取数据
-     *
-     * @param loadType {@link IPtr.LoadType}
-     */
-    private void loadData(IPtr.LoadType loadType) {
-        if (innerDataHandler.isLoading()) return;
-        innerDataHandler.loadData(pageNum, pageSize, loadType);
-    }
-
 
     @Override
     public void refreshUp() {
@@ -104,6 +93,20 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
         this.dataPageSize = defaultSize;
     }
 
+    void setInitialPageNum(int initialPageNum) {
+        INITIAL_PAGE_NUM = initialPageNum;
+    }
+
+    /**
+     * 从网络获取数据
+     *
+     * @param loadType {@link IPtr.LoadType}
+     */
+    private void loadData(IPtr.LoadType loadType) {
+        if (innerDataHandler.isLoading()) return;
+        innerDataHandler.loadData(pageNum, pageSize, loadType);
+    }
+
     /**
      * 该内部类同时处理了{@link IPtr.DataLoader}和{@link IPtr.DataSetter}的职能
      */
@@ -122,32 +125,11 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
             }
         }
 
-        boolean isLoading() {
-            return isLoading;
-        }
-
-        void setLoading(boolean loading) {
-            isLoading = loading;
-        }
-
         @Override
         public void loadData(int pageNum, int pageSize, DataSetter<DataType> setter,
                              LoadType loadType) {
             setLoading(true);
             dataLoader.loadData(pageNum, pageSize, setter, loadType);
-        }
-
-        private void loadData(int pageNum, int pageSize, LoadType loadType) {
-            this.pageNum = pageNum;
-            this.loadType = loadType;
-            if (onDataLoadListener != null) {
-                onDataLoadListener.onLoadStart(loadType);
-            }
-            dataLoader.loadData(pageNum, pageSize, this, loadType);
-        }
-
-        void setOnDataLoadListener(OnDataLoadListener onDataLoadListener) {
-            this.onDataLoadListener = onDataLoadListener;
         }
 
         @Override
@@ -168,6 +150,35 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
             }
         }
 
+        @Override
+        public void setFailed(int errorCode, @Nullable String dataErrorMsg) {
+            setLoading(false);
+            if (onDataLoadListener != null) {
+                onDataLoadListener.onLoadFailed(loadType, errorCode, dataErrorMsg);
+            }
+        }
+
+        boolean isLoading() {
+            return isLoading;
+        }
+
+        void setLoading(boolean loading) {
+            isLoading = loading;
+        }
+
+        void setOnDataLoadListener(OnDataLoadListener onDataLoadListener) {
+            this.onDataLoadListener = onDataLoadListener;
+        }
+
+        private void loadData(int pageNum, int pageSize, LoadType loadType) {
+            this.pageNum = pageNum;
+            this.loadType = loadType;
+            if (onDataLoadListener != null) {
+                onDataLoadListener.onLoadStart(loadType);
+            }
+            dataLoader.loadData(pageNum, pageSize, this, loadType);
+        }
+
         private void loadSuccessButDataIsEmpty() {
             L.v("load success but data is empty");
             //当接口加载数据为空时，充值页面页号为前一页，若请求的是第一页数据，则重置为初始页页号
@@ -176,14 +187,6 @@ class IPtrImpl<T extends IPtr & IPtr.Model<DataType>, DataType>
             if (loadType == LoadType.Refresh || loadType == LoadType.Reload) {
                 //如果当前加载类型是刷新或者重载，即意味着第一页就没数据，需要resetData以刷新UI
                 adapter.resetData(new ArrayList<DataType>());
-            }
-        }
-
-        @Override
-        public void setFailed(int errorCode, @Nullable String dataErrorMsg) {
-            setLoading(false);
-            if (onDataLoadListener != null) {
-                onDataLoadListener.onLoadFailed(loadType, errorCode, dataErrorMsg);
             }
         }
 

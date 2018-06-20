@@ -2,7 +2,6 @@ package com.bian.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -24,139 +23,137 @@ import java.util.List;
  */
 
 public abstract class AbsAdapter<DataType, VH extends AbsAdapter.ViewHolder>
-        extends BaseAdapter {
+        extends BaseAdapter implements IAdapter<DataType> {
     private final LayoutInflater INFLATER;
     private final Context CONTEXT;
-    private List<DataType> mData;
+    private List<DataType> mOriginData;
+    private List<DataType> mPretreatmentData;
 
     public AbsAdapter(Context context) {
         this.CONTEXT = context;
         INFLATER = LayoutInflater.from(context);
     }
 
-    public AbsAdapter(List<DataType> mData, Activity CONTEXT) {
+    public AbsAdapter(List<DataType> data, Activity CONTEXT) {
         this(CONTEXT);
-        this.mData = dataAssignment(mData);
-    }
-
-    protected final LayoutInflater getInflater() {
-        return INFLATER;
-    }
-
-    public final Context getContext() {
-        return CONTEXT;
+        resetData(data);
     }
 
     /**
-     * data改动，重写这个方法，可以对被赋值的data做出改动，可被重写。
-     * <p>
-     * 默认实现不做任何转换
-     */
-    protected
-    @Nullable
-    List<DataType> dataAssignment(@Nullable List<DataType> data) {
-        return data;
-    }
-
-    protected DataType dataAssignment(DataType dataType) {
-        return dataType;
-    }
-
-    /**
+     * 子类实现
      * 获得Holder
      */
-    protected abstract
-    @NonNull
-    VH onCreateHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
+    protected abstract @NonNull VH onCreateHolder(LayoutInflater inflater, ViewGroup parent,
+                                                  int viewType);
 
     /**
-     * 展示数据
+     * 子类实现
+     * 绑定数据到Holder
      */
     protected abstract void bindView(int position, int viewType, @NonNull VH holder,
                                      @NonNull DataType dataType, boolean isLast);
 
     /**
-     * 重置数据
-     *
-     * @param data data
+     * @see IAdapter#dataAssignment(List)
      */
+    @Override
+    public @Nullable List<DataType> dataAssignment(@Nullable List<DataType> data) {
+        return data;
+    }
+
+    /**
+     * @see IAdapter#resetData(List)
+     */
+    @Override
     public final void resetData(List<DataType> data) {
-        this.mData = dataAssignment(data);
-        notifyDataSetChanged();
+        ensureOriginDataNonNull();
+        mOriginData = data;
+        handleOriginDataUpdate();
     }
 
     /**
-     * 将指定位置的数据替换
-     *
-     * @param position position
-     * @param dataType 展示的数据类型的实体
+     * @see IAdapter#addData(List)
      */
-    public final void replaceData(int position, DataType dataType) {
-        if (mData == null) {
-            throw new NullPointerException();
-        }
-        if (position > mData.size()) {
-            throw new IllegalArgumentException();
-        }
-        mData.set(position, dataAssignment(dataType));
-        notifyDataSetChanged();
-    }
-
-    /**
-     * 添加集合数据
-     *
-     * @param data data
-     */
+    @Override
     public final void addData(List<DataType> data) {
-        if (mData == null) {
-            mData = new ArrayList<>();
+        ensureOriginDataNonNull();
+        if (data != null) {
+            mOriginData.addAll(data);
         }
-        List<DataType> dataTypes = dataAssignment(data);
-        if (dataTypes != null) {
-            mData.addAll(dataTypes);
-            notifyDataSetChanged();
-        }
+        handleOriginDataUpdate();
     }
 
     /**
-     * 添加单个数据
-     *
-     * @param dataType 展示的数据类型
+     * @see IAdapter#addData(Object)
      */
-    public final void addData(DataType dataType) {
-        if (mData == null) {
-            mData = new ArrayList<>();
+    @Override
+    public final void addData(DataType data) {
+        ensureOriginDataNonNull();
+        if (data != null) {
+            mOriginData.add(data);
         }
-        mData.add(dataAssignment(dataType));
-        notifyDataSetChanged();
+        handleOriginDataUpdate();
     }
 
     /**
-     * 获得当前数据集的保护性拷贝
+     * @see IAdapter#removeData(Object)
      */
-    public final
-    @Nullable
-    List<DataType> getData() {
-        if (mData == null) {
-            return null;
-        }
-        return new ArrayList<>(mData);
+    @Override
+    public final void removeData(DataType data) {
+        ensureOriginDataNonNull();
+        mOriginData.remove(data);
+        handleOriginDataUpdate();
     }
 
-    @CallSuper
+    /**
+     * @see IAdapter#removeData(int)
+     */
     @Override
-    public int getCount() {
-        return mData != null ? mData.size() : 0;
+    public final void removeData(int position) {
+        ensureOriginDataNonNull();
+        mOriginData.remove(position);
+        handleOriginDataUpdate();
+    }
+
+    /**
+     * @see IAdapter#getData()
+     */
+    @Override
+    public final @Nullable List<DataType> getData() {
+        return mOriginData;
+    }
+
+    /**
+     * @see IAdapter#getPretreatmentData()
+     */
+    @Override
+    public final @Nullable List<DataType> getPretreatmentData() {
+        return mPretreatmentData;
     }
 
     @Override
-    public long getItemId(int i) {
+    public final LayoutInflater getInflater() {
+        return INFLATER;
+    }
+
+    @Override
+    public final Context getContext() {
+        return CONTEXT;
+    }
+
+    @Override
+    public final int getCount() {
+        return mPretreatmentData != null ? mPretreatmentData.size() : 0;
+    }
+
+    @Override
+    public final long getItemId(int i) {
         return i;
     }
 
     @Override
     public final DataType getItem(int i) {
-        return mData != null ? mData.get(i) : null;
+        return indexValid(i, mPretreatmentData) ? mPretreatmentData.get(i) : null;
     }
 
     @Override
@@ -169,7 +166,6 @@ public abstract class AbsAdapter<DataType, VH extends AbsAdapter.ViewHolder>
             view.setTag(holder);
         } else {
             /*注意不能对getView获得的根视图设置tag*/
-
             //noinspection unchecked
             holder = (VH) view.getTag();
         }
@@ -180,13 +176,36 @@ public abstract class AbsAdapter<DataType, VH extends AbsAdapter.ViewHolder>
         return view;
     }
 
+    private void handleOriginDataUpdate() {
+        if (mPretreatmentData != null) {
+            mPretreatmentData.clear();
+        }
+        List<DataType> pretreatment = dataAssignment(mOriginData);
+        if (pretreatment != null) {
+            mPretreatmentData = new ArrayList<>(pretreatment);
+        }
+        notifyDataSetChanged();
+    }
+
+    private void ensureOriginDataNonNull() {
+        if (mOriginData == null) {
+            mOriginData = new ArrayList<>();
+        }
+    }
+
+    private static boolean indexValid(int index, List<?> list) {
+        return list != null && index >= 0 && index < list.size();
+    }
+
     public static class ViewHolder {
-        private View itemView;
+        @SuppressWarnings("WeakerAccess")
+        protected View itemView;
 
         public ViewHolder(View itemView) {
             this.itemView = itemView;
         }
 
+        @SuppressWarnings("WeakerAccess")
         public final View getItemView() {
             return itemView;
         }

@@ -42,6 +42,7 @@
         <activity android:name=".ui.flipover.FlipOverActivity"/>
         <activity android:name=".ui.flower.FlowerActivity"/>
         <activity android:name=".ui.stream.MusicStreamActivity"/>
+        <activity android:name=".ui.adapterbasetest.BaseTest"/>
 
         <receiver android:name="com.wilddog.client.receiver.WilddogAuthCastReceiver">
             <intent-filter>

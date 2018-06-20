@@ -59,8 +59,8 @@ public class AdapterTest extends BaseActivity {
 
     private void initAdptListener() {
         bookRecyclerViewAdapter.setOnDataLoadListener(new IPtr.OnDataLoadListener() {
-            @Override
-            public void onLoadSuccess() {
+
+            @Override public void onLoadSuccess(IPtr.LoadType loadType, int pageNum) {
                 CharSequence type = rvInfo.getText();
                 List<BookBean> data = bookRecyclerViewAdapter.getData();
                 String info = type + "\n页数:" + bookRecyclerViewAdapter.getPageNum() +
@@ -69,7 +69,7 @@ public class AdapterTest extends BaseActivity {
             }
 
             @Override
-            public void onLoadFailed(int errorCode, @Nullable String msg) {
+            public void onLoadFailed(IPtr.LoadType loadType, int errorCode, @Nullable String msg) {
 
             }
 
@@ -79,8 +79,8 @@ public class AdapterTest extends BaseActivity {
             }
         });
         bookListAdapter.setOnDataLoadListener(new IPtr.OnDataLoadListener() {
-            @Override
-            public void onLoadSuccess() {
+
+            @Override public void onLoadSuccess(IPtr.LoadType loadType, int pageNum) {
                 CharSequence type = listInfo.getText();
                 List<BookBean> data = bookListAdapter.getData();
                 String info = type + "\n页数:" + bookListAdapter.getPageNum() +
@@ -89,7 +89,7 @@ public class AdapterTest extends BaseActivity {
             }
 
             @Override
-            public void onLoadFailed(int errorCode, @Nullable String msg) {
+            public void onLoadFailed(IPtr.LoadType loadType, int errorCode, @Nullable String msg) {
 
             }
 

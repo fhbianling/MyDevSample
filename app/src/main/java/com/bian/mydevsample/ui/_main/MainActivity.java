@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bian.base.AbsBaseActivity;
 import com.bian.mydevsample.R;
+import com.bian.mydevsample.ui.adapterbasetest.BaseTest;
 import com.bian.mydevsample.ui.adaptertest.AdapterTest;
 import com.bian.mydevsample.ui.backstage.BackStageActivity;
 import com.bian.mydevsample.ui.daggerstudy.Dagger2StudyActivity;
@@ -94,6 +95,7 @@ public class MainActivity extends AbsBaseActivity
         ListView buttonList = this.findViewById(R.id.buttonList);
         List<ButtonDesc> buttonDescs = new ArrayList<>();
         buttonDescs.add(new ButtonDesc("音乐播放器", MediaPlayerActivity.class));
+        buttonDescs.add(new ButtonDesc("adapter基础测试", BaseTest.class));
         buttonDescs.add(new ButtonDesc("adapter封装测试", AdapterTest.class));
         buttonDescs.add(new ButtonDesc("微团动画1", AnimViewExecutorTest.class));
         buttonDescs.add(new ButtonDesc("微团动画2", FloatingAnimTest.class));

@@ -41,8 +41,8 @@ public abstract class BasePtrAdapter<DataType, HolderClass extends AbsAdapter.Vi
         init();
     }
 
-    private void init() {
-        iPtr = new IPtrImpl<>(this);
+    public final void setInitialPageNum(int initialPageNum) {
+        iPtr.setInitialPageNum(initialPageNum);
     }
 
     @Override
@@ -88,6 +88,10 @@ public abstract class BasePtrAdapter<DataType, HolderClass extends AbsAdapter.Vi
     @Override
     public final int getDataCount() {
         return getCount();
+    }
+
+    private void init() {
+        iPtr = new IPtrImpl<>(this);
     }
 
 }

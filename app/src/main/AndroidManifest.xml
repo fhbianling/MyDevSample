@@ -43,6 +43,7 @@
         <activity android:name=".ui.flower.FlowerActivity"/>
         <activity android:name=".ui.stream.MusicStreamActivity"/>
         <activity android:name=".ui.adapterbasetest.BaseTest"/>
+        <activity android:name=".ui.indicatorbar.TemplateIndicatorTest"/>
 
         <receiver android:name="com.wilddog.client.receiver.WilddogAuthCastReceiver">
             <intent-filter>

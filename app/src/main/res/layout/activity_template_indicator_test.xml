@@ -6,6 +6,11 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mRv"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
     <com.bian.mydevsample.ui.indicatorbar.TemplateIndicatorView
         android:id="@+id/indicatorView"
         android:layout_width="match_parent"

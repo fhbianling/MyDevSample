@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -47,4 +48,7 @@ dependencies {
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     /*滚轮选择器*/
     implementation 'com.contrarywind:Android-PickerView:3.2.4'
+}
+repositories {
+    mavenCentral()
 }

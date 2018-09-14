@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.bian.util.core.ParamChecker;
+import com.bian.util.core.Checker;
 import com.bian.util.core.ToastUtil;
 import com.bian.widget.infotextview.InfoTextView;
 import com.bian.image.loader.GlideUtil;
@@ -62,7 +62,7 @@ public class InfoTextViewSampleActivity extends BaseActivity
     @Override
     public void onImageSelectResult(List<String> imageResult, ImageSelector.OpenMode openMode,
                                     int requestCode) {
-        if (!ParamChecker.isEmpty(imageResult)) {
+        if (!Checker.isEmpty(imageResult)) {
             String resultPath = imageResult.get(0);
             View infoView = avatar.getInfoView();
             if (infoView instanceof ImageView) {

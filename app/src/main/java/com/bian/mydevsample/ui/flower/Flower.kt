@@ -4,8 +4,38 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
 import android.view.View
-import com.bian.mydevsample.ui.flower.Util.rotateCoordinateSystem
-import com.bian.mydevsample.ui.flower.Util.translationCoordinateSystem
+
+fun PointF.rotateCoordinateSystem(degree : Double) {
+    val toRadians = Math.toRadians(degree)
+    val cosDegree = Math.cos(toRadians)
+    val sinDegree = Math.sin(toRadians)
+    val x = this.x * cosDegree + this.y * sinDegree
+    val y = - this.x * sinDegree + this.y * cosDegree
+    this.set(x.toFloat(), y.toFloat())
+}
+
+fun PointF.translationCoordinateSystem(originX : Float, originY : Float) {
+    val x = this.x + originX
+    val y = this.y + originY
+    this.set(x, y)
+}
+
+/**
+ * 求平方值
+ */
+fun Int.square() : Double {
+    return this.toDouble().square()
+}
+
+fun Float.square() : Double {
+    return this.toDouble().square()
+}
+
+fun Double.square() : Double {
+    return Math.pow(this, 2.0)
+}
+
+private const val SCATTERING_ANGLE = 30//散射角度范围，中轴向两侧各15度范围
 
 /**
  * author 边凌
@@ -28,24 +58,22 @@ class Flower(view : View) {
         }
         val drawPosition = computer.calcDrawPosition()
         canvas.drawCircle(drawPosition.x, drawPosition.y, radius, paint)
-
     }
 
     inner class Computer {
         private var process = 0f
         private var startX = 0f
         private var startY = 0f
-        private var step = 0f
+        private var step = 0f//步进值，实际代表速度
         private var directionDegree = 0.0
-        private var maxProcess = 0f
+        private var maxProcess = 0f//路程
         private val drawPosition = PointF()
         private val endPosition = PointF()
-        private val scatteringAngle = 30
         val finish : Boolean get() = process == maxProcess
 
         fun initialValue() {
             process = 0f
-            directionDegree = Math.random() * scatteringAngle - scatteringAngle / 2f
+            directionDegree = Math.random() * SCATTERING_ANGLE - SCATTERING_ANGLE / 2f
             step = (Math.random() * 0.0045 + 0.0005).toFloat()
             maxProcess = (Math.random() * 0.6 + 0.4).toFloat()
             drawPosition.set(0f, 0f)
@@ -54,25 +82,23 @@ class Flower(view : View) {
         }
 
         private fun generateRandomStartPosition() {
-            val r = Math.sqrt(Math.pow(widthScope.toDouble(),
-                                       2.0) + Math.pow(heightScope.toDouble(), 2.0)) / 2
+            val r = Math.sqrt(widthScope.square() + heightScope.square()) / 2
             //原坐标系计算出的起始点x,y
             val startX = (Math.random() * 2 * r - r).toFloat()
-            val startY = (- Math.random() *
-                    Math.sqrt(Math.pow(r, 2.0) - Math.pow(startX.toDouble(), 2.0))).toFloat()
+            val startY = (- Math.random() * Math.sqrt(r.square() - startX.square())).toFloat()
 
             val endX = startX
-            val endY = (Math.sqrt(Math.pow(r, 2.0) - Math.pow(endX.toDouble(), 2.0))).toFloat()
+            val endY = (Math.sqrt(r.square() - endX.square())).toFloat()
 
             drawPosition.set(startX, startY)
             endPosition.set(endX, endY)
             //待变换新坐标系原点x,y
             val originX = widthScope / 2f
             val originY = heightScope / 2f
-            rotateCoordinateSystem(drawPosition, directionDegree)
-            rotateCoordinateSystem(endPosition, directionDegree)
-            translationCoordinateSystem(drawPosition, originX, originY)
-            translationCoordinateSystem(endPosition, originX, originY)
+            drawPosition.rotateCoordinateSystem(directionDegree)
+            endPosition.rotateCoordinateSystem(directionDegree)
+            drawPosition.translationCoordinateSystem(originX, originY)
+            endPosition.translationCoordinateSystem(originX, originY)
 
             this.startX = drawPosition.x
             this.startY = drawPosition.y

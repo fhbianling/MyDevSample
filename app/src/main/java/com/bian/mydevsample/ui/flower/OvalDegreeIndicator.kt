@@ -15,6 +15,8 @@ import android.view.View
  * date 2018/2/9 14:06
  * 类描述：
  */
+private const val MIN_SIDE_LENGTH = 100f
+
 class OvalDegreeIndicator(context : Context?, attrs : AttributeSet?) : View(context, attrs) {
 
     var angle : Double = 0.0
@@ -24,7 +26,6 @@ class OvalDegreeIndicator(context : Context?, attrs : AttributeSet?) : View(cont
         }
     var angelChangeListener : ((Double) -> Unit)? = null
     private var radius = 0f
-    private val minSideLength = 100f
 
     private val paint by lazy {
         Paint().apply {
@@ -45,8 +46,8 @@ class OvalDegreeIndicator(context : Context?, attrs : AttributeSet?) : View(cont
 
     override fun onDraw(canvas : Canvas?) {
         indicatorPoint.set(radius, 0f)
-        Util.rotateCoordinateSystem(indicatorPoint, - angle)
-        Util.translationCoordinateSystem(indicatorPoint, centerX, centerY)
+        indicatorPoint.rotateCoordinateSystem(- angle)
+        indicatorPoint.translationCoordinateSystem(centerX, centerY)
 
         paint.color = Color.WHITE
         paint.strokeWidth = strokeWidth
@@ -82,7 +83,7 @@ class OvalDegreeIndicator(context : Context?, attrs : AttributeSet?) : View(cont
         val widthSize = MeasureSpec.getSize(widthMeasureSpec)
         val heightSize = MeasureSpec.getSize(heightMeasureSpec)
         var measuredSideLength = Math.min(widthSize, heightSize).toFloat()
-        measuredSideLength = Math.max(measuredSideLength, minSideLength)
+        measuredSideLength = Math.max(measuredSideLength, MIN_SIDE_LENGTH)
         radius = measuredSideLength / 2 - strokeWidth / 2 - offSet
         setMeasuredDimension(measuredSideLength.toInt(), measuredSideLength.toInt())
     }

@@ -1,6 +1,6 @@
 package com.bian.util.rx;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 
 import io.reactivex.FlowableEmitter;

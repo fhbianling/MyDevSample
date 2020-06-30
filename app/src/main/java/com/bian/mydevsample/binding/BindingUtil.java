@@ -1,6 +1,6 @@
 package com.bian.mydevsample.binding;
 
-import android.databinding.BindingAdapter;
+import androidx.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.bian.image.loader.GlideUtil;

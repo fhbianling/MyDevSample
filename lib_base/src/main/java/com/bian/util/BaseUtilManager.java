@@ -1,14 +1,14 @@
 package com.bian.util;
 
 import android.app.Application;
-import android.support.annotation.IdRes;
-import android.support.annotation.LayoutRes;
 
 import com.bian.util.core.L;
 import com.bian.util.core.SharedPrefUtil;
 import com.bian.util.core.ToastUtil;
 import com.bian.util.throwable.ThrowableHandler;
-import com.squareup.leakcanary.LeakCanary;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
 
 /**
  * author 边凌
@@ -31,7 +31,6 @@ public class BaseUtilManager {
      */
     public static void init(Application application, boolean debug) {
         DEBUG = debug;
-        initLeakCanary(application);
         SharedPrefUtil.init(application);
         ThrowableHandler.init(application);
         ToastUtil.init(application);
@@ -39,13 +38,6 @@ public class BaseUtilManager {
     }
     public static void setDebugTag(String tag) {
         L.setTAG(tag);
-    }
-
-    private static void initLeakCanary(Application application) {
-        if (LeakCanary.isInAnalyzerProcess(application)) {
-            return;
-        }
-        LeakCanary.install(application);
     }
 
     public static void setToastStyle(@LayoutRes int layoutRes, @IdRes int textViewId) {

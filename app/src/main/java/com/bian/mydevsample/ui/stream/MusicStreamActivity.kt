@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.audiofx.Visualizer
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
+import androidx.core.app.ActivityCompat
 import com.bian.mydevsample.R
 import com.bian.mydevsample.base.BaseActivity
 import com.bian.util.core.PermissionUtil

@@ -3,7 +3,7 @@ package com.bian.widget.infotextview;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -19,7 +19,7 @@ import java.util.Locale;
  * 类描述：
  */
 
-public class LetterSpacingTextView extends android.support.v7.widget.AppCompatTextView
+public class LetterSpacingTextView extends androidx.appcompat.widget.AppCompatTextView
         implements ViewTreeObserver.OnGlobalLayoutListener {
 
     private final static String HTML_REPLACE =

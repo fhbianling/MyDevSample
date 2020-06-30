@@ -8,14 +8,12 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * author 边凌

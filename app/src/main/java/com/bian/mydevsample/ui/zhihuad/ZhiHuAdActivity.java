@@ -2,22 +2,27 @@ package com.bian.mydevsample.ui.zhihuad;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.bian.adapter.AbsRVAdapter;
 import com.bian.adapter.RvDefaultHolder;
-import com.bian.image.loader.GlideUtil;
 import com.bian.mydevsample.R;
 import com.bian.mydevsample.base.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * author 边凌
@@ -31,6 +36,7 @@ public class ZhiHuAdActivity extends BaseActivity {
         return R.layout.activity_zhihuad;
     }
 
+    private Point size = new Point();
     @Override
     protected void initView(Bundle savedInstanceState) {
         RecyclerView rv = findViewById(R.id.rv);
@@ -45,7 +51,7 @@ public class ZhiHuAdActivity extends BaseActivity {
             Item item = new Item();
             if (i == 5) {
                 item.type = Item.TYPE_AD;
-                item.img = "http://img1.gamersky.com/image2017/12/20171205_zq_281_2/gamersky_02origin_03_201712592056B.jpg";
+                item.img = R.mipmap.ic_test2;
             } else {
                 item.type = Item.TYPE_ITEM;
                 item.title = title;
@@ -54,15 +60,25 @@ public class ZhiHuAdActivity extends BaseActivity {
             mockDatas.add(item);
         }
         rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(new Adapter(mockDatas, this));
+        Adapter adapter = new Adapter(mockDatas, this);
+        rv.setAdapter(adapter);
+        AtomicBoolean first = new AtomicBoolean(true);
+        rv.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if (first.get()) {
+                size.x = rv.getWidth();
+                size.y = rv.getHeight();
+                adapter.notifyDataSetChanged();
+                first.set(false);
+            }
+        });
     }
 
 
-    private class Item {
+    private static class Item {
         private final static int TYPE_AD = 1;
         private final static int TYPE_ITEM = 2;
         private int type;
-        private String img;
+        private @DrawableRes int img;
         private String title;
         private String msg;
     }
@@ -77,13 +93,10 @@ public class ZhiHuAdActivity extends BaseActivity {
         protected RvDefaultHolder onCreateHolder(LayoutInflater inflater, ViewGroup parent,
                                                  int viewType) {
             View view;
-            switch (viewType) {
-                case Item.TYPE_AD:
-                    view = inflater.inflate(R.layout.item_zhihuad_ad, parent, false);
-                    break;
-                default:
-                    view = inflater.inflate(R.layout.item_zhiduad_item, parent, false);
-                    break;
+            if (viewType == Item.TYPE_AD) {
+                view = inflater.inflate(R.layout.item_zhihuad_ad, parent, false);
+            } else {
+                view = inflater.inflate(R.layout.item_zhiduad_item, parent, false);
             }
             return new RvDefaultHolder(view, viewType);
         }
@@ -102,12 +115,9 @@ public class ZhiHuAdActivity extends BaseActivity {
                                 @NonNull Item item, boolean isLast) {
             switch (viewType) {
                 case Item.TYPE_AD:
-                    GlideUtil.loadBitmap(getContext(), item.img, new GlideUtil.BitmapLoader() {
-                        @Override
-                        public void onResourceReady(Bitmap resource) {
-                            holder.setImageRes(R.id.zhiHuAd, resource);
-                        }
-                    });
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), item.img);
+                    ((ZhiHuAdImageView) holder.itemView).setSize(size.x, size.y);
+                    holder.setImageRes(R.id.zhiHuAd, bitmap);
                     break;
                 case Item.TYPE_ITEM:
                     holder.setText(R.id.title, item.title);

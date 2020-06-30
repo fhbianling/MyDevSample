@@ -6,7 +6,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
-import android.support.annotation.FloatRange;
+import androidx.annotation.FloatRange;
 
 import com.bian.util.core.L;
 

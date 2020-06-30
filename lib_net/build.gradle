@@ -24,11 +24,12 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
+    def retrofitVersion = '2.8.1'
     /*retrofit*/
-    api 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:retrofit-converters:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
-    api 'com.google.code.gson:gson:2.8.2'
-    compileOnly "com.android.support:support-annotations:$supportLibraryVersion"
+    api "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:retrofit-converters:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+    api 'com.google.code.gson:gson:2.8.6'
+    compileOnly 'androidx.annotation:annotation:1.1.0'
 }

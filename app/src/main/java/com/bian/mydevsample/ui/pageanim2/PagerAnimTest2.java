@@ -1,7 +1,7 @@
 package com.bian.mydevsample.ui.pageanim2;
 
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;

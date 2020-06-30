@@ -1,6 +1,6 @@
 package com.bian.mydevsample.application;
 
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 
 import com.bian.mydevsample.BuildConfig;
 import com.bian.net.Api;

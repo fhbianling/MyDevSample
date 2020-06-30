@@ -3,7 +3,7 @@ package com.bian.audio;
 import android.Manifest;
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.bian.audio.internal.AudioRecorder;

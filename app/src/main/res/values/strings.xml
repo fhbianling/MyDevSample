@@ -1,6 +1,9 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">MyDevSample</string>
     <string name="delete">删除</string>
     <string name="test">这里是歌词\n这里是歌词\n这里是歌词\n这里是歌词\n这里是歌词\n这里是歌词\n这里是歌词\n这里是歌词\n这里是歌词</string>
     <string name="hint">这里是播放页</string>
+    <string name="org">原图:</string>
+    <string name="after">合成后:</string>
+    <string name="mixColor">叠加色:</string>
 </resources>

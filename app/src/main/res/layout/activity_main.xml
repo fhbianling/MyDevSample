@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".ui._main.MainActivity">
 
-    <android.support.design.widget.TabLayout
+    <com.google.android.material.tabs.TabLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
@@ -17,31 +17,31 @@
         app:tabSelectedTextColor="@android:color/white"
         app:tabTextColor="#ccc">
 
-        <android.support.design.widget.TabItem
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Tab1"/>
 
-        <android.support.design.widget.TabItem
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Tab2"/>
 
-        <android.support.design.widget.TabItem
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Tab3"/>
 
-        <android.support.design.widget.TabItem
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Tab5"/>
 
-        <android.support.design.widget.TabItem
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Tab6"/>
-    </android.support.design.widget.TabLayout>
+    </com.google.android.material.tabs.TabLayout>
 
     <FrameLayout
         android:id="@+id/fragmentContainer"

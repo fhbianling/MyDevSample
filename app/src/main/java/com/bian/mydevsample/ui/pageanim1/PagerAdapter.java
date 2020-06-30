@@ -13,7 +13,7 @@ import com.bian.mydevsample.R;
  * 类描述：
  */
 
-class PagerAdapter extends android.support.v4.view.PagerAdapter {
+class PagerAdapter extends androidx.viewpager.widget.PagerAdapter {
     private LayoutInflater inflater;
     private int[] layoutRes = new int[]{R.layout.pager_1, R.layout.pager_2, R.layout.pager_3};
     private View[] views = new View[3];

@@ -10,7 +10,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.bian.video.compress.OnVideoCompressListener;

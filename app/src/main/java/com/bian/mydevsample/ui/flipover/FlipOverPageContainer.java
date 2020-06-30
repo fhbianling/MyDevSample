@@ -8,8 +8,11 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Region;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
@@ -80,13 +83,21 @@ public class FlipOverPageContainer extends FrameLayout {
             Path backPath = pathComputer.getBackPath();
             mPaint.setColor(Color.WHITE);
             canvas.clipPath(mRect);
-            canvas.clipPath(backPath, Region.Op.REPLACE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                canvas.clipPath(backPath);
+            } else {
+                canvas.clipPath(backPath, Region.Op.REPLACE);
+            }
             canvas.drawPath(backPath, mPaint);
 
 
             Path nextPagePath = pathComputer.getNextPagePath();
             canvas.clipPath(mRect);
-            canvas.clipPath(nextPagePath, Region.Op.REPLACE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                canvas.clipPath(nextPagePath);
+            } else {
+                canvas.clipPath(nextPagePath, Region.Op.REPLACE);
+            }
             if (bitmap != null) {
                 canvas.drawBitmap(bitmap, 0, 0, mPaint);
             }

@@ -1,6 +1,6 @@
 package com.bian.adapter;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.bian.util.core.L;
 

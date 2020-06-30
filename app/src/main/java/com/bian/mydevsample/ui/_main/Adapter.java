@@ -1,13 +1,12 @@
 package com.bian.mydevsample.ui._main;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.bian.adapter.AbsAdapter;
 import com.bian.adapter.ListDefaultHolder;
-import com.bian.image.loader.GlideUtil;
 import com.bian.mydevsample.R;
 
 import java.util.List;

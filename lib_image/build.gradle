@@ -30,14 +30,14 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'id.zelory:compressor:2.1.0'
-    implementation "com.android.support:support-annotations:$supportLibraryVersion"
-    implementation("com.android.support:appcompat-v7:$supportLibraryVersion", {
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation('androidx.appcompat:appcompat:1.0.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation("com.android.support:support-v4:$supportLibraryVersion", {
+    implementation('androidx.legacy:legacy-support-v4:1.0.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation("com.android.support:recyclerview-v7:$supportLibraryVersion", {
+    implementation('androidx.recyclerview:recyclerview:1.0.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     api 'com.github.bumptech.glide:glide:3.7.0'

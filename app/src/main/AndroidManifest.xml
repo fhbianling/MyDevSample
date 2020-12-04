@@ -3,51 +3,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bian.mydevsample">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--        android:networkSecurityConfig="@xml/network_config"-->
     <application
         android:name=".application.MyApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:networkSecurityConfig="@xml/network_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup"
-        tools:ignore="UnusedAttribute">
+        tools:ignore="UnusedAttribute"
+        tools:replace="android:allowBackup">
 
         <!-- <activity android:name=".ui.InfoTextViewActivity"> -->
         <activity android:name=".ui._main.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.media.MediaPlayerActivity"/>
-        <activity android:name=".ui.infotextview.InfoTextViewSampleActivity"/>
-        <activity android:name=".ui.pageanim3qidian.QiDianViewPagerAnimActivity"/>
-        <activity android:name=".ui.adaptertest.AdapterTest"/>
-        <activity android:name=".ui.pageanim1.PagerAnimTest1"/>
-        <activity android:name=".ui.pageanim2.PagerAnimTest2"/>
-        <activity android:name=".ui.zhihuad.ZhiHuAdActivity"/>
-        <activity android:name=".ui.qqclean.QQCleanAnimActivity"/>
-        <activity android:name=".ui.pageanim4.PageAnimFadeActivity"/>
-        <activity android:name=".ui.backstage.BackStageActivity"/>
-        <activity android:name=".ui.kugouanim.KuGouMainAnimActivity"/>
-        <activity android:name=".ui.flipover.FlipOverActivity"/>
-        <activity android:name=".ui.flower.FlowerActivity"/>
-        <activity android:name=".ui.stream.MusicStreamActivity"/>
-        <activity android:name=".ui.adapterbasetest.BaseTest"/>
-        <activity android:name=".ui.indicatorbar.TemplateIndicatorTest"/>
-        <activity android:name=".ui.bitmapcomposite.BitmapComposite" />
+        <activity android:name=".ui.media.MediaPlayerActivity" />
+        <activity android:name=".ui.infotextview.InfoTextViewSampleActivity" />
+        <activity android:name=".ui.pageanim3qidian.QiDianViewPagerAnimActivity" />
+        <activity android:name=".ui.adaptertest.AdapterTest" />
+        <activity android:name=".ui.pageanim1.PagerAnimTest1" />
+        <activity android:name=".ui.pageanim2.PagerAnimTest2" />
+        <activity android:name=".ui.zhihuad.ZhiHuAdActivity" />
+        <activity android:name=".ui.qqclean.QQCleanAnimActivity" />
+        <activity android:name=".ui.pageanim4.PageAnimFadeActivity" />
+        <activity android:name=".ui.backstage.BackStageActivity" />
+        <activity android:name=".ui.kugouanim.KuGouMainAnimActivity" />
+        <activity android:name=".ui.flipover.FlipOverActivity" />
+        <activity android:name=".ui.flower.FlowerActivity" />
+        <activity android:name=".ui.stream.MusicStreamActivity" />
+        <activity android:name=".ui.adapterbasetest.BaseTest" />
+        <activity android:name=".ui.indicatorbar.TemplateIndicatorTest" />
+        <activity android:name=".ui.customtab.CustomTabActivity" />
+        <activity
+            android:name=".ui.randomcards.RandomCardActivity"
+            android:screenOrientation="portrait" />
 
         <receiver android:name="com.wilddog.client.receiver.WilddogAuthCastReceiver">
             <intent-filter>
-                <action android:name="com.wilddog.wilddogauth.signinsuccess"/>
-                <action android:name="com.wilddog.wilddogauth.signoutsuccess"/>
+                <action android:name="com.wilddog.wilddogauth.signinsuccess" />
+                <action android:name="com.wilddog.wilddogauth.signoutsuccess" />
             </intent-filter>
         </receiver>
 

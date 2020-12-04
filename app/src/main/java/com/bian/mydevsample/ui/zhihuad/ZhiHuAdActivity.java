@@ -51,7 +51,7 @@ public class ZhiHuAdActivity extends BaseActivity {
             Item item = new Item();
             if (i == 5) {
                 item.type = Item.TYPE_AD;
-                item.img = R.mipmap.ic_test2;
+//                item.img = R.mipmap.ic_test2;
             } else {
                 item.type = Item.TYPE_ITEM;
                 item.title = title;

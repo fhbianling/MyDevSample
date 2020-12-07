@@ -3,8 +3,7 @@ package com.bian.mydevsample.ui.randomcards
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.animation.AnimationUtils
-import android.view.animation.LayoutAnimationController
+import android.view.animation.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.math.MathUtils
 import com.bian.mydevsample.R
@@ -59,10 +58,18 @@ class RandomCardActivity : AppCompatActivity() {
 			rv.adapter = null
 			adapter.items = list
 			rv.adapter = adapter
+			rv.scheduleLayoutAnimation()
 		}
-		val lac = LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.item_anim))
+		val scaleAnimation = ScaleAnimation(0f, 1f,
+		                                    0f, 1f,
+		                                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+		                                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f)
+		scaleAnimation.interpolator = OvershootInterpolator()
+		scaleAnimation.duration = 500
+		val lac = LayoutAnimationController(scaleAnimation)
 		lac.delay = 0.05f
 		lac.order = LayoutAnimationController.ORDER_RANDOM
+//		lac.interpolator = OvershootInterpolator()
 		rv.layoutAnimation = lac
 	}
 

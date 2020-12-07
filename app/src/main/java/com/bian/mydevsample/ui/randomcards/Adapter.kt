@@ -66,8 +66,8 @@ class Adapter(private val inflater : LayoutInflater) :
 				tag.checked = ! tag.checked
 				startAnimation(tag)
 			}
-			if (viewType >= 3)
-				itemView.animation = AnimationUtils.loadAnimation(v.context, R.anim.item_anim2)
+//			if (viewType >= 3)
+//				itemView.animation = AnimationUtils.loadAnimation(v.context, R.anim.item_anim3)
 		}
 
 		private val paint = Paint().also {

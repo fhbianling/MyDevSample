@@ -26,6 +26,7 @@ import com.bian.mydevsample.ui.pageanim2.PagerAnimTest2;
 import com.bian.mydevsample.ui.pageanim3qidian.QiDianViewPagerAnimActivity;
 import com.bian.mydevsample.ui.pageanim4.PageAnimFadeActivity;
 import com.bian.mydevsample.ui.qqclean.QQCleanAnimActivity;
+import com.bian.mydevsample.ui.randombubbles.RandomBubblesDemo;
 import com.bian.mydevsample.ui.randomcards.RandomCardActivity;
 import com.bian.mydevsample.ui.stream.MusicStreamActivity;
 import com.bian.mydevsample.ui.zhihuad.ZhiHuAdActivity;
@@ -109,6 +110,7 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("刻度条测试", TemplateIndicatorTest.class));
         buttonDescs.add(new ButtonDesc("自定义TabLayout", CustomTabActivity.class));
         buttonDescs.add(new ButtonDesc("随机大小布局", RandomCardActivity.class));
+        buttonDescs.add(new ButtonDesc("随机气泡", RandomBubblesDemo.class));
 //        buttonDescs.add(new ButtonDesc("Bitmap合成", BitmapComposite.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);

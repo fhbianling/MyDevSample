@@ -7,11 +7,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import com.bian.util.core.L
 import kotlinx.coroutines.*
-import kotlin.math.ceil
 import kotlin.math.hypot
 import kotlin.math.min
 import kotlin.system.measureTimeMillis
@@ -25,10 +25,12 @@ class RandomBubbles(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 	private val bubbles = mutableListOf<Bubble>()
 	private val circleMap = mutableMapOf<PointF, Float>()
 	private val bubbleItems = mutableListOf<BubbleItem>()
+	private val textPadding = 20f
 	private var expectHeight = 0
 	private val paint = Paint().also {
 		it.isAntiAlias = true
-		it.textSize = 14f * 3f
+		it.textSize = 14f.sp2px()
+		it.style = Paint.Style.FILL
 	}
 
 	private suspend fun calculateExpectHeight() : Int {
@@ -39,25 +41,26 @@ class RandomBubbles(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 			L.d("calculate task[$id] is running")
 			circleMap.clear()
 			val initialWidth = measuredWidth
-			val halfWidth = initialWidth / 2f
-			val maxRadius = initialWidth / 3f
+			initialWidth / 2f
+			val maxRadius = initialWidth / 4f
 			// 向下扩展
 			val xRange = 0f .. initialWidth.toFloat()
 			var yRange = 0f .. initialWidth.toFloat()
 			var translateTop = Float.MAX_VALUE
+			val yIncrement = initialWidth * 0.3f
 
 			for (i in 0 until bubbles.size) {
 				var pointF : PointF
 				var radius : Float
-				var minBubbleRadius = paint.measureText(bubbles[i].text)
+				var minBubbleRadius = paint.measureText(bubbles[i].text) / 2f + textPadding
 				if (minBubbleRadius > maxRadius) {
 					minBubbleRadius = maxRadius
 				}
 				var loopCount = 0
 				FindValidPoint@ while (true) {
 					loopCount ++
-					if (loopCount > 500) {
-						yRange *= 1.5f
+					if (loopCount > 1000) {
+						yRange = 0f .. yRange.endInclusive + yIncrement
 						L.d("scale y range,drop loop count:$loopCount")
 						loopCount = 0
 					}
@@ -134,7 +137,8 @@ class RandomBubbles(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 			}
 			MotionEvent.ACTION_MOVE -> {
 				val diff = event.y - lastEvent.y
-				translationX
+				translationY += diff
+				return true
 			}
 		}
 		return super.onTouchEvent(event)
@@ -142,7 +146,7 @@ class RandomBubbles(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 
 	override fun onDraw(canvas : Canvas?) {
 		if (canvas == null) return
-		paint.style = Paint.Style.STROKE
+		paint.style = Paint.Style.FILL
 		paint.strokeWidth = 5f
 		val lineHeight = paint.descent() - paint.ascent()
 		L.d("bubble item size:${bubbleItems.size}")
@@ -156,6 +160,9 @@ class RandomBubbles(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 			                center.y + (lineHeight) / 2f - paint.descent(),
 			                paint)
 		}
+		paint.style = Paint.Style.STROKE
+		paint.color = Color.parseColor("#5000ff00")
+		canvas.drawRect(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint)
 	}
 
 	fun setBubbles(bubbles : List<Bubble>) {
@@ -183,4 +190,8 @@ class RandomBubbles(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 	data class BubbleItem(val bubble : Bubble, val radius : Float, val p : PointF)
 
 	private operator fun ClosedFloatingPointRange<Float>.times(scale : Float) = start * scale .. endInclusive * scale
+
+	fun Float.sp2px() = TypedValue.applyDimension(
+			TypedValue.COMPLEX_UNIT_SP, this, context.resources.displayMetrics
+	)
 }

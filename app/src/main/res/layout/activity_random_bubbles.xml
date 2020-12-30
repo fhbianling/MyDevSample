@@ -19,17 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#50ffffff"
-        app:layout_constrainedHeight="true"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="@id/bubble"
-        app:layout_constraintEnd_toEndOf="@id/bubble"
-        app:layout_constraintStart_toStartOf="@id/bubble"
-        app:layout_constraintTop_toTopOf="@id/bubble" />
-
     <Button
         android:id="@+id/btn"
         android:layout_width="wrap_content"

@@ -25,11 +25,15 @@ class RandomBubblesDemo : BaseActivity() {
 
 	private fun debug() {
 		L.d("debug")
-		val items = mutableListOf<RandomBubblesView.BubbleItem>()
+		val items = mutableListOf<RandomBubbles.Bubble>()
 		for (i in 0 .. (3 + Math.random() * 5f).toInt()) {
-			items.add(RandomBubblesView.BubbleItem("测试$i", randomColor()))
+			var string = ""
+			for (j in 0 .. ((3 + Math.random() * 5f).toInt())) {
+				string += "字"
+			}
+			items.add(RandomBubbles.Bubble(string, randomColor()))
 		}
-		randomBubbles.setBubbleItems(items)
+		bubble.setBubbles(items)
 		bubbleCount.text = "气泡数量应有值:${items.size}"
 	}
 

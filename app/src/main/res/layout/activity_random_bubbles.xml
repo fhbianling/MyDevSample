@@ -7,11 +7,14 @@
     android:clipChildren="false">
 
 
-    <com.bian.mydevsample.ui.randombubbles.RandomBubblesView
-        android:id="@+id/randomBubbles"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:elevation="10dp"
+    <com.bian.mydevsample.ui.randombubbles.RandomBubbles
+        android:id="@+id/bubble"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,10 +25,10 @@
         android:background="#50ffffff"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="@id/randomBubbles"
-        app:layout_constraintEnd_toEndOf="@id/randomBubbles"
-        app:layout_constraintStart_toStartOf="@id/randomBubbles"
-        app:layout_constraintTop_toTopOf="@id/randomBubbles" />
+        app:layout_constraintBottom_toBottomOf="@id/bubble"
+        app:layout_constraintEnd_toEndOf="@id/bubble"
+        app:layout_constraintStart_toStartOf="@id/bubble"
+        app:layout_constraintTop_toTopOf="@id/bubble" />
 
     <Button
         android:id="@+id/btn"

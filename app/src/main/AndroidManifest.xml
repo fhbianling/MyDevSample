@@ -46,6 +46,7 @@
             android:name=".ui.randomcards.RandomCardActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.randombubbles.RandomBubblesDemo" />
+        <activity android:name=".ui.wheelview.WheelViewDemo" />
 
         <receiver android:name="com.wilddog.client.receiver.WilddogAuthCastReceiver">
             <intent-filter>

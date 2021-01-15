@@ -56,7 +56,7 @@ class CustomWheelView(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 		centerItemHeight =
 				ta.getDimensionPixelSize(R.styleable.CustomWheelView_centerItemHeight, 150)
 		enableLoop = ta.getBoolean(R.styleable.CustomWheelView_enableLoop, true)
-		resistance = ta.getFloat(R.styleable.CustomWheelView_resistance, 2.3f)
+		resistance = ta.getFloat(R.styleable.CustomWheelView_resistance, 2f)
 		ta.recycle()
 		if (itemOnScreen % 2 == 0) throw IllegalArgumentException("item on screen must be odd number")
 		val itemAngleStepRadians = TWO_PI / (itemOnScreen * 2)
@@ -265,13 +265,14 @@ class CustomWheelView(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 		override fun drawItem(position : Int, canvas : Canvas, rect : RectF, itemTopAngle : Int, itemAngleSpan : Int) {
 			items?.getOrNull(position)?.let {
 				val central = itemTopAngle + itemAngleSpan / 2f
-				val ratio : Float = abs(central % 90f) / 90f
-//				val color = ratio.lerpColor(Color.RED, Color.GREEN)
-//				paint.color = color
-//				canvas.drawRect(rect, paint)
+				val ratio : Float = 1 - abs(central - 90f) / 90f
+				val color = ratio.lerpColor(Color.RED, Color.GREEN)
+				paint.color = color
+				canvas.drawRect(rect, paint)
 
 				paint.color = textColor
-				paint.textSize = textSize * (0.7f + ratio * 0.3f)
+				paint.textSize = textSize * (0.5f + ratio * 0.5f)
+				L.d("$position text size:${paint.textSize}")
 				val text = stringFactory?.invoke(it) ?: it.toString()
 				val textWidth = paint.measureText(text)
 				val textBaseLine = rect.bottom - (rect.height() - textHeight) / 2f - paint.descent()

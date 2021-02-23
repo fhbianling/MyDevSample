@@ -24,11 +24,13 @@ class WheelViewDemo : BaseActivity() {
 		}
 		drawer.setData(item)
 
-		plus.setOnClickListener {
-			wheelView.add()
+		wheelView.setOnItemSelectListener {
+			selectInfo.text = "选中:$it,end:${wheelView.end}"
 		}
-		minus.setOnClickListener {
-			wheelView.minus()
+		reset.setOnClickListener {
+			val index = (0 .. 10).random()
+			selectIndex.text = index.toString()
+			wheelView.resetState(index)
 		}
 	}
 }

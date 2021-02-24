@@ -193,12 +193,10 @@ class CustomWheelView(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 		return super.onTouchEvent(event)
 	}
 
-	private var va : ValueAnimator? = null
+	private var job : Job? = null
 	var end : Int = 0
 	private fun autoScrollAnimation() {
-		if (va?.isRunning == true) {
-			va?.cancel()
-		}
+		job?.cancel()
 		val endForLast = itemAngleStep - fluctuation
 		val endForNext = - fluctuation
 		val endForRollback = - fluctuation
@@ -236,7 +234,7 @@ class CustomWheelView(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 		this.end = end
 		L.i("execute animation-start:$fluctuation,index:$centerItemIndex,animation-start:0,animation-end:$end")
 
-		GlobalScope.launch {
+		job = GlobalScope.launch {
 			var count = abs(end)
 			val sign = sign(end.toDouble()).toInt()
 			while (count != 0) {
@@ -249,22 +247,11 @@ class CustomWheelView(ctx : Context, attrs : AttributeSet) : View(ctx, attrs) {
 				delay(10)
 			}
 		}
+	}
 
-//		va = ValueAnimator.ofInt(0, end).also {
-//			it.addUpdateListener { va ->
-//				val diff = va.animatedValue as Int
-//				L.d("on animation:diff:$diff")
-//				fluctuation += sign(diff.toDouble()).toInt()
-//				invalidate()
-//			}
-//			it.addListener(object : SimpleAnimatorListener() {
-//				override fun onAnimationEnd(animation : Animator?) {
-//					invalidate()
-//				}
-//			})
-//			it.duration = DURATION
-//		}
-//		va?.start()
+	override fun onDetachedFromWindow() {
+		super.onDetachedFromWindow()
+		job?.cancel()
 	}
 
 	private fun updateFluctuation(f : Int, rollBack : Boolean = false) {

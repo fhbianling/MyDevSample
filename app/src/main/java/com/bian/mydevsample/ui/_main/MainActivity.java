@@ -29,6 +29,7 @@ import com.bian.mydevsample.ui.qqclean.QQCleanAnimActivity;
 import com.bian.mydevsample.ui.randombubbles.RandomBubblesDemo;
 import com.bian.mydevsample.ui.randomcards.RandomCardActivity;
 import com.bian.mydevsample.ui.stream.MusicStreamActivity;
+import com.bian.mydevsample.ui.wheeelview2.WheelViewDemo2;
 import com.bian.mydevsample.ui.wheelview.WheelViewDemo;
 import com.bian.mydevsample.ui.zhihuad.ZhiHuAdActivity;
 
@@ -113,6 +114,7 @@ public class MainActivity extends AbsBaseActivity
         buttonDescs.add(new ButtonDesc("随机大小布局", RandomCardActivity.class));
         buttonDescs.add(new ButtonDesc("随机气泡", RandomBubblesDemo.class));
         buttonDescs.add(new ButtonDesc("自定义滚轮", WheelViewDemo.class));
+        buttonDescs.add(new ButtonDesc("自定义滚轮2-graphic.matrix实现", WheelViewDemo2.class));
 //        buttonDescs.add(new ButtonDesc("Bitmap合成", BitmapComposite.class));
         adapter = new Adapter(buttonDescs, this);
         buttonList.setAdapter(adapter);

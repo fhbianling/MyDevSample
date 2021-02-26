@@ -1,11 +1,20 @@
 package com.bian.mydevsample.ui.wheeelview2
 
 import android.os.Bundle
-import android.widget.SeekBar
-import android.widget.TextView
 import com.bian.mydevsample.R
 import com.bian.mydevsample.base.BaseActivity
+import com.bian.util.core.L
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.activity_wheel_view_2.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.concurrent.timer
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 /**
  * author fhbianling@163.com
@@ -17,39 +26,11 @@ class WheelViewDemo2 : BaseActivity() {
 		return R.layout.activity_wheel_view_2
 	}
 
+	@ExperimentalTime
 	override fun initView(savedInstanceState : Bundle?) {
-		rotateXSeekBar.doSeek(rotateX) {
-			wheel.rotateX = it.toFloat()
+		autoScroll.setOnCheckedChangeListener { buttonView, isChecked ->
+			wheel.autoRotate = isChecked
 		}
-		rotateYSeekBar.doSeek(rotateY) {
-			wheel.rotateY = it.toFloat()
-		}
-		rotateZSeekBar.doSeek(rotateZ) {
-			wheel.rotateZ = it.toFloat()
-		}
-		locationXSeekBar.doSeek(locationX) {
-			wheel.locationX = it.toFloat()
-		}
-		locationYSeekBar.doSeek(locationY) {
-			wheel.locationY = it.toFloat()
-		}
-		locationZSeekBar.doSeek(locationZ) {
-			wheel.locationZ = it.toFloat()
-		}
-	}
-
-	private fun SeekBar.doSeek(tv : TextView, onSeekChange : ((Int) -> Unit)) {
-		setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-			override fun onProgressChanged(seekBar : SeekBar?, progress : Int, fromUser : Boolean) {
-				tv.text = progress.toString()
-				onSeekChange.invoke(progress)
-			}
-
-			override fun onStartTrackingTouch(seekBar : SeekBar?) {
-			}
-
-			override fun onStopTrackingTouch(seekBar : SeekBar?) {
-			}
-		})
+		chart.isLogEnabled = true
 	}
 }

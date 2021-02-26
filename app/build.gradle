@@ -77,6 +77,8 @@ dependencies {
     // 一个google自己的瀑布流布局容器，这个布局的优点是他的副坐标轴上的排布个数可以不同，不像RecyclerView使用瀑布流时强制每行列数相等这个感觉
     // 这一库同时对应着一个RecyclerView的FlexLayoutManager和一个可以直接使用的控件FlexboxLayout
     implementation 'com.google.android:flexbox:2.0.1'
+
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
 repositories {
     mavenCentral()

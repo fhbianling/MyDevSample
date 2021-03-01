@@ -32,5 +32,11 @@ class WheelViewDemo2 : BaseActivity() {
 			wheel.autoRotate = isChecked
 		}
 		chart.isLogEnabled = true
+		genChart.setOnClickListener {
+			val map = wheel.values.map { Entry(it.key, it.value) }
+			L.d(map.size)
+			chart.data = LineData(LineDataSet(map, ""))
+			chart.invalidate()
+		}
 	}
 }

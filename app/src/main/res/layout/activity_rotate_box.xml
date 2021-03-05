@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/darker_gray">
+
+    <com.bian.mydevsample.ui.rotatebox.RotateBox
+        android:id="@+id/box"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/enableRandom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/randomrotate"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="@string/reset"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@id/enableRandom"
+        app:layout_constraintStart_toEndOf="@id/enableRandom" />
+
+    <SeekBar
+        android:id="@+id/rotateX"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="360"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/rotateXShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rotateX"
+        tools:text="360" />
+
+    <SeekBar
+        android:id="@+id/rotateY"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="360"
+        app:layout_constraintTop_toBottomOf="@id/rotateXShow" />
+
+    <TextView
+        android:id="@+id/rotateYShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rotateY"
+        tools:text="360" />
+
+    <SeekBar
+        android:id="@+id/rotateZ"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="360"
+        app:layout_constraintTop_toBottomOf="@id/rotateYShow" />
+
+    <TextView
+        android:id="@+id/rotateZShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rotateZ"
+        tools:text="360" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/seekBarGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="rotateX,rotateXShow,rotateY,rotateYShow,rotateZ,rotateZShow" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

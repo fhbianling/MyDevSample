@@ -6,4 +6,6 @@
     <string name="org">原图:</string>
     <string name="after">合成后:</string>
     <string name="mixColor">叠加色:</string>
+    <string name="randomrotate">RandomRotate</string>
+    <string name="reset">reset</string>
 </resources>
